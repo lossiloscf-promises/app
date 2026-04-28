@@ -1,8 +1,8 @@
 {
-  "name": "Los Silos CF — Promises Valencia",
+  "name": "Los Silos CF \u2014 Promises Valencia",
   "short_name": "Los Silos CF",
-  "description": "App de gestión deportiva del Los Silos CF Promises Valencia",
-  "start_url": "/lossilos-club-app/",
+  "description": "App de gesti\u00f3n deportiva del Los Silos CF Promises Valencia",
+  "start_url": "/app/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#1A3A6B",
@@ -20,5 +20,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "scope": "/app/"
 }
