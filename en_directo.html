@@ -155,12 +155,10 @@ function renderizar() {
     return;
   }
 
-  // Auto-iniciar timers para partidos ya en vivo
+  // Auto-iniciar timers para partidos ya en vivo usando timestamp
   lista.forEach(function(p) {
-    if (p.estado === 'vivo' && !timers[p.categoria]) {
-      var cfg_t = TIEMPOS[p.categoria] || {partes:2, min:45};
-      timers[p.categoria] = {secs:0, parte:1, corriendo:false, finParte:false, maxSecs: cfg_t.min*60};
-      playTimer(p.categoria);
+    if (p.estado === 'vivo') {
+      iniciarTimer(p.categoria, p.timestamp_inicio||0);
     }
   });
 
@@ -231,18 +229,24 @@ function card(p) {
     evHtml = '<div class="eventos">'+evHtml+'</div>';
   }
 
-  var puede = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente'||(cfg.rol==='entrenador'&&cfg.equipo===p.categoria);
+  var es_mi_equipo = cfg.rol==='entrenador' && cfg.equipo===p.categoria;
+  var puede_iniciar = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente'||cfg.rol==='entrenador';
   var btns = '';
-  if (puede && p.estado==='pendiente') {
+  if (p.estado==='pendiente' && puede_iniciar) {
     btns = '<div class="card-btns iniciar"><button class="btn btn-iniciar" onclick="iniciar(\''+p.categoria+'\')">▶️ Iniciar partido</button></div>';
-  } else if (puede && p.estado==='vivo') {
+  } else if (es_mi_equipo && p.estado==='vivo') {
     btns = '<div class="card-btns">' +
       '<button class="btn btn-verde" onclick="evento(\''+p.categoria+'\',\'gol_silos\')">⚽ +Gol</button>' +
-      '<button class="btn btn-rojo" onclick="evento(\''+p.categoria+'\',\'gol_rival\')">⚽ Rival</button>' +
-      '<button class="btn btn-amarillo" onclick="evento(\''+p.categoria+'\',\'amarilla\')">🟨</button>' +
-      '<button class="btn btn-roja" onclick="evento(\''+p.categoria+'\',\'roja\')">🟥</button>' +
+      '<button class="btn btn-rojo" onclick="evento(\''+p.categoria+'\',\'gol_rival\')">⚽ +Rival</button>' +
+      '<button class="btn btn-amarillo" onclick="evento(\''+p.categoria+'\',\'amarilla\')">🟨 Amarilla</button>' +
+      '<button class="btn btn-roja" onclick="evento(\''+p.categoria+'\',\'roja\')">🟥 Roja</button>' +
     '</div>' +
-    '<button class="btn-fin" onclick="finalizar(\''+p.categoria+'\')">⏹ Finalizar partido</button>';
+    '<div class="card-btns" style="border-top:none;padding-top:0">' +
+      '<button class="btn" style="background:#1a2a1a;color:#666;font-size:11px" onclick="evento(\''+p.categoria+'\',\'anular_gol_silos\')">↩ -Gol nuestro</button>' +
+      '<button class="btn" style="background:#2a1a1a;color:#666;font-size:11px" onclick="evento(\''+p.categoria+'\',\'anular_gol_rival\')">↩ -Gol rival</button>' +
+      '<button class="btn" style="background:#2a1a00;color:#666;font-size:11px" onclick="resetMarcador(\''+p.categoria+'\')">↺ Reset 0-0</button>' +
+      '<button class="btn" style="background:#111;color:#444;font-size:11px" onclick="finalizar(\''+p.categoria+'\')">⏹ Fin</button>' +
+    '</div>';
   }
 
   return '<div class="card">' +
@@ -259,11 +263,33 @@ function card(p) {
 }
 
 // ── TEMPORIZADOR ──────────────────────────────────────────────────────
-function iniciarTimer(cat) {
-  if (timers[cat]) return; // ya existe
+function iniciarTimer(cat, timestamp_inicio) {
   var cfg_t = TIEMPOS[cat] || {partes:2, min:45};
-  timers[cat] = {secs:0, parte:1, corriendo:false, finParte:false, maxSecs: cfg_t.min*60};
-  playTimer(cat);
+  var maxSecs = cfg_t.min * 60;
+
+  if (!timers[cat]) {
+    timers[cat] = {secs:0, parte:1, corriendo:false, finParte:false, maxSecs:maxSecs};
+  }
+
+  // Si hay timestamp de inicio, recalcular segundos transcurridos
+  if (timestamp_inicio && timestamp_inicio > 0) {
+    var elapsed = Math.floor((Date.now() - timestamp_inicio) / 1000);
+    var parte = 1;
+    // Calcular en qué parte estamos
+    while (elapsed > maxSecs && parte < cfg_t.partes) {
+      elapsed -= maxSecs;
+      parte++;
+    }
+    elapsed = Math.min(elapsed, maxSecs);
+    timers[cat].secs    = elapsed;
+    timers[cat].parte   = parte;
+    timers[cat].finParte= elapsed >= maxSecs;
+    timers[cat].maxSecs = maxSecs;
+  }
+
+  if (!timers[cat].finParte && !timers[cat].corriendo) {
+    playTimer(cat);
+  }
 }
 
 function playTimer(cat) {
