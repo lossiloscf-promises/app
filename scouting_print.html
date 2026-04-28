@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Plantilla Scouting — Los Silos CF</title>
+<style>
+@page{size:A4;margin:12mm 14mm}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:9pt;color:#1A1A1A;background:#fff}
+.page{width:100%;padding:0}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2.5px solid #1A3A6B;padding-bottom:8px;margin-bottom:10px}
+.header-logo{display:flex;align-items:center;gap:10px}
+.logo-circle{width:40px;height:40px;border-radius:50%;background:#1A3A6B;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700}
+.header-title h1{font-size:14pt;font-weight:700;color:#1A3A6B;margin:0}
+.header-title p{font-size:8pt;color:#666;margin:2px 0 0}
+.header-right{text-align:right;font-size:8pt;color:#666}
+.header-right strong{display:block;font-size:10pt;color:#1A3A6B}
+
+/* SECCIONES */
+.section{margin-bottom:10px}
+.section-title{background:#1A3A6B;color:#fff;padding:4px 10px;font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-radius:3px;margin-bottom:6px}
+.section-title.verde{background:#1E7B34}
+.section-title.naranja{background:#E8771A}
+.section-title.gris{background:#555}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
+
+/* CAMPOS */
+.field-group{margin-bottom:4px}
+.field-label{font-size:7pt;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
+.field-line{border-bottom:1px solid #999;height:16px;width:100%}
+.field-box{border:1px solid #ccc;border-radius:3px;height:18px;width:100%}
+
+/* CAMPO DE FUTBOL */
+.pitch-wrap{display:flex;gap:10px;align-items:flex-start}
+.pitch{background:#2E7D32;border:1.5px solid rgba(255,255,255,.6);border-radius:4px;width:120px;height:160px;flex-shrink:0;position:relative;overflow:hidden}
+.p-line{position:absolute;background:rgba(255,255,255,.4)}
+.p-circle{position:absolute;border:1px solid rgba(255,255,255,.4);border-radius:50%;background:transparent}
+.p-dot{position:absolute;width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.6);transform:translate(-50%,-50%)}
+.pitch-notas{flex:1}
+.pitch-notas textarea-sub{display:block;font-size:7pt;color:#666;margin-bottom:4px}
+
+/* TABLA JUGADORES */
+.jugadores-table{width:100%;border-collapse:collapse;font-size:8pt}
+.jugadores-table th{background:#1A3A6B;color:#fff;padding:4px 6px;text-align:left;font-size:7pt;font-weight:700;text-transform:uppercase}
+.jugadores-table td{padding:4px 6px;border-bottom:1px solid #eee;height:18px}
+.jugadores-table tr:nth-child(even) td{background:#F8F9FA}
+
+/* TARJETAS */
+.tarj-tabla{width:100%;border-collapse:collapse;font-size:8pt}
+.tarj-tabla th{padding:3px 6px;text-align:left;font-size:7pt;font-weight:700;text-transform:uppercase;color:#555;border-bottom:1px solid #ccc}
+.tarj-tabla td{padding:3px 6px;border-bottom:1px solid #eee;height:16px}
+.tarj-am{display:inline-block;width:10px;height:14px;background:#F1C40F;border-radius:1px;vertical-align:middle;margin-right:3px}
+.tarj-ro{display:inline-block;width:10px;height:14px;background:#E74C3C;border-radius:1px;vertical-align:middle;margin-right:3px}
+
+/* TRAMOS */
+.tramos-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.tramo-box{border:1px solid #ccc;border-radius:3px;padding:6px 4px;text-align:center}
+.tramo-box .tramo-min{font-size:7.5pt;font-weight:700;color:#1A3A6B;display:block;margin-bottom:3px}
+.tramo-gf{display:flex;align-items:center;gap:2px;font-size:7pt;margin-bottom:2px}
+.tramo-gc{display:flex;align-items:center;gap:2px;font-size:7pt}
+.dot-gf{width:8px;height:8px;border-radius:50%;background:#1E7B34;flex-shrink:0}
+.dot-gc{width:8px;height:8px;border-radius:50%;background:#C0392B;flex-shrink:0}
+.tramo-line{border-bottom:1px solid #ccc;flex:1}
+
+/* VALORACIÓN ESTRELLAS */
+.stars-row{display:flex;align-items:center;gap:4px;margin-bottom:4px}
+.stars-row label{font-size:8pt;width:130px;flex-shrink:0}
+.stars{display:flex;gap:3px}
+.star-empty{width:12px;height:12px;border:1px solid #ccc;border-radius:2px}
+
+/* TOGGLES IMPRIMIBLES */
+.toggle-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.toggle-item{display:flex;align-items:center;gap:5px;font-size:8pt}
+.check-box{width:11px;height:11px;border:1px solid #999;border-radius:2px;flex-shrink:0}
+
+/* TEXTAREA GRANDE */
+.big-field{border:1px solid #ccc;border-radius:3px;width:100%;min-height:40px;padding:4px}
+.big-field-lines{border:none;border-bottom:1px solid #ccc;width:100%;height:14px;margin-bottom:4px;display:block}
+
+/* SISTEMA */
+.sistema-boxes{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px}
+.sis-box{border:1.5px solid #1A3A6B;border-radius:4px;padding:3px 8px;font-size:8pt;font-weight:700;color:#1A3A6B}
+
+/* RESULTADO */
+.resultado-box{border:2px solid #1A3A6B;border-radius:6px;padding:8px 12px;text-align:center;min-width:80px}
+.resultado-val{font-size:20pt;font-weight:700;color:#1A3A6B;border-bottom:1px solid #ccc;min-height:28px}
+
+/* PIE */
+.footer{border-top:1px solid #ccc;padding-top:6px;margin-top:10px;display:flex;justify-content:space-between;font-size:7pt;color:#999}
+
+/* PRINT */
+@media print{
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .no-print{display:none}
+  .page-break{page-break-before:always}
+}
+</style>
+</head>
+<body>
+<script>
+var p = new URLSearchParams(window.location.search);
+var rival = p.get('rival') || '___________________________';
+var jornada = p.get('jornada') || '__';
+</script>
+
+<!-- BOTÓN IMPRIMIR (solo en pantalla) -->
+<div class="no-print" style="background:#1A3A6B;color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10">
+  <button onclick="history.back()" style="background:#fff2;border:none;color:#fff;padding:8px 14px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">‹ Volver</button>
+  <button onclick="window.print()" style="background:#fff;color:#1A3A6B;border:none;padding:8px 18px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">🖨️ Imprimir / Guardar PDF</button>
+</div>
+
+<div class="page" style="padding:10px">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <div class="logo-circle">⚽</div>
+    <div class="header-title">
+      <h1>LOS SILOS CF</h1>
+      <p>Informe de Scouting — Cuerpo Técnico</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <strong id="h-rival">Cargando...</strong>
+    <span id="h-jornada">Jornada __</span>
+  </div>
+</div>
+
+<!-- DATOS DEL PARTIDO -->
+<div class="section">
+  <div class="section-title">Datos del partido</div>
+  <div class="grid-4">
+    <div class="field-group"><div class="field-label">Equipo rival</div><div class="field-line"></div></div>
+    <div class="field-group"><div class="field-label">Jornada</div><div class="field-line"></div></div>
+    <div class="field-group"><div class="field-label">Fecha</div><div class="field-line"></div></div>
+    <div class="field-group"><div class="field-label">Hora</div><div class="field-line"></div></div>
+  </div>
+  <div class="grid-4" style="margin-top:5px">
+    <div class="field-group"><div class="field-label">Campo</div><div class="field-line"></div></div>
+    <div class="field-group"><div class="field-label">Condicion</div>
+      <div style="display:flex;gap:8px;margin-top:3px">
+        <span style="font-size:8pt;display:flex;align-items:center;gap:3px"><div class="check-box"></div> Local</span>
+        <span style="font-size:8pt;display:flex;align-items:center;gap:3px"><div class="check-box"></div> Visitante</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="field-group" style="flex:1"><div class="field-label">Resultado</div>
+        <div style="border:1.5px solid #1A3A6B;border-radius:4px;height:26px;text-align:center;font-size:13pt;font-weight:700;color:#1A3A6B"></div>
+      </div>
+    </div>
+    <div class="field-group"><div class="field-label">Scout</div><div class="field-line"></div></div>
+  </div>
+</div>
+
+<!-- SISTEMA TÁCTICO + CAMPO -->
+<div class="section">
+  <div class="section-title">Sistema tactico y posicionamiento</div>
+  <div class="pitch-wrap">
+    <div>
+      <div style="font-size:7.5pt;font-weight:700;color:#555;text-transform:uppercase;margin-bottom:4px">Campo (dibuja el sistema)</div>
+      <div class="pitch">
+        <div class="p-line" style="left:50%;top:0;width:1px;height:100%;transform:translateX(-50%)"></div>
+        <div class="p-circle" style="left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%)"></div>
+        <div class="p-line" style="left:10%;top:15%;width:80%;height:1px"></div>
+        <div class="p-line" style="left:10%;top:85%;width:80%;height:1px"></div>
+        <div class="p-line" style="left:25%;top:0;width:50%;height:1px"></div>
+        <div class="p-line" style="left:25%;bottom:0;width:50%;height:1px"></div>
+        <!-- Posiciones base dibujables -->
+        <div class="p-dot" style="left:50%;top:6%"></div>
+      </div>
+    </div>
+    <div style="flex:1">
+      <div class="grid-2" style="margin-bottom:5px">
+        <div class="field-group"><div class="field-label">Sistema</div><div class="field-line"></div></div>
+        <div class="field-group"><div class="field-label">Tipo ataque</div><div class="field-line"></div></div>
+        <div class="field-group"><div class="field-label">Tipo defensa</div><div class="field-line"></div></div>
+        <div class="field-group"><div class="field-label">Repliegue</div><div class="field-line"></div></div>
+      </div>
+      <div class="field-group"><div class="field-label">Notas sobre posicionamiento</div>
+        <div class="big-field" style="min-height:55px">
+          <div class="big-field-lines"></div>
+          <div class="big-field-lines"></div>
+          <div class="big-field-lines"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GOLES Y TARJETAS -->
+<div class="grid-2">
+  <div class="section">
+    <div class="section-title verde">Goles del partido</div>
+    <table class="tarj-tabla" style="width:100%">
+      <thead><tr><th>Min.</th><th>Goleador / Descripcion</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="section">
+    <div class="section-title naranja">Tarjetas</div>
+    <table class="tarj-tabla" style="width:100%">
+      <thead><tr><th>Tipo</th><th>Jugador</th><th>Min.</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tarj-am"></span></td><td></td><td></td></tr>
+        <tr><td><span class="tarj-am"></span></td><td></td><td></td></tr>
+        <tr><td><span class="tarj-am"></span></td><td></td><td></td></tr>
+        <tr><td><span class="tarj-ro"></span></td><td></td><td></td></tr>
+        <tr><td><span class="tarj-ro"></span></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- JUGADORES -->
+<div class="section" style="margin-top:8px">
+  <div class="section-title">Jugadores destacados a vigilar</div>
+  <table class="jugadores-table">
+    <thead><tr><th>Nombre del jugador</th><th>Posicion</th><th>Nivel</th><th>Observaciones</th></tr></thead>
+    <tbody>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TRAMOS -->
+<div class="section">
+  <div class="section-title">Analisis temporal — goles por tramos</div>
+  <div class="tramos-grid">
+    <div class="tramo-box"><span class="tramo-min">0-15'</span>
+      <div class="tramo-gf"><div class="dot-gf"></div><div class="tramo-line"></div></div>
+      <div class="tramo-gc"><div class="dot-gc"></div><div class="tramo-line"></div></div>
+    </div>
+    <div class="tramo-box"><span class="tramo-min">15-30'</span>
+      <div class="tramo-gf"><div class="dot-gf"></div><div class="tramo-line"></div></div>
+      <div class="tramo-gc"><div class="dot-gc"></div><div class="tramo-line"></div></div>
+    </div>
+    <div class="tramo-box"><span class="tramo-min">30-45'</span>
+      <div class="tramo-gf"><div class="dot-gf"></div><div class="tramo-line"></div></div>
+      <div class="tramo-gc"><div class="dot-gc"></div><div class="tramo-line"></div></div>
+    </div>
+    <div class="tramo-box"><span class="tramo-min">45-60'</span>
+      <div class="tramo-gf"><div class="dot-gf"></div><div class="tramo-line"></div></div>
+      <div class="tramo-gc"><div class="dot-gc"></div><div class="tramo-line"></div></div>
+    </div>
+    <div class="tramo-box"><span class="tramo-min">60-75'</span>
+      <div class="tramo-gf"><div class="dot-gf"></div><div class="tramo-line"></div></div>
+      <div class="tramo-gc"><div class="dot-gc"></div><div class="tramo-line"></div></div>
+    </div>
+    <div class="tramo-box"><span class="tramo-min">75-90'</span>
+      <div class="tramo-gf"><div class="dot-gf"></div><div class="tramo-line"></div></div>
+      <div class="tramo-gc"><div class="dot-gc"></div><div class="tramo-line"></div></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:16px;margin-top:4px;font-size:7.5pt">
+    <span style="display:flex;align-items:center;gap:3px"><div class="dot-gf"></div> Goles a favor</span>
+    <span style="display:flex;align-items:center;gap:3px"><div class="dot-gc"></div> Goles en contra</span>
+  </div>
+</div>
+
+<!-- CARACTERÍSTICAS Y VALORACIONES -->
+<div class="grid-2">
+  <div class="section">
+    <div class="section-title">Caracteristicas del rival</div>
+    <div class="toggle-grid">
+      <div class="toggle-item"><div class="check-box"></div><span>Presion alta sostenida</span></div>
+      <div class="toggle-item"><div class="check-box"></div><span>Juego directo</span></div>
+      <div class="toggle-item"><div class="check-box"></div><span>Peligrosos en BP</span></div>
+      <div class="toggle-item"><div class="check-box"></div><span>Buscan contraataque</span></div>
+      <div class="toggle-item"><div class="check-box"></div><span>Juego por bandas</span></div>
+      <div class="toggle-item"><div class="check-box"></div><span>Agresivos / faltas</span></div>
+      <div class="toggle-item"><div class="check-box"></div><span>Fisicamente potentes</span></div>
+      <div class="toggle-item"><div class="check-box"></div><span>Tecnico / toque corto</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">Valoraciones (marca con X)</div>
+    <div class="stars-row"><label>Nivel general</label><div class="stars"><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div></div></div>
+    <div class="stars-row"><label>Peligrosidad ofensiva</label><div class="stars"><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div></div></div>
+    <div class="stars-row"><label>Solidez defensiva</label><div class="stars"><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div></div></div>
+    <div class="stars-row"><label>Preparacion fisica</label><div class="stars"><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div></div></div>
+    <div class="stars-row"><label>Calidad tecnica</label><div class="stars"><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div><div class="star-empty"></div></div></div>
+    <div style="margin-top:6px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:8pt;font-weight:700;color:#555">VALORACION GLOBAL</span>
+      <div style="border:1.5px solid #1A3A6B;border-radius:4px;width:36px;height:24px;display:flex;align-items:center;justify-content:center;font-size:14pt;font-weight:700;color:#1A3A6B">&nbsp;</div>
+      <span style="font-size:7.5pt;color:#999">/ 10</span>
+    </div>
+  </div>
+</div>
+
+<!-- ANÁLISIS DAFO -->
+<div class="section">
+  <div class="section-title">Analisis del partido</div>
+  <div class="grid-2">
+    <div>
+      <div style="font-size:8pt;font-weight:700;color:#1E7B34;text-transform:uppercase;margin-bottom:3px">💪 Fortalezas del rival</div>
+      <div class="big-field">
+        <div class="big-field-lines"></div>
+        <div class="big-field-lines"></div>
+        <div class="big-field-lines"></div>
+        <div class="big-field-lines"></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:8pt;font-weight:700;color:#C0392B;text-transform:uppercase;margin-bottom:3px">⚠️ Debilidades del rival</div>
+      <div class="big-field">
+        <div class="big-field-lines"></div>
+        <div class="big-field-lines"></div>
+        <div class="big-field-lines"></div>
+        <div class="big-field-lines"></div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:6px">
+    <div style="font-size:8pt;font-weight:700;color:#1A3A6B;text-transform:uppercase;margin-bottom:3px">🎯 Plan de partido recomendado</div>
+    <div class="big-field">
+      <div class="big-field-lines"></div>
+      <div class="big-field-lines"></div>
+      <div class="big-field-lines"></div>
+    </div>
+  </div>
+  <div style="margin-top:6px">
+    <div style="font-size:8pt;font-weight:700;color:#E8771A;text-transform:uppercase;margin-bottom:3px">⚽ Jugador clave a neutralizar</div>
+    <div class="field-line" style="width:60%;border-bottom:1.5px solid #E8771A"></div>
+  </div>
+</div>
+
+<!-- NOTAS FINALES -->
+<div class="section">
+  <div class="section-title gris">Observaciones finales del scout</div>
+  <div class="big-field" style="min-height:60px">
+    <div class="big-field-lines"></div>
+    <div class="big-field-lines"></div>
+    <div class="big-field-lines"></div>
+    <div class="big-field-lines"></div>
+    <div class="big-field-lines"></div>
+  </div>
+</div>
+
+<!-- PIE DE PÁGINA -->
+<div class="footer">
+  <span>Los Silos CF — Plantilla de Scouting Profesional</span>
+  <span id="f-info">Jornada __ · ___________________________</span>
+  <span>Confidencial — Uso interno del cuerpo tecnico</span>
+</div>
+
+</div>
+
+<script>
+var p = new URLSearchParams(window.location.search);
+var rival = p.get('rival') || '___________________________';
+var jornada = p.get('jornada') || '__';
+document.getElementById('h-rival').textContent = rival;
+document.getElementById('h-jornada').textContent = 'Jornada ' + jornada;
+document.getElementById('f-info').textContent = 'Jornada ' + jornada + ' · ' + rival;
+</script>
+</body>
+</html>

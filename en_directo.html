@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>En Directo — Los Silos CF</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#0A0A0A;color:#fff;min-height:100vh}
+.topbar{background:#111;padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;border-bottom:2px solid #C0392B}
+.btn-back{width:36px;height:36px;border-radius:50%;border:none;background:#333;color:#fff;font-size:20px;cursor:pointer}
+.topbar h1{font-size:16px;font-weight:700;flex:1}
+.dot{width:9px;height:9px;background:#C0392B;border-radius:50%;display:inline-block;margin-right:6px;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.2}}
+#clock{font-size:11px;color:#555}
+.body{padding:12px 12px 60px}
+.filtros{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
+.filtros::-webkit-scrollbar{display:none}
+.fb{padding:6px 14px;border-radius:20px;border:1px solid #333;background:#1a1a1a;font-size:12px;font-weight:600;cursor:pointer;color:#aaa;white-space:nowrap}
+.fb.on{background:#C0392B;color:#fff;border-color:#C0392B}
+
+/* CARD */
+.card{background:#1A1A1A;border-radius:14px;margin-bottom:10px;overflow:hidden;border:1px solid #2A2A2A}
+.card-top{background:#222;padding:7px 14px;display:flex;justify-content:space-between;align-items:center}
+.cat{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px}
+.badge{font-size:10px;font-weight:700;border-radius:6px;padding:2px 8px}
+.badge-v{background:#C0392B;color:#fff}
+.badge-f{background:#333;color:#666}
+.badge-p{background:#222;color:#555;border:1px solid #333}
+.fecha-txt{font-size:10px;color:#444;margin-right:4px}
+
+/* TEMPORIZADOR */
+.timer-bloque{padding:8px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2A2A2A}
+.timer-display{font-size:28px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:2px;color:#E8771A}
+.timer-display.parado{color:#555}
+.timer-display.fin-parte{color:#F1C40F;animation:blink 1s infinite}
+.timer-info{font-size:11px;color:#555;text-align:right;line-height:1.5}
+.timer-info strong{color:#aaa}
+.timer-btns{display:flex;gap:6px}
+.tb{padding:6px 12px;border-radius:8px;border:none;font-size:12px;font-weight:700;cursor:pointer}
+.tb-play{background:#1a5c1a;color:#4CAF50}
+.tb-pause{background:#3a3a00;color:#F1C40F}
+.tb-next{background:#1a3a5c;color:#4CA1F5}
+
+/* MARCADOR */
+.card-body{padding:14px;display:flex;align-items:center;gap:6px}
+.equipo{flex:1;text-align:center}
+.nombre-silos{font-size:13px;font-weight:900;color:#fff}
+.nombre-rival{font-size:13px;font-weight:700;color:#888}
+.marcador{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.gol-n{font-size:44px;font-weight:900;min-width:36px;text-align:center;color:#fff}
+.gol-r{font-size:44px;font-weight:900;min-width:36px;text-align:center;color:#555}
+.sep{font-size:24px;color:#444;margin:0 2px}
+
+/* BOTONES */
+.card-btns{padding:8px 12px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;border-top:1px solid #2A2A2A}
+.card-btns.iniciar{grid-template-columns:1fr}
+.btn{padding:8px 4px;border-radius:8px;border:none;font-size:12px;font-weight:700;cursor:pointer;text-align:center}
+.btn-verde{background:#1a4a1a;color:#4CAF50}
+.btn-rojo{background:#4a1a1a;color:#E57373}
+.btn-amarillo{background:#3a3a00;color:#F1C40F}
+.btn-roja{background:#3a0000;color:#C0392B}
+.btn-iniciar{background:#1a4a1a;color:#4CAF50;font-size:14px}
+.btn-fin{width:calc(100% - 24px);margin:0 12px 8px;padding:7px;background:#222;color:#555;border:none;border-radius:8px;font-size:11px;cursor:pointer}
+
+.eventos{padding:0 14px 10px;display:flex;gap:5px;flex-wrap:wrap}
+.ev{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.ev-g{background:#1a3a1a;color:#4CAF50}
+.ev-a{background:#3a3a00;color:#F1C40F}
+.ev-r{background:#3a0000;color:#C0392B}
+.empty{text-align:center;color:#444;padding:60px 20px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="btn-back" onclick="history.back()">&#8249;</button>
+  <h1><span class="dot"></span>En directo</h1>
+  <span id="clock">--:--:--</span>
+</div>
+<div class="body">
+  <div class="filtros">
+    <button class="fb on" onclick="setF('todos',this)">Todos</button>
+    <button class="fb" onclick="setF('vivo',this)">🔴 En juego</button>
+    <button class="fb" onclick="setF('hoy',this)">📅 Hoy</button>
+  </div>
+  <div id="debug" style="font-size:10px;color:#555;margin-bottom:8px"></div>
+  <div id="lista">Cargando...</div>
+</div>
+<script>
+var URL = 'https://script.google.com/macros/s/AKfycbzccJuHc7_dNEJluOJL4-2HGnPvHX-UvzHIMCNPBmfJi5Q-dwFnyAKT0aatXCay3Ygm/exec';
+var cfg = {};
+try { cfg = JSON.parse(localStorage.getItem('silos_sesion')||'{}'); } catch(e){}
+var filtro = 'todos';
+var datos = [];
+var pmap = {};
+
+// Tiempos por categoría (minutos por parte)
+var TIEMPOS = {
+  amateur:          {partes:2, min:45},
+  juvenil_a:        {partes:2, min:45},
+  juvenil_b:        {partes:2, min:45},
+  cadete_a:         {partes:2, min:40},
+  cadete_b:         {partes:2, min:40},
+  cadete_femenino:  {partes:2, min:40},
+  infantil_a:       {partes:2, min:35},
+  infantil_b:       {partes:2, min:35},
+  infantil_femenino:{partes:2, min:35},
+  alevin_a:         {partes:2, min:30},
+  alevin_b:         {partes:2, min:30},
+  alevin_femenino:  {partes:2, min:30},
+  benjamin_a:       {partes:2, min:25},
+  benjamin_b:       {partes:2, min:25},
+  prebenjamin_a:    {partes:2, min:20},
+  prebenjamin_b:    {partes:2, min:20}
+};
+
+// Estado local de temporizadores
+var timers = {}; // { categoria: {secs, parte, corriendo, interval} }
+
+var ORDEN = ['amateur','juvenil_a','juvenil_b','cadete_a','cadete_b','cadete_femenino','infantil_a','infantil_b','infantil_femenino','alevin_a','alevin_b','alevin_femenino','benjamin_a','benjamin_b','prebenjamin_a','prebenjamin_b'];
+
+function tick() {
+  var d = new Date();
+  document.getElementById('clock').textContent =
+    String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+}
+setInterval(tick, 1000); tick();
+
+async function cargar() {
+  try {
+    var resp = await fetch(URL + '?action=partidos_directo&t=' + Date.now());
+    var json = await resp.json();
+    if (json.ok) { datos = json.partidos || []; renderizar(); }
+  } catch(e) {}
+}
+
+function renderizar() {
+  pmap = {};
+  datos.forEach(function(p){ pmap[p.categoria] = p; });
+
+  var lista = datos.slice();
+  if (filtro === 'vivo') lista = lista.filter(function(p){ return p.estado==='vivo'; });
+  if (filtro === 'hoy')  lista = lista.filter(function(p){ return p.es_hoy; });
+
+  lista.sort(function(a,b){
+    var oa = {vivo:0,finalizado:1,pendiente:2};
+    var ea = oa[a.estado]!==undefined?oa[a.estado]:2;
+    var eb = oa[b.estado]!==undefined?oa[b.estado]:2;
+    if (ea!==eb) return ea-eb;
+    return (ORDEN.indexOf(a.categoria)||99)-(ORDEN.indexOf(b.categoria)||99);
+  });
+
+  if (!lista.length) {
+    document.getElementById('lista').innerHTML = '<div class="empty">Sin partidos</div>';
+    return;
+  }
+
+  // Auto-iniciar timers para partidos ya en vivo
+  lista.forEach(function(p) {
+    if (p.estado === 'vivo' && !timers[p.categoria]) {
+      var cfg_t = TIEMPOS[p.categoria] || {partes:2, min:45};
+      timers[p.categoria] = {secs:0, parte:1, corriendo:false, finParte:false, maxSecs: cfg_t.min*60};
+      playTimer(p.categoria);
+    }
+  });
+
+  var html = '';
+  for (var i=0; i<lista.length; i++) html += card(lista[i]);
+  document.getElementById('lista').innerHTML = html;
+}
+
+function timerHtml(cat, estado) {
+  if (estado !== 'vivo') return '';
+  var t = timers[cat];
+  var cfg_t = TIEMPOS[cat] || {partes:2, min:45};
+  var maxSecs = cfg_t.min * 60;
+  var parte = t ? t.parte : 1;
+  var secs  = t ? t.secs  : 0;
+  var corriendo = t ? t.corriendo : false;
+  var finParte  = t ? t.finParte  : false;
+
+  var mm = String(Math.floor(secs/60)).padStart(2,'0');
+  var ss = String(secs%60).padStart(2,'0');
+  var dispClass = finParte ? 'timer-display fin-parte' : corriendo ? 'timer-display' : 'timer-display parado';
+
+  var btns = '';
+  if (finParte && parte < cfg_t.partes) {
+    btns = '<div class="timer-btns"><button class="tb tb-next" onclick="siguienteParte(\''+cat+'\')">▶ 2ª Parte</button></div>';
+  } else if (!corriendo) {
+    btns = '<div class="timer-btns"><button class="tb tb-play" onclick="playTimer(\''+cat+'\')">▶ Reanudar</button></div>';
+  } else {
+    btns = '<div class="timer-btns"><button class="tb tb-pause" onclick="pauseTimer(\''+cat+'\')">⏸ Pausa</button></div>';
+  }
+
+  var info = '<div class="timer-info"><strong>Parte '+parte+'/'+cfg_t.partes+'</strong><br>'+cfg_t.min+' min/parte</div>';
+
+  return '<div class="timer-bloque">'+
+    '<div class="'+dispClass+'" id="td_'+cat+'">'+mm+':'+ss+'</div>'+
+    info + btns +
+  '</div>';
+}
+
+function card(p) {
+  var badgeCls = p.estado==='vivo'?'badge-v':p.estado==='finalizado'?'badge-f':'badge-p';
+  var badgeTxt = p.estado==='vivo'?'🔴 EN JUEGO':p.estado==='finalizado'?'FINALIZADO':(p.hora||'PENDIENTE');
+
+  var dTxt = '';
+  if (p.diff_dias===0) dTxt='HOY';
+  else if (p.diff_dias===1) dTxt='MAÑANA';
+  else if (p.diff_dias===-1) dTxt='AYER';
+  else dTxt=p.fecha||'';
+
+  var local   = p.es_local ? 'LOS SILOS CF' : escHtml(p.rival);
+  var visit   = p.es_local ? escHtml(p.rival) : 'LOS SILOS CF';
+  var golL    = p.es_local ? p.gf : p.gc;
+  var golV    = p.es_local ? p.gc : p.gf;
+  var clsNomL = p.es_local ? 'nombre-silos' : 'nombre-rival';
+  var clsNomV = p.es_local ? 'nombre-rival' : 'nombre-silos';
+  var clsGL   = p.es_local ? 'gol-n' : 'gol-r';
+  var clsGV   = p.es_local ? 'gol-r' : 'gol-n';
+
+  var evHtml = '';
+  if (p.eventos && p.eventos.length) {
+    var evs = p.eventos.slice(-6);
+    for (var j=0; j<evs.length; j++) {
+      var ev = evs[j];
+      var cls = ev.tipo==='gol_silos'||ev.tipo==='gol_rival'?'ev-g':ev.tipo==='amarilla'?'ev-a':'ev-r';
+      var ico = ev.tipo==='gol_silos'||ev.tipo==='gol_rival'?'⚽':ev.tipo==='amarilla'?'🟨':'🟥';
+      evHtml += '<span class="ev '+cls+'">'+ico+' '+ev.min+'\'</span>';
+    }
+    evHtml = '<div class="eventos">'+evHtml+'</div>';
+  }
+
+  var puede = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente'||(cfg.rol==='entrenador'&&cfg.equipo===p.categoria);
+  var btns = '';
+  if (puede && p.estado==='pendiente') {
+    btns = '<div class="card-btns iniciar"><button class="btn btn-iniciar" onclick="iniciar(\''+p.categoria+'\')">▶️ Iniciar partido</button></div>';
+  } else if (puede && p.estado==='vivo') {
+    btns = '<div class="card-btns">' +
+      '<button class="btn btn-verde" onclick="evento(\''+p.categoria+'\',\'gol_silos\')">⚽ +Gol</button>' +
+      '<button class="btn btn-rojo" onclick="evento(\''+p.categoria+'\',\'gol_rival\')">⚽ Rival</button>' +
+      '<button class="btn btn-amarillo" onclick="evento(\''+p.categoria+'\',\'amarilla\')">🟨</button>' +
+      '<button class="btn btn-roja" onclick="evento(\''+p.categoria+'\',\'roja\')">🟥</button>' +
+    '</div>' +
+    '<button class="btn-fin" onclick="finalizar(\''+p.categoria+'\')">⏹ Finalizar partido</button>';
+  }
+
+  return '<div class="card">' +
+    '<div class="card-top"><span class="cat">'+escHtml(p.cat)+'</span>' +
+    '<div style="display:flex;align-items:center;gap:6px"><span class="fecha-txt">'+dTxt+'</span><span class="badge '+badgeCls+'">'+badgeTxt+'</span></div></div>' +
+    timerHtml(p.categoria, p.estado) +
+    '<div class="card-body">' +
+      '<div class="equipo"><div class="'+clsNomL+'">'+local+'</div></div>' +
+      '<div class="marcador"><span class="'+clsGL+'" id="g_'+p.categoria+'_l">'+golL+'</span><span class="sep">-</span><span class="'+clsGV+'" id="g_'+p.categoria+'_v">'+golV+'</span></div>' +
+      '<div class="equipo"><div class="'+clsNomV+'">'+visit+'</div></div>' +
+    '</div>' +
+    evHtml + btns +
+  '</div>';
+}
+
+// ── TEMPORIZADOR ──────────────────────────────────────────────────────
+function iniciarTimer(cat) {
+  if (timers[cat]) return; // ya existe
+  var cfg_t = TIEMPOS[cat] || {partes:2, min:45};
+  timers[cat] = {secs:0, parte:1, corriendo:false, finParte:false, maxSecs: cfg_t.min*60};
+  playTimer(cat);
+}
+
+function playTimer(cat) {
+  var t = timers[cat];
+  if (!t || t.corriendo || t.finParte) return;
+  t.corriendo = true;
+  t.interval  = setInterval(function() {
+    t.secs++;
+    actualizarDisplay(cat);
+    if (t.secs >= t.maxSecs) {
+      clearInterval(t.interval);
+      t.corriendo = false;
+      t.finParte  = true;
+      actualizarDisplay(cat);
+      renderizar(); // refrescar botones
+    }
+  }, 1000);
+  renderizar();
+}
+
+function pauseTimer(cat) {
+  var t = timers[cat];
+  if (!t) return;
+  clearInterval(t.interval);
+  t.corriendo = false;
+  renderizar();
+}
+
+function siguienteParte(cat) {
+  var t = timers[cat];
+  if (!t) return;
+  var cfg_t = TIEMPOS[cat] || {partes:2, min:45};
+  t.parte++;
+  t.secs    = 0;
+  t.finParte= false;
+  t.corriendo=false;
+  t.maxSecs = cfg_t.min * 60;
+  renderizar();
+  playTimer(cat);
+}
+
+function actualizarDisplay(cat) {
+  var t = timers[cat];
+  if (!t) return;
+  var el = document.getElementById('td_'+cat);
+  if (!el) return;
+  var mm = String(Math.floor(t.secs/60)).padStart(2,'0');
+  var ss = String(t.secs%60).padStart(2,'0');
+  el.textContent = mm+':'+ss;
+  if (t.finParte) {
+    el.className = 'timer-display fin-parte';
+  } else if (t.corriendo) {
+    el.className = 'timer-display';
+  } else {
+    el.className = 'timer-display parado';
+  }
+}
+
+// ── ACCIONES ──────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function iniciarBtn(btn) {
+  var cat = btn.getAttribute('data-cat');
+  iniciar(cat);
+}
+
+async function iniciar(cat) {
+  // Buscar siempre en datos[] — más fiable que pmap
+  var p = null;
+  for (var i=0; i<datos.length; i++) { if (datos[i].categoria===cat) { p=datos[i]; break; } }
+  if (!p) { alert('Sin datos para '+cat+'. Recarga la página.'); return; }
+  try {
+    var params = '?action=iniciar_directo'
+      +'&categoria='+encodeURIComponent(cat)
+      +'&cat='+encodeURIComponent(p.cat||cat)
+      +'&rival='+encodeURIComponent(p.rival||'')
+      +'&es_local='+(p.es_local?'true':'false')
+      +'&hora='+encodeURIComponent(p.hora||'');
+    var resp = await fetch(URL+params);
+    var json = await resp.json();
+    if (!json.ok) { alert('Error del servidor: '+(json.error||'desconocido')); return; }
+    iniciarTimer(cat);
+    setTimeout(cargar, 800);
+  } catch(e){ alert('Error de red: '+e.message); }
+}
+
+async function anularGol(cat, tipo) {
+  if (!confirm('¿Anular el gol?')) return;
+  try {
+    var t = timers[cat];
+    var min = t ? String(Math.floor(t.secs/60)) : '?';
+    await fetch(URL+'?action=evento_directo&categoria='+encodeURIComponent(cat)+'&evento=anular_'+tipo+'&minuto='+encodeURIComponent(min)+'&usuario='+encodeURIComponent(cfg.nombre||''));
+    setTimeout(cargar, 800);
+  } catch(e){ alert('Error'); }
+}
+
+async function resetMarcador(cat) {
+  if (!confirm('¿Reiniciar marcador a 0-0?')) return;
+  try {
+    await fetch(URL+'?action=evento_directo&categoria='+encodeURIComponent(cat)+'&evento=reset&minuto=0&usuario='+encodeURIComponent(cfg.nombre||''));
+    setTimeout(cargar, 800);
+  } catch(e){ alert('Error'); }
+}
+
+async function finalizar(cat) {
+  if (!confirm('¿Finalizar el partido?')) return;
+  if (timers[cat]) { clearInterval(timers[cat].interval); delete timers[cat]; }
+  try {
+    await fetch(URL+'?action=finalizar_directo&categoria='+encodeURIComponent(cat));
+    setTimeout(cargar, 800);
+  } catch(e){ alert('Error'); }
+}
+
+async function evento(cat, tipo) {
+  var t = timers[cat];
+  var min = t ? String(Math.floor(t.secs/60)) : prompt('Minuto:','');
+  if (min===null) return;
+  try {
+    await fetch(URL+'?action=evento_directo&categoria='+encodeURIComponent(cat)+'&evento='+tipo+'&minuto='+encodeURIComponent(min||'?')+'&usuario='+encodeURIComponent(cfg.nombre||''));
+    setTimeout(cargar, 800);
+  } catch(e){ alert('Error'); }
+}
+
+function setF(f,btn) {
+  filtro=f;
+  document.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderizar();
+}
+
+var dbg = document.getElementById('debug');
+if (dbg) dbg.textContent = 'Rol: '+(cfg.rol||'sin sesion')+' | Equipo: '+(cfg.equipo||'-');
+cargar();
+setInterval(cargar, 5000);
+</script>
+</body>
+</html>

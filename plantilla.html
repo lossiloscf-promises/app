@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Plantilla — Los Silos CF</title>
+<style>
+:root{
+  --azul:#1A3A6B;--azul2:#2E5FAC;--azul-c:#DAEEFF;
+  --verde:#1E7B34;--verde-c:#D4F0DC;
+  --rojo:#C0392B;--rojo-c:#FAD7D3;
+  --naranja:#E8771A;--naranja-c:#FFE5CC;
+  --amarillo:#856D00;--amarillo-c:#FFF9C4;
+  --gris:#F0F4F8;--borde:#E0E0E0;
+  --texto:#1A1A1A;--texto2:#666;--texto3:#999;
+  --radio:14px;--radio-sm:10px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--gris);color:var(--texto);min-height:100vh}
+.topbar{background:var(--azul);color:#fff;padding:env(safe-area-inset-top,14px) 16px 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.btn-back{width:36px;height:36px;border-radius:50%;border:none;background:#fff2;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font)}
+.topbar h1{font-size:16px;font-weight:700}
+.topbar p{font-size:11px;opacity:.7;margin-top:1px}
+.body{padding:12px 16px 80px}
+.sec-label{font-size:11px;font-weight:700;color:var(--texto3);text-transform:uppercase;letter-spacing:.6px;margin:18px 0 8px 2px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:.5px;background:var(--borde)}
+
+/* FILTROS */
+.filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.filtro-btn{padding:6px 12px;border-radius:20px;border:.5px solid var(--borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;color:var(--texto2);font-family:var(--font)}
+.filtro-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+
+/* JUGADOR CARD */
+.jugador-card{background:#fff;border-radius:var(--radio-sm);border:.5px solid var(--borde);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.jugador-card.baja_def{opacity:.4}
+.jugador-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.av-activo{background:var(--verde)}
+.av-cedido_arriba{background:var(--azul2)}
+.av-baja_temporal{background:var(--naranja)}
+.av-baja_def{background:#999}
+.av-solo_entrena{background:var(--amarillo)}
+.jugador-info{flex:1;min-width:0}
+.jugador-nombre{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jugador-meta{font-size:11px;color:var(--texto3);margin-top:2px}
+.badge-estado{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:4px;display:inline-block}
+.badge-activo{background:var(--verde-c);color:var(--verde)}
+.badge-cedido_arriba{background:var(--azul-c);color:var(--azul2)}
+.badge-baja_temporal{background:var(--naranja-c);color:var(--naranja)}
+.badge-baja_def{background:#eee;color:#999}
+.badge-solo_entrena{background:var(--amarillo-c);color:var(--amarillo)}
+.badge-manual{background:var(--azul-c);color:var(--azul2);font-size:9px;margin-left:4px}
+.btn-editar{width:34px;height:34px;border-radius:50%;border:.5px solid var(--borde);background:var(--gris);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:#0007;z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:500px}
+.modal h2{font-size:17px;font-weight:700;margin-bottom:4px}
+.modal-nombre{font-size:13px;color:var(--texto3);margin-bottom:16px}
+.estado-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.estado-opt{padding:11px;border-radius:var(--radio-sm);border:1.5px solid var(--borde);cursor:pointer;text-align:center;font-size:12px;font-weight:700;transition:all .15s}
+.estado-opt.sel{border-color:var(--azul);background:var(--azul-c);color:var(--azul)}
+.notas-input{width:100%;padding:11px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:14px;font-family:var(--font);resize:none;outline:none;margin-bottom:12px}
+.notas-input:focus{border-color:var(--azul2)}
+.modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn-modal{padding:13px;border-radius:var(--radio-sm);border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font)}
+.btn-modal-cancel{background:var(--gris);color:var(--texto2)}
+.btn-modal-ok{background:var(--azul);color:#fff}
+
+/* AÑADIR */
+.add-card{background:#fff;border-radius:var(--radio-sm);border:1.5px dashed var(--borde);padding:14px;margin-bottom:12px}
+.add-row{display:flex;gap:8px;align-items:center}
+.add-input{flex:1;padding:11px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:14px;font-family:var(--font);outline:none}
+.add-input:focus{border-color:var(--azul2)}
+.btn-add{padding:11px 16px;border-radius:var(--radio-sm);border:none;background:var(--verde);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);flex-shrink:0}
+
+.empty{text-align:center;color:var(--texto3);padding:30px;font-size:13px}
+.loading{text-align:center;color:var(--texto3);padding:40px}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;width:20px;height:20px;border:2px solid #eee;border-top-color:var(--azul);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="btn-back" onclick="history.back()">‹</button>
+  <div>
+    <h1>👥 Gestión de plantilla</h1>
+    <p id="top-cat">Cargando...</p>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- AÑADIR JUGADOR -->
+  <div class="sec-label">Añadir jugador</div>
+  <div class="add-card">
+    <div class="add-row">
+      <input class="add-input" id="nuevo-nombre" type="text" placeholder="Nombre completo del jugador" autocapitalize="words">
+      <button class="btn-add" onclick="añadirJugador()">+ Añadir</button>
+    </div>
+    <p style="font-size:11px;color:var(--texto3);margin-top:8px">Se añadirá como "activo" — puedes cambiar el estado después</p>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="sec-label">Jugadores</div>
+  <div class="filtros">
+    <button class="filtro-btn on" onclick="setFiltro('todos',this)">Todos</button>
+    <button class="filtro-btn" onclick="setFiltro('activo',this)">✅ Activos</button>
+    <button class="filtro-btn" onclick="setFiltro('cedido_arriba',this)">⬆️ Cedidos</button>
+    <button class="filtro-btn" onclick="setFiltro('baja_temporal',this)">🟠 Baja temporal</button>
+    <button class="filtro-btn" onclick="setFiltro('solo_entrena',this)">🏃 Solo entrena</button>
+    <button class="filtro-btn" onclick="setFiltro('baja_def',this)">❌ Bajas def.</button>
+  </div>
+
+  <div id="lista-jugadores"><div class="loading"><span class="spin"></span>Cargando plantilla...</div></div>
+
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal-overlay hidden" id="modal-overlay" onclick="cerrarModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2>Editar jugador</h2>
+    <div class="modal-nombre" id="modal-nombre"></div>
+    <div class="estado-grid">
+      <div class="estado-opt" data-estado="activo" onclick="selEstado(this)">✅ Activo</div>
+      <div class="estado-opt" data-estado="cedido_arriba" onclick="selEstado(this)">⬆️ Cedido arriba</div>
+      <div class="estado-opt" data-estado="baja_temporal" onclick="selEstado(this)">🟠 Baja temporal</div>
+      <div class="estado-opt" data-estado="solo_entrena" onclick="selEstado(this)">🏃 Solo entrena</div>
+      <div class="estado-opt" data-estado="baja_def" onclick="selEstado(this)" style="grid-column:1/-1">❌ Baja definitiva</div>
+    </div>
+    <textarea class="notas-input" id="modal-notas" rows="2" placeholder="Notas (lesión, club destino, motivo...)"></textarea>
+    <div class="modal-btns">
+      <button class="btn-modal btn-modal-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-modal btn-modal-ok" onclick="guardarCambio()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzccJuHc7_dNEJluOJL4-2HGnPvHX-UvzHIMCNPBmfJi5Q-dwFnyAKT0aatXCay3Ygm/exec';
+var cfg = JSON.parse(localStorage.getItem('silos_sesion') || '{}');
+var categoria = new URLSearchParams(window.location.search).get('categoria') || cfg.equipo || 'amateur';
+var filtroActual = 'todos';
+var jugadoresData = [];
+var jugadorEditando = null;
+
+var ESTADOS = {
+  activo:        {label:'Activo',         badge:'badge-activo',        av:'av-activo'},
+  cedido_arriba: {label:'Cedido arriba',  badge:'badge-cedido_arriba', av:'av-cedido_arriba'},
+  baja_temporal: {label:'Baja temporal',  badge:'badge-baja_temporal', av:'av-baja_temporal'},
+  baja_def:      {label:'Baja definitiva',badge:'badge-baja_def',      av:'av-baja_def'},
+  solo_entrena:  {label:'Solo entrena',   badge:'badge-solo_entrena',  av:'av-solo_entrena'}
+};
+
+var NOMBRES_CAT = {
+  amateur:'Amateur', juvenil_a:'Juvenil A', juvenil_b:'Juvenil B',
+  cadete_a:'Cadete A', cadete_b:'Cadete B', cadete_femenino:'Cadete Femenino',
+  infantil_a:'Infantil A', infantil_b:'Infantil B', infantil_femenino:'Infantil Femenino',
+  alevin_a:'Alevín A', alevin_b:'Alevín B', alevin_femenino:'Alevín Femenino',
+  benjamin_a:'Benjamín A', benjamin_b:'Benjamín B',
+  prebenjamin_a:'Prebenjamín A', prebenjamin_b:'Prebenjamín B'
+};
+
+window.addEventListener('DOMContentLoaded', cargar);
+
+async function cargar() {
+  document.getElementById('top-cat').textContent = NOMBRES_CAT[categoria] || categoria;
+  try {
+    var r = await fetch(WEBAPP_URL + '?action=plantilla&categoria=' + encodeURIComponent(categoria)).then(r=>r.json());
+    if (!r.ok) { mostrarError(r.error); return; }
+    jugadoresData = r.jugadores || [];
+    renderLista();
+  } catch(e) { mostrarError('Error de conexión'); }
+}
+
+function renderLista() {
+  var lista = document.getElementById('lista-jugadores');
+  var filtrados = jugadoresData.filter(function(j) {
+    return filtroActual === 'todos' || j.estado === filtroActual;
+  });
+  // Ordenar: activos primero, luego por nombre
+  var orden = ['activo','cedido_arriba','solo_entrena','baja_temporal','baja_def'];
+  filtrados.sort(function(a,b) {
+    var oa = orden.indexOf(a.estado||'activo'), ob = orden.indexOf(b.estado||'activo');
+    if (oa !== ob) return oa - ob;
+    return (a.nombre||'').localeCompare(b.nombre||'');
+  });
+
+  if (!filtrados.length) { lista.innerHTML='<div class="empty">Sin jugadores en este estado</div>'; return; }
+
+  lista.innerHTML = filtrados.map(function(j) {
+    var est = j.estado || 'activo';
+    var info = ESTADOS[est] || ESTADOS.activo;
+    var iniciales = (j.nombre||'?').split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
+    return '<div class="jugador-card ' + est + '">' +
+      '<div class="jugador-avatar ' + info.av + '">' + iniciales + '</div>' +
+      '<div class="jugador-info">' +
+        '<div class="jugador-nombre">' + j.nombre + (j.manual?'<span class="badge-manual badge-estado">manual</span>':'') + '</div>' +
+        '<div class="jugador-meta">' + (j.apariciones>0?j.apariciones+' actas FFCV':'Añadido manualmente') + '</div>' +
+        '<span class="badge-estado ' + info.badge + '">' + info.label + '</span>' +
+        (j.notas?'<div style="font-size:11px;color:var(--texto3);margin-top:3px">📝 '+j.notas+'</div>':'') +
+      '</div>' +
+      '<button class="btn-editar" onclick="abrirModal(\'' + j.nombre.replace(/'/g,"\\'") + '\',\'' + est + '\',\'' + (j.notas||'').replace(/'/g,"\\'") + '\')">✏️</button>' +
+    '</div>';
+  }).join('');
+}
+
+function setFiltro(f, btn) {
+  filtroActual = f;
+  document.querySelectorAll('.filtro-btn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderLista();
+}
+
+function abrirModal(nombre, estado, notas) {
+  jugadorEditando = nombre;
+  document.getElementById('modal-nombre').textContent = nombre;
+  document.getElementById('modal-notas').value = notas || '';
+  document.querySelectorAll('.estado-opt').forEach(function(opt) {
+    opt.classList.toggle('sel', opt.dataset.estado === estado);
+  });
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+function cerrarModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.add('hidden');
+    jugadorEditando = null;
+  }
+}
+
+function selEstado(el) {
+  document.querySelectorAll('.estado-opt').forEach(function(o){o.classList.remove('sel');});
+  el.classList.add('sel');
+}
+
+async function guardarCambio() {
+  var estadoEl = document.querySelector('.estado-opt.sel');
+  if (!estadoEl) return;
+  var estado = estadoEl.dataset.estado;
+  var notas  = document.getElementById('modal-notas').value.trim();
+
+  document.getElementById('modal-overlay').classList.add('hidden');
+
+  try {
+    await fetch(WEBAPP_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({tipo:'actualizar_jugador', categoria:categoria, nombre:jugadorEditando, estado:estado, notas:notas})
+    });
+    // Actualizar local
+    var j = jugadoresData.find(function(j){ return j.nombre===jugadorEditando; });
+    if (j) { j.estado=estado; j.notas=notas; }
+    renderLista();
+  } catch(e) { alert('Error al guardar'); }
+  jugadorEditando = null;
+}
+
+async function añadirJugador() {
+  var nombre = document.getElementById('nuevo-nombre').value.trim();
+  if (!nombre) { alert('Introduce el nombre del jugador'); return; }
+  if (jugadoresData.find(function(j){ return j.nombre.toLowerCase()===nombre.toLowerCase(); })) {
+    alert('Este jugador ya está en la plantilla'); return;
+  }
+  try {
+    await fetch(WEBAPP_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({tipo:'añadir_jugador', categoria:categoria, nombre:nombre, estado:'activo', notas:''})
+    });
+    jugadoresData.unshift({nombre:nombre, estado:'activo', notas:'', manual:true, apariciones:0});
+    document.getElementById('nuevo-nombre').value = '';
+    renderLista();
+  } catch(e) { alert('Error al añadir'); }
+}
+
+function mostrarError(msg) {
+  document.getElementById('lista-jugadores').innerHTML = '<div class="empty">⚠️ ' + (msg||'Error') + '</div>';
+}
+</script>
+</body>
+</html>

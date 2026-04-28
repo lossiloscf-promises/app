@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Scouting Rival — Los Silos CF</title>
+<style>
+:root{
+  --azul:#1A3A6B;--azul2:#2E5FAC;--azul-c:#DAEEFF;
+  --verde:#1E7B34;--verde-c:#D4F0DC;
+  --rojo:#C0392B;--rojo-c:#FAD7D3;
+  --naranja:#E8771A;--naranja-c:#FFE5CC;
+  --gris:#F0F4F8;--borde:#E0E0E0;
+  --texto:#1A1A1A;--texto2:#666;--texto3:#999;
+  --radio:14px;--radio-sm:10px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--gris);color:var(--texto);min-height:100vh}
+.topbar{background:var(--azul);color:#fff;padding:env(safe-area-inset-top,14px) 16px 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.btn-back{width:36px;height:36px;border-radius:50%;border:none;background:#fff2;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.topbar h1{font-size:16px;font-weight:700}
+.topbar p{font-size:11px;opacity:.7;margin-top:1px}
+.topbar-right{margin-left:auto;display:flex;gap:8px}
+.btn-print{background:#fff2;border:none;color:#fff;font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer}
+.body{padding:12px 16px 60px}
+.card{background:#fff;border-radius:var(--radio);border:0.5px solid var(--borde);margin-bottom:12px;overflow:hidden}
+.card-header{padding:12px 16px 10px;border-bottom:0.5px solid var(--borde);display:flex;align-items:center;gap:8px}
+.card-header h2{font-size:13px;font-weight:700;color:var(--texto2);text-transform:uppercase;letter-spacing:.5px}
+.card-body{padding:12px 16px}
+.sec-label{font-size:11px;font-weight:700;color:var(--texto3);text-transform:uppercase;letter-spacing:.7px;margin:18px 0 8px 2px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:.5px;background:var(--borde)}
+.field{margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--texto2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border:0.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:var(--font);color:var(--texto);background:#fff;outline:none;-webkit-appearance:none;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--azul2)}
+.field textarea{resize:none;line-height:1.5;font-size:14px}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.rating-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--borde)}
+.rating-row:last-child{border-bottom:none}
+.rating-lbl{flex:1;font-size:13px}
+.rating-stars{display:flex;gap:4px}
+.star{width:30px;height:30px;border-radius:8px;border:0.5px solid var(--borde);background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .15s}
+.star.on{background:var(--naranja-c);border-color:var(--naranja)}
+.jugador-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--borde)}
+.jugador-row:last-child{border-bottom:none}
+.jug-num{width:32px;height:32px;border-radius:8px;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.jug-nombre{flex:1;font-size:13px;font-weight:500}
+.jug-pos{font-size:11px;color:var(--texto3);flex-shrink:0}
+.jug-nota{font-size:11px;padding:3px 8px;border-radius:6px;flex-shrink:0}
+.jug-nota.clave{background:var(--rojo-c);color:var(--rojo)}
+.jug-nota.seguimiento{background:var(--naranja-c);color:var(--naranja)}
+.pitch-container{background:#2D7A3A;border-radius:12px;padding:8px;margin-bottom:8px;position:relative}
+.pitch{background:#2D7A3A;border:2px solid rgba(255,255,255,.4);border-radius:8px;width:100%;aspect-ratio:3/4;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.pitch-line{position:absolute;background:rgba(255,255,255,.35)}
+.pitch-circle{position:absolute;border:1.5px solid rgba(255,255,255,.35);border-radius:50%;background:transparent}
+.pitch-label{font-size:10px;color:rgba(255,255,255,.5);text-align:center;margin-top:4px}
+.player-dot{position:absolute;width:28px;height:28px;border-radius:50%;background:var(--rojo);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;cursor:pointer;transform:translate(-50%,-50%);transition:all .2s;z-index:2;font-family:var(--font)}
+.player-dot.portero{background:var(--naranja)}
+.player-dot.destacado{background:#FFD700;color:#000}
+.sistema-selector{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.sis-btn{padding:7px 12px;border-radius:20px;border:0.5px solid var(--borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;color:var(--texto2);transition:all .15s}
+.sis-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+.gol-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.gol-min{width:58px;flex-shrink:0;padding:9px 8px;border:0.5px solid var(--borde);border-radius:var(--radio-sm);font-size:14px;text-align:center;outline:none;font-family:var(--font);color:var(--texto)}
+.gol-scorer{flex:1;padding:9px 12px;border:0.5px solid var(--borde);border-radius:var(--radio-sm);font-size:14px;outline:none;font-family:var(--font);color:var(--texto)}
+.gol-tipo{width:70px;flex-shrink:0;padding:9px 6px;border:0.5px solid var(--borde);border-radius:var(--radio-sm);font-size:12px;-webkit-appearance:none;background:#fff;color:var(--texto);outline:none}
+.del-btn{width:30px;height:30px;border-radius:50%;border:0.5px solid var(--borde);background:#fff;color:var(--texto3);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.add-btn{width:100%;padding:10px;border:1px dashed var(--borde);border-radius:var(--radio-sm);background:transparent;color:var(--azul2);font-size:13px;font-weight:600;cursor:pointer;margin-top:4px;font-family:var(--font)}
+.tarj-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.tarj-color{width:22px;height:30px;border-radius:4px;flex-shrink:0}
+.tarj-color.amarilla{background:#F1C40F}
+.tarj-color.roja{background:#E74C3C}
+.tarj-jugador{flex:1;padding:9px 12px;border:0.5px solid var(--borde);border-radius:var(--radio-sm);font-size:14px;outline:none;font-family:var(--font);color:var(--texto)}
+.tarj-min{width:58px;flex-shrink:0;padding:9px 8px;border:0.5px solid var(--borde);border-radius:var(--radio-sm);font-size:14px;text-align:center;outline:none;font-family:var(--font);color:var(--texto)}
+.valoracion-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.val-box{background:var(--gris);border-radius:var(--radio-sm);padding:12px;text-align:center;border:0.5px solid var(--borde)}
+.val-num{font-size:32px;font-weight:800}
+.val-lbl{font-size:11px;color:var(--texto3);margin-top:3px}
+.val-controls{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
+.val-btn{width:34px;height:34px;border-radius:50%;border:0.5px solid var(--borde);background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--texto)}
+.btn-main{width:100%;padding:16px;border-radius:var(--radio);border:none;font-size:17px;font-weight:700;cursor:pointer;margin-top:6px;font-family:var(--font)}
+.btn-azul{background:var(--azul);color:#fff}
+.btn-verde{background:var(--verde);color:#fff}
+.btn-outline{background:#fff;color:var(--azul);border:1.5px solid var(--azul)}
+.success-wrap{text-align:center;padding:40px 20px;display:none}
+.success-icon{width:72px;height:72px;border-radius:50%;background:var(--verde-c);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 16px}
+.tramo-check{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.tramo-pill{padding:8px 4px;border-radius:8px;border:0.5px solid var(--borde);background:#fff;font-size:11px;font-weight:600;text-align:center;cursor:pointer;color:var(--texto2);transition:all .15s}
+.tramo-pill.on{background:var(--rojo-c);color:var(--rojo);border-color:var(--rojo)}
+.tramo-pill.on-gf{background:var(--verde-c);color:var(--verde);border-color:var(--verde)}
+.toggle-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--borde)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-lbl{flex:1;font-size:13px}
+.toggle{width:44px;height:26px;border-radius:13px;background:#ddd;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:none}
+.toggle.on{background:var(--verde)}
+.toggle::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .2s}
+.toggle.on::after{left:21px}
+@media(prefers-color-scheme:dark){
+  body{background:#1A1A2E}
+  .card,.field input,.field select,.field textarea,.star,.sis-btn,.gol-min,.gol-scorer,.gol-tipo,.tarj-jugador,.tarj-min,.val-box,.val-btn,.del-btn,.add-btn,.tramo-pill,.toggle{background:#252540;border-color:#333355;color:#E0E0FF}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="btn-back" onclick="history.back()">‹</button>
+  <div>
+    <h1>📋 Scouting rival</h1>
+    <p id="top-rival">Nuevo informe</p>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-print" onclick="imprimirPlantilla()">🖨️ Imprimir</button>
+  </div>
+</div>
+
+<div class="body" id="form-body">
+
+  <!-- INFO PARTIDO -->
+  <div class="sec-label">Datos del partido</div>
+  <div class="card"><div class="card-body">
+    <div class="grid-2">
+      <div class="field"><label>Equipo rival</label><input type="text" id="s-rival" placeholder="Nombre del equipo" oninput="document.getElementById('top-rival').textContent=this.value||'Nuevo informe'"></div>
+      <div class="field"><label>Jornada</label><input type="number" id="s-jornada" placeholder="26"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Fecha</label><input type="date" id="s-fecha"></div>
+      <div class="field"><label>Hora</label><input type="time" id="s-hora"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Campo</label><input type="text" id="s-campo" placeholder="Nombre del campo"></div>
+      <div class="field"><label>Condicion</label><select id="s-condicion"><option>Local</option><option>Visitante</option></select></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Resultado</label><input type="text" id="s-resultado" placeholder="2-1" maxlength="6"></div>
+      <div class="field"><label>Scout</label><input type="text" id="s-scout" placeholder="Tu nombre"></div>
+    </div>
+  </div></div>
+
+  <!-- SISTEMA TACTICO -->
+  <div class="sec-label">Sistema tactico rival</div>
+  <div class="card"><div class="card-body">
+    <div class="field"><label>Sistema</label>
+      <div class="sistema-selector">
+        <button class="sis-btn" onclick="setSistema('4-3-3')">4-3-3</button>
+        <button class="sis-btn" onclick="setSistema('4-4-2')">4-4-2</button>
+        <button class="sis-btn" onclick="setSistema('4-2-3-1')">4-2-3-1</button>
+        <button class="sis-btn" onclick="setSistema('3-5-2')">3-5-2</button>
+        <button class="sis-btn" onclick="setSistema('5-3-2')">5-3-2</button>
+        <button class="sis-btn" onclick="setSistema('4-1-4-1')">4-1-4-1</button>
+        <button class="sis-btn" onclick="setSistema('3-4-3')">3-4-3</button>
+      </div>
+      <input type="text" id="s-sistema" placeholder="O escribe el sistema..." style="margin-top:8px">
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Tipo de ataque</label><select id="s-tipo-ataque"><option>Posicional</option><option>Directo</option><option>Contraataque</option><option>Mixto</option></select></div>
+      <div class="field"><label>Tipo de defensa</label><select id="s-tipo-defensa"><option>Zonal</option><option>Individual</option><option>Mixta</option><option>Presion alta</option></select></div>
+    </div>
+    <div class="field"><label>Repliegue defensivo</label><select id="s-repliegue"><option>Intensivo</option><option>Ordenado</option><option>Mixto</option><option>Presion alta</option></select></div>
+  </div></div>
+
+  <!-- CAMPO VISUAL -->
+  <div class="sec-label">Posicionamiento en campo</div>
+  <div class="card"><div class="card-body">
+    <div class="pitch-container">
+      <div class="pitch" id="pitch">
+        <!-- Lineas del campo -->
+        <div class="pitch-line" style="left:50%;top:0;width:1.5px;height:100%;transform:translateX(-50%)"></div>
+        <div class="pitch-circle" style="left:50%;top:50%;width:60px;height:60px;transform:translate(-50%,-50%)"></div>
+        <div class="pitch-line" style="left:10%;top:15%;width:80%;height:1.5px"></div>
+        <div class="pitch-line" style="left:10%;top:85%;width:80%;height:1.5px"></div>
+        <div class="pitch-line" style="left:25%;top:0;width:50%;height:1.5px"></div>
+        <div class="pitch-line" style="left:25%;top:100%;width:50%;height:1.5px;transform:translateY(-1.5px)"></div>
+        <!-- Porteros -->
+        <div class="player-dot portero" style="left:50%;top:5%" id="pd-p">P</div>
+      </div>
+      <div class="pitch-label">Toca el campo para añadir jugadores · Toca un jugador para editarlo</div>
+    </div>
+    <div class="field"><label>Notas sobre posicionamiento</label><textarea id="s-pos-notas" rows="2" placeholder="Observaciones sobre el sistema y posicionamiento..."></textarea></div>
+  </div></div>
+
+  <!-- GOLES -->
+  <div class="sec-label">Goles del partido</div>
+  <div class="card"><div class="card-body" style="padding-bottom:12px">
+    <div id="goles-list"></div>
+    <button class="add-btn" onclick="addGol()">+ Anadir gol</button>
+  </div></div>
+
+  <!-- TARJETAS -->
+  <div class="sec-label">Tarjetas</div>
+  <div class="card"><div class="card-body" style="padding-bottom:12px">
+    <div id="tarjetas-list"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="add-btn" style="background:var(--amarillo-c);border-color:#F1C40F;color:#856D00" onclick="addTarjeta('amarilla')">🟨 Amarilla</button>
+      <button class="add-btn" style="background:var(--rojo-c);border-color:var(--rojo);color:var(--rojo)" onclick="addTarjeta('roja')">🟥 Roja</button>
+    </div>
+  </div></div>
+
+  <!-- JUGADORES DESTACADOS -->
+  <div class="sec-label">Jugadores a vigilar</div>
+  <div class="card"><div class="card-body">
+    <div id="jugadores-list"></div>
+    <button class="add-btn" onclick="addJugador()">+ Añadir jugador</button>
+  </div></div>
+
+  <!-- ANALISIS POR TRAMOS -->
+  <div class="sec-label">Momentos peligrosos detectados</div>
+  <div class="card"><div class="card-body">
+    <p style="font-size:12px;color:var(--texto2);margin-bottom:8px">Tramos donde el rival es peligroso atacando:</p>
+    <div class="tramo-check" id="tramos-gf">
+      <div class="tramo-pill on-gf" onclick="toggleTramo(this,'gf')">0-15'</div>
+      <div class="tramo-pill" onclick="toggleTramo(this,'gf')">15-30'</div>
+      <div class="tramo-pill" onclick="toggleTramo(this,'gf')">30-45'</div>
+      <div class="tramo-pill" onclick="toggleTramo(this,'gf')">45-60'</div>
+      <div class="tramo-pill" onclick="toggleTramo(this,'gf')">60-75'</div>
+      <div class="tramo-pill" onclick="toggleTramo(this,'gf')">75-90'</div>
+    </div>
+    <p style="font-size:12px;color:var(--texto2);margin:12px 0 8px">Tramos donde el rival es vulnerable defensivamente:</p>
+    <div class="tramo-check" id="tramos-gc">
+      <div class="tramo-pill" onclick="toggleTramo(this,'gc')">0-15'</div>
+      <div class="tramo-pill" onclick="toggleTramo(this,'gc')">15-30'</div>
+      <div class="tramo-pill" onclick="toggleTramo(this,'gc')">30-45'</div>
+      <div class="tramo-pill" onclick="toggleTramo(this,'gc')">45-60'</div>
+      <div class="tramo-pill on" onclick="toggleTramo(this,'gc')">60-75'</div>
+      <div class="tramo-pill on" onclick="toggleTramo(this,'gc')">75-90'</div>
+    </div>
+  </div></div>
+
+  <!-- CARACTERÍSTICAS -->
+  <div class="sec-label">Caracteristicas del rival</div>
+  <div class="card"><div class="card-body">
+    <div class="toggle-row">
+      <span class="toggle-lbl">Presion alta sostenida</span>
+      <button class="toggle" onclick="toggleBtn(this)"></button>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-lbl">Juego directo / balon largo</span>
+      <button class="toggle" onclick="toggleBtn(this)"></button>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-lbl">Peligrosos en balones parados</span>
+      <button class="toggle on" onclick="toggleBtn(this)"></button>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-lbl">Buscan el contraataque</span>
+      <button class="toggle" onclick="toggleBtn(this)"></button>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-lbl">Juego por bandas</span>
+      <button class="toggle on" onclick="toggleBtn(this)"></button>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-lbl">Agresivos / muchas faltas</span>
+      <button class="toggle" onclick="toggleBtn(this)"></button>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-lbl">Fisicamente muy potentes</span>
+      <button class="toggle" onclick="toggleBtn(this)"></button>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-lbl">Equipo tecnico / toque corto</span>
+      <button class="toggle" onclick="toggleBtn(this)"></button>
+    </div>
+  </div></div>
+
+  <!-- VALORACIONES -->
+  <div class="sec-label">Valoraciones generales</div>
+  <div class="card"><div class="card-body">
+    <div class="rating-row"><span class="rating-lbl">Nivel general del equipo</span><div class="rating-stars" id="r-nivel"></div></div>
+    <div class="rating-row"><span class="rating-lbl">Peligrosidad ofensiva</span><div class="rating-stars" id="r-ataque"></div></div>
+    <div class="rating-row"><span class="rating-lbl">Solidez defensiva</span><div class="rating-stars" id="r-defensa"></div></div>
+    <div class="rating-row"><span class="rating-lbl">Preparacion fisica</span><div class="rating-stars" id="r-fisico"></div></div>
+    <div class="rating-row"><span class="rating-lbl">Calidad tecnica</span><div class="rating-stars" id="r-tecnica"></div></div>
+  </div></div>
+
+  <!-- FORTALEZAS / DEBILIDADES -->
+  <div class="sec-label">Analisis DAFO</div>
+  <div class="card"><div class="card-body">
+    <div class="field"><label>💪 Fortalezas del rival</label><textarea id="s-fortalezas" rows="3" placeholder="Que hacen bien, sus armas principales..."></textarea></div>
+    <div class="field"><label>⚠️ Debilidades del rival</label><textarea id="s-debilidades" rows="3" placeholder="Donde son vulnerables, que aprovechar..."></textarea></div>
+    <div class="field"><label>🎯 Plan de partido recomendado</label><textarea id="s-plan" rows="3" placeholder="Como planteamos el partido ante este rival..."></textarea></div>
+    <div class="field"><label>⚽ Jugador clave a neutralizar</label><input type="text" id="s-jugador-clave" placeholder="Nombre del jugador mas peligroso"></div>
+  </div></div>
+
+  <!-- OBSERVACIONES FINALES -->
+  <div class="sec-label">Observaciones finales del scout</div>
+  <div class="card"><div class="card-body">
+    <div class="field"><label>Notas generales</label><textarea id="s-notas" rows="5" placeholder="Todo lo que hayas observado que no encaje en los apartados anteriores..."></textarea></div>
+    <div class="field"><label>Valoracion global del partido (1-10)</label>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+        <div class="val-btn" onclick="cambiarVal(-1)">-</div>
+        <span id="val-num" style="font-size:28px;font-weight:800;color:var(--azul);min-width:32px;text-align:center">7</span>
+        <div class="val-btn" onclick="cambiarVal(1)">+</div>
+      </div>
+    </div>
+  </div></div>
+
+  <button class="btn-main btn-verde" onclick="guardarScouting()" style="margin-bottom:12px">✅ Guardar informe</button>
+  <button class="btn-main btn-outline" onclick="imprimirPlantilla()">🖨️ Imprimir plantilla en blanco</button>
+
+  <!-- EXITO -->
+  <div class="success-wrap" id="success-wrap">
+    <div class="success-icon">✅</div>
+    <h2 style="font-size:20px;font-weight:700;color:var(--verde);margin-bottom:8px">Informe guardado</h2>
+    <p style="font-size:14px;color:var(--texto2);margin-bottom:24px">El informe de scouting se ha guardado y enriquecera el informe pre-partido automaticamente.</p>
+    <button class="btn-main btn-azul" style="max-width:300px;margin:0 auto" onclick="history.back()">Volver al inicio</button>
+  </div>
+
+</div>
+
+<script>
+var WEBAPP_URL = localStorage.getItem('gscript_url') ||
+  'https://script.google.com/macros/s/AKfycbzccJuHc7_dNEJluOJL4-2HGnPvHX-UvzHIMCNPBmfJi5Q-dwFnyAKT0aatXCay3Ygm/exec';
+var cfg = JSON.parse(localStorage.getItem('silos_sesion') || '{}');
+var valoracion = 7;
+var golCount = 0, tarjCount = 0, jugCount = 0;
+var sistemaSel = '';
+var pitchPlayers = [];
+
+// Rellenar datos del URL
+window.addEventListener('DOMContentLoaded', function() {
+  var p = new URLSearchParams(window.location.search);
+  if (p.get('jornada')) document.getElementById('s-jornada').value = p.get('jornada');
+  if (p.get('rival'))   { document.getElementById('s-rival').value = p.get('rival'); document.getElementById('top-rival').textContent = p.get('rival'); }
+  if (p.get('fecha'))   document.getElementById('s-fecha').value = p.get('fecha');
+  if (p.get('hora'))    document.getElementById('s-hora').value  = p.get('hora');
+  if (p.get('condicion')) document.getElementById('s-condicion').value = p.get('condicion');
+  if (cfg.nombre) document.getElementById('s-scout').value = cfg.nombre;
+  document.getElementById('s-fecha').value = document.getElementById('s-fecha').value || new Date().toISOString().split('T')[0];
+
+  // Ratings
+  ['r-nivel','r-ataque','r-defensa','r-fisico','r-tecnica'].forEach(function(id) { buildStars(id, 3); });
+
+  // Pitch click
+  document.getElementById('pitch').addEventListener('click', function(e) {
+    if (e.target.classList.contains('player-dot')) return;
+    var rect = this.getBoundingClientRect();
+    var x = Math.round((e.clientX - rect.left) / rect.width * 100);
+    var y = Math.round((e.clientY - rect.top) / rect.height * 100);
+    addPitchPlayer(x, y);
+  });
+});
+
+function buildStars(id, def) {
+  var el = document.getElementById(id);
+  el.innerHTML = [1,2,3,4,5].map(function(n) {
+    return '<div class="star'+(n<=def?' on':'')+'" onclick="setRating(\''+id+'\','+n+')">★</div>';
+  }).join('');
+}
+function setRating(id, val) {
+  var stars = document.getElementById(id).querySelectorAll('.star');
+  stars.forEach(function(s, i) { s.classList.toggle('on', i < val); });
+}
+function getRating(id) {
+  return document.getElementById(id).querySelectorAll('.star.on').length;
+}
+
+function setSistema(s) {
+  sistemaSel = s;
+  document.getElementById('s-sistema').value = s;
+  document.querySelectorAll('.sis-btn').forEach(function(b){ b.classList.toggle('on', b.textContent === s); });
+}
+
+function toggleBtn(el) { el.classList.toggle('on'); }
+function toggleTramo(el, tipo) { el.classList.toggle(tipo==='gc'?'on':'on-gf'); }
+
+function cambiarVal(d) {
+  valoracion = Math.min(10, Math.max(1, valoracion + d));
+  document.getElementById('val-num').textContent = valoracion;
+}
+
+// GOLES
+function addGol() {
+  golCount++;
+  var div = document.createElement('div'); div.className='gol-row'; div.id='gol-'+golCount;
+  var id = golCount;
+  div.innerHTML = '<input class="gol-min" type="number" placeholder="Min">' +
+    '<input class="gol-scorer" type="text" placeholder="Goleador">' +
+    '<select class="gol-tipo"><option>GF</option><option>GC</option><option>AG</option></select>' +
+    '<button class="del-btn" onclick="document.getElementById(\'gol-'+id+'\').remove()">×</button>';
+  document.getElementById('goles-list').appendChild(div);
+}
+
+// TARJETAS
+function addTarjeta(tipo) {
+  tarjCount++;
+  var div = document.createElement('div'); div.className='tarj-row'; div.id='tarj-'+tarjCount;
+  var id = tarjCount;
+  div.innerHTML = '<div class="tarj-color '+tipo+'"></div>' +
+    '<input class="tarj-jugador" type="text" placeholder="Jugador">' +
+    '<input class="tarj-min" type="number" placeholder="Min">' +
+    '<button class="del-btn" onclick="document.getElementById(\'tarj-'+id+'\').remove()">×</button>';
+  document.getElementById('tarjetas-list').appendChild(div);
+}
+
+// JUGADORES
+function addJugador() {
+  jugCount++;
+  var div = document.createElement('div'); div.className='jugador-row'; div.id='jug-'+jugCount;
+  var id = jugCount;
+  div.innerHTML = '<div class="jug-num">' + jugCount + '</div>' +
+    '<input style="flex:1;padding:8px 10px;border:0.5px solid var(--borde);border-radius:8px;font-size:13px;outline:none;font-family:var(--font)" type="text" placeholder="Nombre del jugador">' +
+    '<input style="width:80px;padding:8px 8px;border:0.5px solid var(--borde);border-radius:8px;font-size:12px;outline:none;font-family:var(--font)" type="text" placeholder="Pos.">' +
+    '<select style="width:90px;padding:8px 6px;border:0.5px solid var(--borde);border-radius:8px;font-size:11px;-webkit-appearance:none;background:#fff;font-family:var(--font)">' +
+      '<option>Normal</option><option>Clave</option><option>Seguimiento</option>' +
+    '</select>' +
+    '<button class="del-btn" onclick="document.getElementById(\'jug-'+id+'\').remove()">×</button>';
+  document.getElementById('jugadores-list').appendChild(div);
+}
+
+// PITCH
+function addPitchPlayer(x, y) {
+  var n = pitchPlayers.length + 1;
+  var dot = document.createElement('div');
+  dot.className = 'player-dot'; dot.style.left=x+'%'; dot.style.top=y+'%'; dot.textContent=n;
+  dot.onclick = function(e) { e.stopPropagation(); if(confirm('Eliminar jugador '+n+'?')) dot.remove(); };
+  document.getElementById('pitch').appendChild(dot);
+  pitchPlayers.push({x:x, y:y, n:n});
+}
+
+// GUARDAR
+function guardarScouting() {
+  var jornada = document.getElementById('s-jornada').value;
+  var rival   = document.getElementById('s-rival').value;
+  if (!rival) { alert('Introduce el nombre del equipo rival'); return; }
+
+  var goles = [], tarjetas = [], jugadores = [];
+  document.querySelectorAll('[id^=gol-]').forEach(function(r) {
+    var i = r.querySelectorAll('input,select');
+    goles.push({min:i[0].value, goleador:i[1].value, tipo:i[2].value});
+  });
+  document.querySelectorAll('[id^=tarj-]').forEach(function(r) {
+    var color = r.querySelector('.tarj-color').classList.contains('amarilla') ? 'amarilla' : 'roja';
+    var inputs = r.querySelectorAll('input');
+    tarjetas.push({tipo:color, jugador:inputs[0].value, min:inputs[1].value});
+  });
+  document.querySelectorAll('[id^=jug-]').forEach(function(r) {
+    var inputs = r.querySelectorAll('input,select');
+    jugadores.push({nombre:inputs[0].value, pos:inputs[1].value, nivel:inputs[2].value});
+  });
+
+  var tramos_peligrosos = [], tramos_vulnerables = [];
+  document.querySelectorAll('#tramos-gf .tramo-pill.on-gf').forEach(function(el){ tramos_peligrosos.push(el.textContent); });
+  document.querySelectorAll('#tramos-gc .tramo-pill.on').forEach(function(el){ tramos_vulnerables.push(el.textContent); });
+
+  var caracteristicas = [];
+  document.querySelectorAll('.toggle-row').forEach(function(r) {
+    if (r.querySelector('.toggle.on')) caracteristicas.push(r.querySelector('.toggle-lbl').textContent);
+  });
+
+  var datos = {
+    tipo: 'scouting',
+    jornada: jornada, rival: rival,
+    fecha: document.getElementById('s-fecha').value,
+    hora:  document.getElementById('s-hora').value,
+    campo: document.getElementById('s-campo').value,
+    condicion: document.getElementById('s-condicion').value,
+    resultado: document.getElementById('s-resultado').value,
+    scout: document.getElementById('s-scout').value,
+    sistema: document.getElementById('s-sistema').value,
+    tipo_ataque: document.getElementById('s-tipo-ataque').value,
+    tipo_defensa: document.getElementById('s-tipo-defensa').value,
+    repliegue: document.getElementById('s-repliegue').value,
+    notas_posicion: document.getElementById('s-pos-notas').value,
+    goles: JSON.stringify(goles),
+    tarjetas: JSON.stringify(tarjetas),
+    jugadores_clave: JSON.stringify(jugadores),
+    tramos_peligrosos: tramos_peligrosos.join(','),
+    tramos_vulnerables: tramos_vulnerables.join(','),
+    caracteristicas: caracteristicas.join('|'),
+    r_nivel: getRating('r-nivel'),
+    r_ataque: getRating('r-ataque'),
+    r_defensa: getRating('r-defensa'),
+    r_fisico: getRating('r-fisico'),
+    r_tecnica: getRating('r-tecnica'),
+    fortalezas: document.getElementById('s-fortalezas').value,
+    debilidades: document.getElementById('s-debilidades').value,
+    plan: document.getElementById('s-plan').value,
+    jugador_clave: document.getElementById('s-jugador-clave').value,
+    notas: document.getElementById('s-notas').value,
+    valoracion: valoracion,
+    timestamp: new Date().toISOString()
+  };
+
+  // Guardar en localStorage para que el informe_rival.html lo lea
+  var key = 'silos_scouting_j' + jornada;
+  localStorage.setItem(key, JSON.stringify(datos));
+
+  // Enviar a Sheets (no-cors)
+  try {
+    fetch(WEBAPP_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(datos)});
+  } catch(e) {}
+
+  document.getElementById('form-body').style.display = 'none';
+  document.getElementById('success-wrap').style.display = 'block';
+}
+
+function imprimirPlantilla() {
+  window.open('scouting_print.html?rival=' +
+    encodeURIComponent(document.getElementById('s-rival').value||'') +
+    '&jornada=' + (document.getElementById('s-jornada').value||''), '_blank');
+}
+</script>
+</body>
+</html>

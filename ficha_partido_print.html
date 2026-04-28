@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ficha Partido — Los Silos CF</title>
+<style>
+@page{size:A4;margin:10mm 12mm}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:9pt;color:#1A1A1A;background:#fff}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2.5px solid #1A3A6B;padding-bottom:7px;margin-bottom:8px}
+.header-logo{display:flex;align-items:center;gap:8px}
+.logo-circle{width:38px;height:38px;border-radius:50%;background:#1A3A6B;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700}
+.header-title h1{font-size:13pt;font-weight:700;color:#1A3A6B}
+.header-title p{font-size:8pt;color:#666;margin-top:1px}
+.header-right{text-align:right;font-size:8pt;color:#666}
+
+/* SECCIONES */
+.section{margin-bottom:9px}
+.section-title{background:#1A3A6B;color:#fff;padding:3px 8px;font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-radius:3px;margin-bottom:5px}
+.section-title.verde{background:#1E7B34}
+.section-title.naranja{background:#E8771A}
+.section-title.gris{background:#555}
+
+/* GRIDS */
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+
+/* CAMPOS */
+.field-g{margin-bottom:4px}
+.field-lbl{font-size:7pt;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
+.field-line{border-bottom:1px solid #999;height:16px;width:100%}
+
+/* MARCADOR */
+.marcador-box{border:2px solid #1A3A6B;border-radius:8px;padding:10px 16px;text-align:center;margin-bottom:8px}
+.marcador-equipos{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.equipo-m{flex:1;text-align:center}
+.equipo-nombre-m{font-size:9pt;font-weight:700;color:#1A3A6B;margin-bottom:4px}
+.goles-box{border:1.5px solid #1A3A6B;border-radius:6px;width:44px;height:44px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:22pt;font-weight:700;color:#1A3A6B}
+.marcador-sep-m{font-size:22pt;font-weight:300;color:#999}
+
+/* TABLA GOLES */
+.tabla{width:100%;border-collapse:collapse;font-size:8pt}
+.tabla th{background:#1A3A6B;color:#fff;padding:3px 5px;text-align:left;font-size:7pt;font-weight:700;text-transform:uppercase}
+.tabla td{padding:3px 5px;border-bottom:.5px solid #ddd;height:17px}
+.tabla tr:nth-child(even) td{background:#F8F9FA}
+.tarj-am{display:inline-block;width:10px;height:13px;background:#F1C40F;border-radius:1px;margin-right:3px;vertical-align:middle}
+.tarj-ro{display:inline-block;width:10px;height:13px;background:#E74C3C;border-radius:1px;margin-right:3px;vertical-align:middle}
+
+/* ESTADÍSTICAS */
+.stats-tabla{width:100%;border-collapse:collapse;font-size:8pt}
+.stats-tabla th{background:#555;color:#fff;padding:3px 5px;font-size:7pt;font-weight:700;text-transform:uppercase}
+.stats-tabla td{padding:3px 5px;border-bottom:.5px solid #ddd;height:17px}
+.stats-tabla .cat{background:#f5f5f5;font-weight:700;font-size:7pt;color:#333;text-transform:uppercase}
+
+/* SISTEMAS */
+.sistema-boxes{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px}
+.sis-box{border:1.5px solid #1A3A6B;border-radius:4px;padding:2px 7px;font-size:8pt;font-weight:700;color:#1A3A6B}
+
+/* VALORACIÓN */
+.val-boxes{display:flex;gap:3px;align-items:center}
+.val-box{width:22px;height:22px;border:1px solid #ccc;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9pt;font-weight:700;color:#666}
+
+/* NOTAS */
+.notas-lines{margin-top:2px}
+.nota-line{border-bottom:1px solid #ccc;height:14px;margin-bottom:2px}
+
+/* PITCH */
+.pitch-mini{background:#2E7D32;border-radius:4px;width:80px;height:110px;position:relative;flex-shrink:0;overflow:hidden;border:1px solid rgba(255,255,255,.4)}
+.p-l{position:absolute;background:rgba(255,255,255,.35)}
+.p-c{position:absolute;border:1px solid rgba(255,255,255,.35);border-radius:50%;background:transparent}
+
+/* TOGGLE CHECK */
+.check-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
+.check-item{display:flex;align-items:center;gap:4px;font-size:7.5pt}
+.check-sq{width:10px;height:10px;border:1px solid #999;border-radius:1px;flex-shrink:0}
+
+/* PIE */
+.footer{border-top:1px solid #ccc;padding-top:5px;margin-top:8px;display:flex;justify-content:space-between;font-size:7pt;color:#999}
+
+/* PRINT */
+@media print{
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .no-print{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="no-print" style="background:#1A3A6B;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0">
+  <button onclick="history.back()" style="background:#fff2;border:none;color:#fff;padding:7px 14px;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer">‹ Volver</button>
+  <button onclick="history.back()" style="background:#fff2;border:none;color:#fff;padding:7px 14px;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer">&#8249; Volver</button>
+  <button onclick="window.print()" style="background:#fff;color:#1A3A6B;border:none;padding:7px 16px;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer">&#128424; Imprimir / PDF</button>
+</div>
+
+<div style="padding:8px">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <div class="logo-circle">⚽</div>
+    <div class="header-title">
+      <h1>LOS SILOS CF</h1>
+      <p>Ficha de Partido — Registro Oficial</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <strong style="color:#1A3A6B;font-size:10pt">JORNADA ___</strong><br>
+    Temporada 2025/26
+  </div>
+</div>
+
+<!-- DATOS DEL PARTIDO -->
+<div class="section">
+  <div class="section-title">Datos del partido</div>
+  <div class="grid-4">
+    <div class="field-g"><div class="field-lbl">Rival</div><div class="field-line"></div></div>
+    <div class="field-g"><div class="field-lbl">Fecha</div><div class="field-line"></div></div>
+    <div class="field-g"><div class="field-lbl">Hora</div><div class="field-line"></div></div>
+    <div class="field-g"><div class="field-lbl">Campo</div><div class="field-line"></div></div>
+  </div>
+  <div class="grid-4" style="margin-top:4px">
+    <div class="field-g">
+      <div class="field-lbl">Condición</div>
+      <div style="display:flex;gap:8px;margin-top:2px;font-size:8pt">
+        <span style="display:flex;align-items:center;gap:3px"><div class="check-sq"></div> Local</span>
+        <span style="display:flex;align-items:center;gap:3px"><div class="check-sq"></div> Visitante</span>
+      </div>
+    </div>
+    <div class="field-g"><div class="field-lbl">Árbitro</div><div class="field-line"></div></div>
+    <div class="field-g"><div class="field-lbl">Entrenador</div><div class="field-line"></div></div>
+    <div class="field-g"><div class="field-lbl">Categoría</div><div class="field-line"></div></div>
+  </div>
+</div>
+
+<!-- MARCADOR -->
+<div class="marcador-box">
+  <div class="marcador-equipos">
+    <div class="equipo-m">
+      <div class="equipo-nombre-m">LOS SILOS CF</div>
+      <div class="goles-box"></div>
+    </div>
+    <div class="marcador-sep-m">vs</div>
+    <div class="equipo-m">
+      <div class="equipo-nombre-m">__________________________</div>
+      <div class="goles-box"></div>
+    </div>
+  </div>
+  <div style="margin-top:6px;display:flex;justify-content:center;gap:20px;font-size:8pt">
+    <span>Descanso: <strong>___-___</strong></span>
+    <span>Final: <strong>___-___</strong></span>
+  </div>
+</div>
+
+<!-- GOLES + TARJETAS -->
+<div class="grid-2">
+  <div class="section">
+    <div class="section-title verde">Goles</div>
+    <table class="tabla">
+      <thead><tr><th>Min</th><th>Jugador / Descripción</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:7pt;color:#999;margin-top:2px">GF=favor · GC=contra · BP=Balón parado · P=Penalti · AG=Autogol</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title naranja">Tarjetas</div>
+    <table class="tabla">
+      <thead><tr><th>Tipo</th><th>Jugador</th><th>Min</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tarj-am"></span>Am</td><td></td><td></td></tr>
+        <tr><td><span class="tarj-am"></span>Am</td><td></td><td></td></tr>
+        <tr><td><span class="tarj-am"></span>Am</td><td></td><td></td></tr>
+        <tr><td><span class="tarj-am"></span>Am</td><td></td><td></td></tr>
+        <tr><td><span class="tarj-ro"></span>Ro</td><td></td><td></td></tr>
+        <tr><td><span class="tarj-ro"></span>Ro</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ESTADÍSTICAS -->
+<div class="section">
+  <div class="section-title gris">Estadísticas del partido</div>
+  <div class="grid-2">
+    <table class="stats-tabla">
+      <thead><tr><th>Estadística</th><th style="width:40px;text-align:center">Valor</th></tr></thead>
+      <tbody>
+        <tr><td>Ocasiones de gol</td><td></td></tr>
+        <tr><td>Tiros a puerta</td><td></td></tr>
+        <tr><td>Tiros fuera</td><td></td></tr>
+        <tr><td>Corners</td><td></td></tr>
+        <tr><td>Faltas recibidas</td><td></td></tr>
+        <tr><td>Faltas cometidas</td><td></td></tr>
+        <tr><td>Fuera de juego a favor</td><td></td></tr>
+        <tr><td>Fuera de juego en contra</td><td></td></tr>
+      </tbody>
+    </table>
+    <table class="stats-tabla">
+      <thead><tr><th>Estadística</th><th style="width:40px;text-align:center">Valor</th></tr></thead>
+      <tbody>
+        <tr><td>BP a favor</td><td></td></tr>
+        <tr><td>BP en contra</td><td></td></tr>
+        <tr><td>Penaltis a favor</td><td></td></tr>
+        <tr><td>Penaltis en contra</td><td></td></tr>
+        <tr><td>Duelos ganados</td><td></td></tr>
+        <tr><td>Centros al área</td><td></td></tr>
+        <tr><td>Contragolpes</td><td></td></tr>
+        <tr><td>Paradas del portero</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SISTEMA + ANÁLISIS -->
+<div class="grid-2">
+  <div class="section">
+    <div class="section-title">Sistema táctico</div>
+    <div class="field-g"><div class="field-lbl">Sistema ataque</div><div class="field-line"></div></div>
+    <div class="field-g" style="margin-top:3px"><div class="field-lbl">Sistema defensa</div><div class="field-line"></div></div>
+    <div class="grid-2" style="margin-top:4px">
+      <div class="field-g"><div class="field-lbl">Tipo ataque</div><div class="field-line"></div></div>
+      <div class="field-g"><div class="field-lbl">Tipo defensa</div><div class="field-line"></div></div>
+    </div>
+    <div class="field-g" style="margin-top:3px"><div class="field-lbl">Repliegue</div><div class="field-line"></div></div>
+    <div style="margin-top:6px">
+      <div class="field-lbl">Valoración del partido (rodea)</div>
+      <div class="val-boxes" style="margin-top:4px">
+        <div class="val-box">1</div><div class="val-box">2</div><div class="val-box">3</div>
+        <div class="val-box">4</div><div class="val-box">5</div><div class="val-box">6</div>
+        <div class="val-box">7</div><div class="val-box">8</div><div class="val-box">9</div>
+        <div class="val-box">10</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Análisis del entrenador</div>
+    <div class="field-lbl" style="margin-bottom:3px">Jugador destacado</div>
+    <div class="field-line"></div>
+    <div class="field-lbl" style="margin-top:5px;margin-bottom:3px">Notas y análisis del partido</div>
+    <div class="notas-lines">
+      <div class="nota-line"></div><div class="nota-line"></div>
+      <div class="nota-line"></div><div class="nota-line"></div>
+      <div class="nota-line"></div><div class="nota-line"></div>
+      <div class="nota-line"></div><div class="nota-line"></div>
+      <div class="nota-line"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PIE -->
+<div class="footer">
+  <span>Los Silos CF — Ficha de Partido Oficial</span>
+  <span>Temporada 2025/26 · Tercera FFCV</span>
+  <span>Uso interno del cuerpo técnico</span>
+</div>
+
+</div>
+</body>
+</html>

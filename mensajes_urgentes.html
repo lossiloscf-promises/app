@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Mensajes Urgentes — Los Silos CF</title>
+<style>
+:root{
+  --azul:#1A3A6B;--azul2:#2E5FAC;--azul-c:#DAEEFF;
+  --verde:#1E7B34;--verde-c:#D4F0DC;
+  --rojo:#C0392B;--rojo-c:#FAD7D3;
+  --naranja:#E8771A;--naranja-c:#FFE5CC;
+  --gris:#F0F4F8;--borde:#E0E0E0;
+  --texto:#1A1A1A;--texto2:#666;--texto3:#999;
+  --radio:14px;--radio-sm:10px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--gris);color:var(--texto);min-height:100vh}
+.topbar{background:var(--rojo);color:#fff;padding:env(safe-area-inset-top,14px) 16px 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.btn-back{width:36px;height:36px;border-radius:50%;border:none;background:#fff2;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font)}
+.topbar h1{font-size:16px;font-weight:700}
+.topbar p{font-size:11px;opacity:.7;margin-top:1px}
+.body{padding:16px 16px 80px}
+.sec-label{font-size:11px;font-weight:700;color:var(--texto3);text-transform:uppercase;letter-spacing:.6px;margin:18px 0 8px 2px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:.5px;background:var(--borde)}
+.card{background:#fff;border-radius:var(--radio);border:.5px solid var(--borde);padding:14px;margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--texto3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.field textarea{width:100%;padding:12px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:var(--font);color:var(--texto);background:#fff;outline:none;resize:none;line-height:1.5}
+.field textarea:focus{border-color:var(--rojo)}
+
+/* PLANTILLAS RÁPIDAS */
+.plantillas{display:flex;flex-direction:column;gap:6px;margin-bottom:4px}
+.plantilla-btn{padding:10px 14px;border-radius:var(--radio-sm);border:.5px solid var(--borde);background:#fff;font-size:13px;cursor:pointer;text-align:left;color:var(--texto);font-family:var(--font);line-height:1.4}
+.plantilla-btn:active{background:var(--gris)}
+.plantilla-ico{margin-right:8px}
+
+/* BOTONES ENVÍO */
+.envio-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.btn-envio{padding:16px;border-radius:var(--radio);border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;flex-direction:column;align-items:center;gap:4px}
+.btn-f11{background:var(--azul);color:#fff}
+.btn-f8{background:var(--verde);color:#fff}
+.btn-envio:active{opacity:.85}
+.btn-envio span{font-size:11px;font-weight:400;opacity:.8}
+.btn-club{width:100%;padding:15px;border-radius:var(--radio);border:none;background:var(--rojo);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:8px}
+.btn-club:active{opacity:.85}
+
+/* PREVIEW */
+.preview-box{background:var(--gris);border-radius:var(--radio-sm);padding:12px 14px;margin-top:10px;font-size:13px;color:var(--texto2);line-height:1.6;border-left:3px solid var(--rojo);display:none}
+.preview-box.show{display:block}
+
+/* CONTADOR */
+.char-count{font-size:11px;color:var(--texto3);text-align:right;margin-top:4px}
+.char-count.largo{color:var(--naranja)}
+
+.info-wa{background:var(--azul-c);border-radius:var(--radio-sm);padding:10px 12px;font-size:12px;color:var(--azul);line-height:1.5;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="btn-back" onclick="history.back()">&#8249;</button>
+  <div>
+    <h1>🚨 Mensajes urgentes</h1>
+    <p>Comunicados a familias del club</p>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="info-wa">
+    ℹ️ Los mensajes se envían a través de la lista de difusión de <strong>WhatsApp Business</strong> del móvil de oficina. Asegúrate de tener las listas F11 y F8 configuradas.
+  </div>
+
+  <!-- PLANTILLAS RÁPIDAS -->
+  <div class="sec-label">⚡ Plantillas rápidas</div>
+  <div class="plantillas">
+    <button class="plantilla-btn" onclick="usarPlantilla('tormenta')">⛈️ <span class="plantilla-ico"></span>Cancelación por tormenta eléctrica</button>
+    <button class="plantilla-btn" onclick="usarPlantilla('campo')">🏟️ Cambio de campo</button>
+    <button class="plantilla-btn" onclick="usarPlantilla('horario')">🕐 Cambio de horario</button>
+    <button class="plantilla-btn" onclick="usarPlantilla('partido')">⚽ Convocatoria partido</button>
+    <button class="plantilla-btn" onclick="usarPlantilla('reunion')">📋 Reunión de padres</button>
+    <button class="plantilla-btn" onclick="usarPlantilla('libre')">✏️ Mensaje libre</button>
+  </div>
+
+  <!-- REDACTAR -->
+  <div class="sec-label">✏️ Mensaje</div>
+  <div class="card">
+    <div class="field">
+      <label>Texto del mensaje</label>
+      <textarea id="mensaje-txt" rows="6" placeholder="Escribe aquí el mensaje urgente..." oninput="actualizarPreview()"></textarea>
+      <div class="char-count" id="char-count">0 caracteres</div>
+    </div>
+    <div class="preview-box" id="preview-box"></div>
+  </div>
+
+  <!-- ENVIAR -->
+  <div class="sec-label">📤 Enviar a</div>
+  <div class="envio-grid">
+    <button class="btn-envio btn-f11" onclick="enviar('f11')">
+      ⚽ F11
+      <span>Amateur · Juvenil · Cadete · Infantil</span>
+    </button>
+    <button class="btn-envio btn-f8" onclick="enviar('f8')">
+      🏃 F8
+      <span>Alevín · Benjamín · Prebenjamín · Querubín</span>
+    </button>
+  </div>
+  <button class="btn-club" onclick="enviar('club')">🌐 Todo el club (F11 + F8)</button>
+
+</div>
+
+<script>
+var PAGOS_URL = 'https://script.google.com/macros/s/AKfycbwi8jRRg3vfH7a-vWm9UoX4hmqpi0sKY4v9KHUzEI8ySqzaNkwwgqeluTi57ybY5d-I/exec';
+var cfg = JSON.parse(localStorage.getItem('silos_sesion') || '{}');
+
+var PLANTILLAS = {
+  tormenta: 'Hola familias de Los Silos CF 🔵\n\n⛈️ El entrenamiento de HOY queda CANCELADO debido a la tormenta eléctrica.\n\nDisculpad las molestias. Os informaremos del próximo entrenamiento.\n\nUn saludo,\nLos Silos CF 🔵⚽',
+  campo:    'Hola familias de Los Silos CF 🔵\n\n🏟️ CAMBIO DE CAMPO\n\nEl entrenamiento/partido de hoy se celebrará en:\n📍 \n\nHorario: sin cambios.\n\nUn saludo,\nLos Silos CF 🔵⚽',
+  horario:  'Hola familias de Los Silos CF 🔵\n\n🕐 CAMBIO DE HORARIO\n\nEl entrenamiento/partido queda modificado:\n📅 Fecha: \n🕐 Hora: \n📍 Campo: \n\nUn saludo,\nLos Silos CF 🔵⚽',
+  partido:  'Hola familias de Los Silos CF 🔵\n\n⚽ CONVOCATORIA PARTIDO\n\n📅 Fecha: \n🕐 Hora de concentración: \n📍 Campo: \n👕 Traer: equipación completa\n\nUn saludo,\nLos Silos CF 🔵⚽',
+  reunion:  'Hola familias de Los Silos CF 🔵\n\n📋 REUNIÓN DE PADRES\n\n📅 Fecha: \n🕐 Hora: \n📍 Lugar: \n\nVuestra asistencia es importante. Os esperamos.\n\nUn saludo,\nLos Silos CF 🔵⚽',
+  libre:    ''
+};
+
+var CATS_F11 = ['AMATEUR','JUVENIL','CADETE','INFANTIL'];
+var CATS_F8  = ['ALEVIN','BENJAMIN','PREBENJAMIN','QUERUBIN'];
+
+function usarPlantilla(tipo) {
+  document.getElementById('mensaje-txt').value = PLANTILLAS[tipo] || '';
+  actualizarPreview();
+  document.getElementById('mensaje-txt').focus();
+}
+
+function actualizarPreview() {
+  var txt = document.getElementById('mensaje-txt').value;
+  var n   = txt.length;
+  var cc  = document.getElementById('char-count');
+  cc.textContent = n + ' caracteres';
+  cc.className   = 'char-count' + (n > 500 ? ' largo' : '');
+  var prev = document.getElementById('preview-box');
+  if (txt.trim()) {
+    prev.innerHTML = txt.replace(/\n/g, '<br>');
+    prev.classList.add('show');
+  } else {
+    prev.classList.remove('show');
+  }
+}
+
+async function enviar(destino) {
+  var txt = document.getElementById('mensaje-txt').value.trim();
+  if (!txt) { alert('Escribe el mensaje antes de enviar'); return; }
+
+  var cats = destino === 'f11' ? CATS_F11 : destino === 'f8' ? CATS_F8 : CATS_F11.concat(CATS_F8);
+  var label = destino === 'f11' ? 'F11' : destino === 'f8' ? 'F8' : 'todo el club';
+
+  // Obtener teléfonos del Sheets
+  var telefonos = [];
+  for (var i = 0; i < cats.length; i++) {
+    try {
+      var r = await fetch(PAGOS_URL + '?action=pagos&categoria=' + cats[i]).then(function(r){return r.json();});
+      if (r.ok && r.jugadores) {
+        r.jugadores.forEach(function(j) {
+          var tel = (j.telefono||'').toString().replace('.0','').replace(/[^0-9+]/g,'');
+          if (tel.length >= 9) {
+            if (!tel.startsWith('+')) tel = '+34' + tel;
+            if (telefonos.indexOf(tel) === -1) telefonos.push(tel);
+          }
+        });
+      }
+    } catch(e) {}
+  }
+
+  if (!telefonos.length) {
+    alert('No hay teléfonos registrados para ' + label + '.\n\nAsegúrate de que las familias están registradas en el sistema de pagos.');
+    return;
+  }
+
+  var confirmado = confirm('Se abrirá WhatsApp ' + telefonos.length + ' veces para enviar a ' + label + '.\n\n¿Continuar?');
+  if (!confirmado) return;
+
+  var msg = encodeURIComponent(txt);
+  var enviados = 0;
+
+  for (var j = 0; j < telefonos.length; j++) {
+    await new Promise(function(res){ setTimeout(res, 700); });
+    window.open('https://wa.me/' + telefonos[j].replace('+','') + '?text=' + msg, '_blank');
+    enviados++;
+  }
+
+  alert('✅ ' + enviados + ' mensajes generados para ' + label);
+}
+</script>
+</body>
+</html>
