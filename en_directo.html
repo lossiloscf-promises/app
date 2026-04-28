@@ -229,7 +229,7 @@ function card(p) {
     evHtml = '<div class="eventos">'+evHtml+'</div>';
   }
 
-  var es_mi_equipo = cfg.rol==='entrenador' && cfg.equipo===p.categoria;
+  var es_mi_equipo = cfg.rol==='superadmin' || (cfg.rol==='entrenador' && cfg.equipo===p.categoria);
   var puede_iniciar = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente'||cfg.rol==='entrenador';
   var btns = '';
   if (p.estado==='pendiente' && puede_iniciar) {
