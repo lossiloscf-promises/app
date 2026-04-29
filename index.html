@@ -452,7 +452,7 @@ body{font-family:var(--font);background:#F0F4F8;color:var(--texto);min-height:10
     <div class="card"><div class="card-body">
       <div class="field" id="campo-equipo-scout" style="display:none">
         <label>Equipo</label>
-        <select id="scout-equipo" style="width:100%;padding:12px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:inherit;background:#fff;color:var(--texto)">
+        <select id="scout-equipo" onchange="cargarJornadaProxima(this.value)" style="width:100%;padding:12px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:inherit;background:#fff;color:var(--texto)">
           <option value="amateur">Amateur</option>
           <option value="juvenil_a">Juvenil A</option>
           <option value="juvenil_b">Juvenil B</option>
@@ -620,6 +620,10 @@ function irA(id) {
     var campoEq = document.getElementById('campo-equipo-scout');
     var esSup = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente';
     if (campoEq) campoEq.style.display = esSup ? 'block' : 'none';
+    // Cargar jornada próxima del equipo actual
+    var selEq = document.getElementById('scout-equipo');
+    var catActual = esSup ? (selEq ? selEq.value : equipoActual) : equipoActual;
+    cargarJornadaProxima(catActual);
   }
 }
 
@@ -767,6 +771,22 @@ function abrirInforme(j_num) {
   localStorage.setItem('silos_proxima_jornada', j_num);
   localStorage.setItem('silos_categoria_activa', equipoActual);
   window.location.href = 'informe_rival.html?jornada=' + j_num + '&categoria=' + encodeURIComponent(equipoActual);
+}
+
+async function cargarJornadaProxima(cat) {
+  var input = document.getElementById('scout-jornada');
+  if (!input) return;
+  input.value = '';
+  input.placeholder = 'Cargando...';
+  try {
+    var r = await fetch(GOOGLE_SCRIPT_URL + '?action=proximos&categoria=' + encodeURIComponent(cat)).then(function(r){return r.json();});
+    if (r.ok && r.proximos && r.proximos.length) {
+      input.value = r.proximos[0].j_num || '';
+      input.placeholder = '26';
+    } else {
+      input.placeholder = 'Sin datos';
+    }
+  } catch(e) { input.placeholder = '26'; }
 }
 
 function abrirScout() {
