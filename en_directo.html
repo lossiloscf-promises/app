@@ -222,19 +222,26 @@ function card(p) {
     var evs = p.eventos.slice(-6);
     for (var j=0; j<evs.length; j++) {
       var ev = evs[j];
-      var cls = ev.tipo==='gol_silos'||ev.tipo==='gol_rival'?'ev-g':ev.tipo==='amarilla'?'ev-a':'ev-r';
-      var ico = ev.tipo==='gol_silos'||ev.tipo==='gol_rival'?'⚽':ev.tipo==='amarilla'?'🟨':'🟥';
-      evHtml += '<span class="ev '+cls+'">'+ico+' '+ev.min+'\'</span>';
+      var cls = (ev.tipo==='gol_silos'||ev.tipo==='gol_rival') ? 'ev-g' :
+                (ev.tipo==='anular_gol_silos'||ev.tipo==='anular_gol_rival') ? 'ev-r' :
+                ev.tipo==='amarilla' ? 'ev-a' : 'ev-r';
+      var ico = ev.tipo==='gol_silos' ? '⚽' :
+                ev.tipo==='gol_rival' ? '⚽' :
+                ev.tipo==='anular_gol_silos' ? '⚽❌' :
+                ev.tipo==='anular_gol_rival' ? '⚽❌' :
+                ev.tipo==='amarilla' ? '🟨' : '🟥';
+      evHtml += '<span class="ev '+cls+'">'+ico+' '+ev.min+"'</span>";
     }
     evHtml = '<div class="eventos">'+evHtml+'</div>';
   }
 
   var es_mi_equipo = cfg.rol==='superadmin' || (cfg.rol==='entrenador' && cfg.equipo===p.categoria);
   var puede_iniciar = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente'||cfg.rol==='entrenador';
+  var estado_p = (p.estado||'').toString().trim();
   var btns = '';
-  if (p.estado==='pendiente' && puede_iniciar) {
+  if (estado_p==='pendiente' && puede_iniciar) {
     btns = '<div class="card-btns iniciar"><button class="btn btn-iniciar" onclick="iniciar(\''+p.categoria+'\')">▶️ Iniciar partido</button></div>';
-  } else if (es_mi_equipo && p.estado==='vivo') {
+  } else if (es_mi_equipo && estado_p==='vivo') {
     btns = '<div class="card-btns">' +
       '<button class="btn btn-verde" onclick="evento(\''+p.categoria+'\',\'gol_silos\')">⚽ +Gol</button>' +
       '<button class="btn btn-rojo" onclick="evento(\''+p.categoria+'\',\'gol_rival\')">⚽ +Rival</button>' +
