@@ -450,6 +450,27 @@ body{font-family:var(--font);background:#F0F4F8;color:var(--texto);min-height:10
   <div class="scroll-body">
     <p class="section-label">Selecciona el informe</p>
     <div class="card"><div class="card-body">
+      <div class="field" id="campo-equipo-scout" style="display:none">
+        <label>Equipo</label>
+        <select id="scout-equipo" style="width:100%;padding:12px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:inherit;background:#fff;color:var(--texto)">
+          <option value="amateur">Amateur</option>
+          <option value="juvenil_a">Juvenil A</option>
+          <option value="juvenil_b">Juvenil B</option>
+          <option value="cadete_a">Cadete A</option>
+          <option value="cadete_b">Cadete B</option>
+          <option value="cadete_femenino">Cadete Femenino</option>
+          <option value="infantil_a">Infantil A</option>
+          <option value="infantil_b">Infantil B</option>
+          <option value="infantil_femenino">Infantil Femenino</option>
+          <option value="alevin_a">Alevín A</option>
+          <option value="alevin_b">Alevín B</option>
+          <option value="alevin_femenino">Alevín Femenino</option>
+          <option value="benjamin_a">Benjamín A</option>
+          <option value="benjamin_b">Benjamín B</option>
+          <option value="prebenjamin_a">Prebenjamín A</option>
+          <option value="prebenjamin_b">Prebenjamín B</option>
+        </select>
+      </div>
       <div class="field"><label>Numero de jornada</label><input type="number" id="scout-jornada" placeholder="26" min="1" max="30"></div>
       <button class="btn-main btn-azul" onclick="abrirScout()">Ver informe</button>
     </div></div>
@@ -594,6 +615,12 @@ function irA(id) {
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+  // Mostrar selector de equipo en scouting si es superadmin/director/presidente
+  if (id === 's-scouting') {
+    var campoEq = document.getElementById('campo-equipo-scout');
+    var esSup = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente';
+    if (campoEq) campoEq.style.display = esSup ? 'block' : 'none';
+  }
 }
 
 // ── INICIAR APP ──────────────────────────────────────
@@ -745,7 +772,11 @@ function abrirInforme(j_num) {
 function abrirScout() {
   var j = document.getElementById('scout-jornada').value;
   if (!j) { alert('Introduce el numero de jornada'); return; }
-  abrirInforme(parseInt(j));
+  var selEq = document.getElementById('scout-equipo');
+  var cat = (selEq && selEq.offsetParent !== null) ? selEq.value : equipoActual;
+  localStorage.setItem('silos_proxima_jornada', parseInt(j));
+  localStorage.setItem('silos_categoria_activa', cat);
+  window.location.href = 'informe_rival.html?jornada=' + parseInt(j) + '&categoria=' + encodeURIComponent(cat);
 }
 
 // ── ESTADÍSTICAS ENTRENAMIENTOS ───────────────────────
