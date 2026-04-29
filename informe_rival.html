@@ -438,6 +438,7 @@ window.addEventListener('DOMContentLoaded', function() {
   var esSuperAdmin = cfg.rol==='superadmin';
   var esDirector   = cfg.rol==='director' || cfg.rol==='presidente';
   var bar = document.getElementById('selector-cat-bar');
+  console.log('selector-cat-bar:', bar, 'rol:', cfg.rol, 'esSuperAdmin:', esSuperAdmin);
   if (bar && (esSuperAdmin || esDirector)) {
     bar.style.display = 'block';
     var sel = document.getElementById('selector-cat');
