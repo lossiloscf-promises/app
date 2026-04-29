@@ -400,7 +400,10 @@ function getCategoria() {
   var sel = document.getElementById('selector-cat');
   if (sel && sel.value) return sel.value;
   var p = new URLSearchParams(window.location.search);
-  return p.get('categoria') || localStorage.getItem('silos_categoria_activa') || cfg.equipo || 'amateur';
+  var cat = p.get('categoria') || localStorage.getItem('silos_categoria_activa') || cfg.equipo || 'amateur';
+  // Si es superadmin/director/presidente con equipo='todos', usar amateur por defecto
+  if (cat === 'todos' || !cat) cat = 'amateur';
+  return cat;
 }
 
 function cambiarCategoria(cat) {
@@ -415,8 +418,10 @@ window.addEventListener('DOMContentLoaded', function() {
   if (bar && (esSuperAdmin || esDirector)) {
     bar.style.display = 'block';
     var sel = document.getElementById('selector-cat');
-    var catInicial = new URLSearchParams(window.location.search).get('categoria') || cfg.equipo || 'amateur';
-    if (sel) sel.value = catInicial;
+    var catInicial = new URLSearchParams(window.location.search).get('categoria') 
+      || localStorage.getItem('silos_categoria_activa') 
+      || (cfg.equipo !== 'todos' ? cfg.equipo : 'amateur');
+    if (sel) sel.value = catInicial || 'amateur';
   }
   cargarTodo();
 });
