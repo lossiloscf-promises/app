@@ -108,8 +108,9 @@ body{font-family:var(--font);background:var(--gris);color:#1A1A1A;min-height:100
 
   <!-- TABS -->
   <div class="tabs">
-    <button class="tab on" onclick="setTab('clasi',this)">🏆 Clasificación</button>
-    <button class="tab" onclick="setTab('resultados',this)">⚽ Resultados</button>
+    <button class="tab on" onclick="setTab('clasi',this)">🏆 Tabla</button>
+    <button class="tab" onclick="setTab('resultados',this)">📈 Mi equipo</button>
+    <button class="tab" onclick="setTab('semana',this)">⚽ Semana</button>
   </div>
 
   <div id="contenido"><div class="loading"><div class="spin"></div>Cargando...</div></div>
@@ -123,6 +124,7 @@ var tabActual = 'clasi';
 var catActual = cfg.equipo && cfg.equipo !== 'todos' ? cfg.equipo : 'amateur';
 var clasi_data = null;
 var res_data   = null;
+var sem_data   = null;
 
 var NOMBRES_SILOS = ['Los Silos','silos','Silos','SILOS'];
 
@@ -146,13 +148,15 @@ async function cargar() {
   document.getElementById('contenido').innerHTML = '<div class="loading"><div class="spin"></div>Cargando...</div>';
   
   // Cargar clasificación y resultados en paralelo
-  var [r_clasi, r_res] = await Promise.all([
+  var [r_clasi, r_res, r_sem] = await Promise.all([
     fetch(URL + '?action=clasificacion&categoria=' + catActual).then(function(r){return r.json();}).catch(function(){return {ok:false};}),
-    fetch(URL + '?action=resultados&categoria=' + catActual).then(function(r){return r.json();}).catch(function(){return {ok:false};})
+    fetch(URL + '?action=resultados&categoria=' + catActual).then(function(r){return r.json();}).catch(function(){return {ok:false};}),
+    fetch(URL + '?action=resultados_semana').then(function(r){return r.json();}).catch(function(){return {ok:false};})
   ]);
 
   clasi_data = r_clasi.ok ? r_clasi : null;
   res_data   = r_res.ok   ? r_res   : null;
+  sem_data   = r_sem.ok   ? r_sem   : null;
 
   if (r_clasi.actualizado) {
     document.getElementById('upd').textContent = 'Act. ' + r_clasi.actualizado.substring(0,10);
@@ -170,7 +174,8 @@ function setTab(tab, btn) {
 
 function renderTab() {
   if (tabActual === 'clasi') renderClasi();
-  else renderResultados();
+  else if (tabActual === 'resultados') renderResultados();
+  else renderSemana();
 }
 
 function renderClasi() {
@@ -296,6 +301,44 @@ function stat(val, lbl) {
 
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderSemana() {
+  if (!sem_data) {
+    document.getElementById('contenido').innerHTML = '<div class="loading">Sin resultados esta semana.<br>El scraping se ejecuta lunes y miércoles.</div>';
+    return;
+  }
+  var resultados = sem_data.resultados || [];
+  var semana = sem_data.semana || '';
+  var html = '<div style="padding:8px 0 12px;font-size:12px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px">Semana ' + escHtml(semana) + '</div>';
+
+  if (!resultados.length) {
+    html += '<div class="loading">Sin resultados registrados para esta semana.</div>';
+  } else {
+    resultados.forEach(function(p) {
+      var es_local = p.cond === 'L';
+      var local    = es_local ? 'LOS SILOS CF' : escHtml(p.rival||'');
+      var visit    = es_local ? escHtml(p.rival||'') : 'LOS SILOS CF';
+      var gf_local = es_local ? p.gf : p.gc;
+      var gf_visit = es_local ? p.gc : p.gf;
+      var res_cls  = p.res==='V'?'res-v':p.res==='E'?'res-e':'res-d';
+      var res_ico  = p.res==='V'?'✅':p.res==='E'?'➖':'❌';
+
+      html += '<div class="resultado-card">';
+      html += '<div class="res-header">';
+      html += '<span class="res-jornada">'+escHtml(p.cat)+' · '+escHtml(p.jornada)+'</span>';
+      html += '<span class="res-badge '+res_cls+'">'+res_ico+' '+(p.res==='V'?'Victoria':p.res==='E'?'Empate':'Derrota')+'</span>';
+      html += '</div>';
+      html += '<div class="res-equipos">';
+      html += '<div class="res-eq left">'+local+'</div>';
+      html += '<div class="res-marcador">'+gf_local+' - '+gf_visit+'</div>';
+      html += '<div class="res-eq right">'+visit+'</div>';
+      html += '</div>';
+      html += '<div class="res-cond">'+(es_local?'🏠 Local':'✈️ Visitante')+'</div>';
+      html += '</div>';
+    });
+  }
+  document.getElementById('contenido').innerHTML = html;
 }
 
 function cambiarEquipo(cat) {
