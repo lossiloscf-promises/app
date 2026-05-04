@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Clasificación — Los Silos CF</title>
+<style>
+:root{
+  --azul:#1A3A6B;--azul2:#2E5FAC;--azul-c:#DAEEFF;
+  --rojo:#C0392B;--rojo-c:#FAD7D3;
+  --verde:#1E7B34;--verde-c:#D4F0DC;
+  --naranja:#E8771A;--amarillo:#F1C40F;
+  --gris:#F0F4F8;--borde:#E0E0E0;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--gris);color:#1A1A1A;min-height:100vh}
+.topbar{background:var(--azul);color:#fff;padding:env(safe-area-inset-top,14px) 16px 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.btn-back{width:36px;height:36px;border-radius:50%;border:none;background:#fff2;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.topbar h1{font-size:16px;font-weight:700;flex:1}
+.upd{font-size:10px;color:#ffffff80}
+.body{padding:12px 12px 60px}
+
+/* SELECTOR */
+.selector-bar{background:#fff;border-radius:12px;padding:10px 12px;margin-bottom:12px;border:.5px solid var(--borde)}
+.selector-bar select{width:100%;padding:8px 12px;border:.5px solid var(--borde);border-radius:8px;font-size:14px;font-weight:600;color:var(--azul);font-family:var(--font);background:#fff;outline:none}
+
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{flex:1;padding:8px;border-radius:10px;border:1px solid var(--borde);background:#fff;font-size:13px;font-weight:700;cursor:pointer;text-align:center;color:#666;font-family:var(--font)}
+.tab.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+
+/* CLASIFICACIÓN */
+.tabla-wrap{background:#fff;border-radius:12px;overflow:hidden;border:.5px solid var(--borde);margin-bottom:12px}
+.tabla-head{display:grid;grid-template-columns:30px 1fr 28px 28px 28px 28px 28px 36px;background:var(--azul);padding:8px 10px;gap:4px}
+.th{font-size:9px;font-weight:700;color:#fff;text-align:center;text-transform:uppercase;letter-spacing:.3px}
+.th.left{text-align:left}
+.tabla-row{display:grid;grid-template-columns:30px 1fr 28px 28px 28px 28px 28px 36px;padding:8px 10px;gap:4px;border-bottom:.5px solid var(--borde);align-items:center;transition:background .1s}
+.tabla-row:last-child{border-bottom:none}
+.tabla-row.silos{background:#EEF4FF;border-left:3px solid var(--azul)}
+.tabla-row:hover{background:#f5f8ff}
+.td{font-size:11px;text-align:center;color:#666}
+.td.left{text-align:left}
+.td-pos{font-size:12px;font-weight:900;color:#333}
+.td-club{font-size:12px;font-weight:700;color:#1A1A1A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.td-club.silos-txt{color:var(--azul)}
+.td-pts{font-size:13px;font-weight:900;color:var(--azul)}
+.badge-pos{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;margin:0 auto}
+.pos-1{background:#FFD700}
+.pos-2{background:#C0C0C0}
+.pos-3{background:#CD7F32}
+.pos-n{background:#ddd;color:#666}
+
+/* RESULTADOS */
+.resultado-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;border:.5px solid var(--borde)}
+.res-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.res-jornada{font-size:10px;font-weight:700;color:#999;text-transform:uppercase}
+.res-badge{font-size:11px;font-weight:900;padding:3px 10px;border-radius:10px}
+.res-v{background:var(--verde-c);color:var(--verde)}
+.res-e{background:#fff3e0;color:#e67e22}
+.res-d{background:var(--rojo-c);color:var(--rojo)}
+.res-equipos{display:flex;align-items:center;gap:8px}
+.res-eq{flex:1;font-size:13px;font-weight:700}
+.res-eq.left{text-align:right;color:var(--azul)}
+.res-eq.right{text-align:left;color:#666}
+.res-marcador{font-size:22px;font-weight:900;color:#333;min-width:60px;text-align:center}
+.res-cond{font-size:10px;color:#999;text-align:center;margin-top:4px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-card{background:#fff;border-radius:12px;padding:12px;border:.5px solid var(--borde);text-align:center}
+.stat-val{font-size:24px;font-weight:900;color:var(--azul)}
+.stat-lbl{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+
+/* RACHA */
+.racha{display:flex;gap:6px;margin-bottom:12px;background:#fff;border-radius:12px;padding:12px;border:.5px solid var(--borde);align-items:center}
+.racha-lbl{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;margin-right:4px}
+.r-v{background:var(--verde);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0}
+.r-e{background:#e67e22;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0}
+.r-d{background:var(--rojo);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0}
+
+.loading{text-align:center;padding:40px;color:#999;font-size:13px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;width:24px;height:24px;border:2px solid #eee;border-top-color:var(--azul);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:8px;display:block;margin:0 auto 8px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="btn-back" onclick="history.back()">&#8249;</button>
+  <h1>📊 Clasificación</h1>
+  <span class="upd" id="upd"></span>
+</div>
+<div class="body">
+  <!-- SELECTOR -->
+  <div class="selector-bar" id="selector-bar" style="display:none">
+    <select id="sel-equipo" onchange="cambiarEquipo(this.value)">
+      <option value="amateur">Amateur</option>
+      <option value="juvenil_a">Juvenil A</option>
+      <option value="juvenil_b">Juvenil B</option>
+      <option value="cadete_a">Cadete A</option>
+      <option value="cadete_b">Cadete B</option>
+      <option value="cadete_femenino">Cadete Femenino</option>
+      <option value="infantil_a">Infantil A</option>
+      <option value="infantil_b">Infantil B</option>
+      <option value="infantil_femenino">Infantil Femenino</option>
+    </select>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on" onclick="setTab('clasi',this)">🏆 Clasificación</button>
+    <button class="tab" onclick="setTab('resultados',this)">⚽ Resultados</button>
+  </div>
+
+  <div id="contenido"><div class="loading"><div class="spin"></div>Cargando...</div></div>
+</div>
+
+<script>
+var URL = 'https://script.google.com/macros/s/AKfycbzccJuHc7_dNEJluOJL4-2HGnPvHX-UvzHIMCNPBmfJi5Q-dwFnyAKT0aatXCay3Ygm/exec';
+var cfg = {};
+try { cfg = JSON.parse(localStorage.getItem('silos_sesion')||'{}'); } catch(e){}
+var tabActual = 'clasi';
+var catActual = cfg.equipo && cfg.equipo !== 'todos' ? cfg.equipo : 'amateur';
+var clasi_data = null;
+var res_data   = null;
+
+var NOMBRES_SILOS = ['Los Silos','silos','Silos','SILOS'];
+
+function esSilos(club) {
+  return club && NOMBRES_SILOS.some(function(n){ return club.indexOf(n) !== -1; });
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  // Mostrar selector para superadmin/director/presidente
+  var esSup = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente';
+  var bar = document.getElementById('selector-bar');
+  if (bar && esSup) {
+    bar.style.display = 'block';
+    var sel = document.getElementById('sel-equipo');
+    if (sel) sel.value = catActual;
+  }
+  cargar();
+});
+
+async function cargar() {
+  document.getElementById('contenido').innerHTML = '<div class="loading"><div class="spin"></div>Cargando...</div>';
+  
+  // Cargar clasificación y resultados en paralelo
+  var [r_clasi, r_res] = await Promise.all([
+    fetch(URL + '?action=clasificacion&categoria=' + catActual).then(function(r){return r.json();}).catch(function(){return {ok:false};}),
+    fetch(URL + '?action=resultados&categoria=' + catActual).then(function(r){return r.json();}).catch(function(){return {ok:false};})
+  ]);
+
+  clasi_data = r_clasi.ok ? r_clasi : null;
+  res_data   = r_res.ok   ? r_res   : null;
+
+  if (r_clasi.actualizado) {
+    document.getElementById('upd').textContent = 'Act. ' + r_clasi.actualizado.substring(0,10);
+  }
+
+  renderTab();
+}
+
+function setTab(tab, btn) {
+  tabActual = tab;
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderTab();
+}
+
+function renderTab() {
+  if (tabActual === 'clasi') renderClasi();
+  else renderResultados();
+}
+
+function renderClasi() {
+  if (!clasi_data) {
+    document.getElementById('contenido').innerHTML = '<div class="loading">Sin datos de clasificación.<br>Ejecuta el scraping del equipo.</div>';
+    return;
+  }
+
+  var equipos = clasi_data.equipos || [];
+  var posNuestro = equipos.findIndex(function(e){ return esSilos(e.club); });
+  var nuestro = posNuestro !== -1 ? equipos[posNuestro] : null;
+
+  var html = '';
+
+  // Stats de nuestro equipo
+  if (nuestro) {
+    html += '<div class="stats-grid">';
+    html += stat(nuestro.pos + 'º', 'Posición');
+    html += stat(nuestro.PT + ' pts', 'Puntos');
+    html += stat(nuestro.J + 'J', 'Partidos');
+    html += stat(nuestro.G + 'V ' + nuestro.E + 'E ' + nuestro.P + 'D', 'Rendimiento');
+    html += '</div>';
+  }
+
+  // Tabla completa
+  html += '<div class="tabla-wrap">';
+  html += '<div class="tabla-head">';
+  html += '<div class="th">#</div>';
+  html += '<div class="th left">Equipo</div>';
+  html += '<div class="th">J</div>';
+  html += '<div class="th">G</div>';
+  html += '<div class="th">E</div>';
+  html += '<div class="th">P</div>';
+  html += '<div class="th">DIF</div>';
+  html += '<div class="th">PTS</div>';
+  html += '</div>';
+
+  equipos.forEach(function(e) {
+    var silos = esSilos(e.club);
+    html += '<div class="tabla-row' + (silos?' silos':'') + '">';
+    var posCls = e.pos===1?'pos-1':e.pos===2?'pos-2':e.pos===3?'pos-3':'pos-n';
+    html += '<div class="td"><div class="badge-pos '+posCls+'">'+e.pos+'</div></div>';
+    html += '<div class="td left td-club'+(silos?' silos-txt':'')+'">'+escHtml(e.club)+'</div>';
+    html += '<div class="td">'+e.J+'</div>';
+    html += '<div class="td">'+e.G+'</div>';
+    html += '<div class="td">'+e.E+'</div>';
+    html += '<div class="td">'+e.P+'</div>';
+    html += '<div class="td">'+(e.DIF>0?'+':'')+e.DIF+'</div>';
+    html += '<div class="td td-pts">'+e.PT+'</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  document.getElementById('contenido').innerHTML = html;
+}
+
+function renderResultados() {
+  if (!res_data) {
+    document.getElementById('contenido').innerHTML = '<div class="loading">Sin resultados registrados.</div>';
+    return;
+  }
+
+  var partidos  = res_data.partidos || [];
+  var stats     = res_data.estadisticas || {};
+  var racha_str = stats.racha_5 || '';
+
+  var html = '';
+
+  // Racha últimos 5
+  if (racha_str) {
+    html += '<div class="racha"><span class="racha-lbl">Últimos 5</span>';
+    racha_str.split(' ').forEach(function(r) {
+      var cls = r==='V'?'r-v':r==='E'?'r-e':'r-d';
+      html += '<div class="'+cls+'">'+r+'</div>';
+    });
+    if (stats.racha_pts_5 !== undefined) html += '<span style="margin-left:auto;font-size:12px;font-weight:700;color:var(--azul)">'+stats.racha_pts_5+' pts</span>';
+    html += '</div>';
+  }
+
+  // Stats rápidas
+  if (stats.J) {
+    html += '<div class="stats-grid">';
+    html += stat(stats.pct_victorias+'%', '% Victorias');
+    html += stat(stats.GF_partido, 'GF/partido');
+    html += stat(stats.GC_partido, 'GC/partido');
+    html += stat(stats.J+'J', 'Partidos');
+    html += '</div>';
+  }
+
+  // Listado resultados
+  var partidos_rev = partidos.slice().reverse();
+  partidos_rev.forEach(function(p) {
+    var es_local = p.cond === 'L';
+    var local    = es_local ? 'LOS SILOS CF' : escHtml(p.rival||'');
+    var visit    = es_local ? escHtml(p.rival||'') : 'LOS SILOS CF';
+    var gf_local = es_local ? p.gf : p.gc;
+    var gf_visit = es_local ? p.gc : p.gf;
+    var res_cls  = p.res==='V'?'res-v':p.res==='E'?'res-e':'res-d';
+    var res_txt  = p.res==='V'?'VICTORIA':p.res==='E'?'EMPATE':'DERROTA';
+
+    html += '<div class="resultado-card">';
+    html += '<div class="res-header">';
+    html += '<span class="res-jornada">'+escHtml(p.jornada||'')+'</span>';
+    html += '<span class="res-badge '+res_cls+'">'+res_txt+'</span>';
+    html += '</div>';
+    html += '<div class="res-equipos">';
+    html += '<div class="res-eq left">'+local+'</div>';
+    html += '<div class="res-marcador">'+gf_local+' - '+gf_visit+'</div>';
+    html += '<div class="res-eq right">'+visit+'</div>';
+    html += '</div>';
+    html += '<div class="res-cond">'+(es_local?'🏠 Local':'✈️ Visitante')+'</div>';
+    html += '</div>';
+  });
+
+  if (!partidos_rev.length) html += '<div class="loading">Sin resultados registrados todavía.</div>';
+
+  document.getElementById('contenido').innerHTML = html;
+}
+
+function stat(val, lbl) {
+  return '<div class="stat-card"><div class="stat-val">'+val+'</div><div class="stat-lbl">'+lbl+'</div></div>';
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function cambiarEquipo(cat) {
+  catActual = cat;
+  clasi_data = null; res_data = null;
+  cargar();
+}
+</script>
+</body>
+</html>
