@@ -147,6 +147,31 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
     </div>
   </div>
 
+  <!-- SELECTOR EQUIPO (superadmin/director) -->
+  <div id="selector-equipo-bar" style="display:none;margin-bottom:12px">
+    <div class="field" style="margin:0">
+      <label>Equipo</label>
+      <select id="sel-equipo-ficha" onchange="cambiarEquipoFicha(this.value)" style="width:100%;padding:12px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:var(--font);background:#fff;outline:none;-webkit-appearance:none">
+        <option value="amateur">Amateur</option>
+        <option value="juvenil_a">Juvenil A</option>
+        <option value="juvenil_b">Juvenil B</option>
+        <option value="cadete_a">Cadete A</option>
+        <option value="cadete_b">Cadete B</option>
+        <option value="cadete_femenino">Cadete Femenino</option>
+        <option value="infantil_a">Infantil A</option>
+        <option value="infantil_b">Infantil B</option>
+        <option value="infantil_femenino">Infantil Femenino</option>
+        <option value="alevin_a">Alevín A</option>
+        <option value="alevin_b">Alevín B</option>
+        <option value="alevin_femenino">Alevín Femenino</option>
+        <option value="benjamin_a">Benjamín A</option>
+        <option value="benjamin_b">Benjamín B</option>
+        <option value="prebenjamin_a">Prebenjamín A</option>
+        <option value="prebenjamin_b">Prebenjamín B</option>
+      </select>
+    </div>
+  </div>
+
   <!-- DATOS DEL PARTIDO -->
   <div class="sec-label">Datos del partido</div>
   <div class="card"><div class="card-body">
@@ -285,6 +310,38 @@ function volverAtras() {
   else window.location.href = 'index.html';
 }
 
+function getCatActual() {
+  var esSup = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente';
+  if (esSup) {
+    var sel = document.getElementById('sel-equipo-ficha');
+    return sel ? sel.value : 'amateur';
+  }
+  return cfg.equipo && cfg.equipo!=='todos' ? cfg.equipo : 'amateur';
+}
+
+function cambiarEquipoFicha(cat) {
+  convocatoria = {};
+  document.getElementById('cambios-list').innerHTML='';
+  cargarPlantilla();
+}
+
+async function cargarProximoPartido(cat) {
+  try {
+    var r = await fetch(WEBAPP_URL+'?action=proximos&categoria='+cat).then(function(r){return r.json();});
+    if (r.ok && r.proximos && r.proximos.length) {
+      var p = r.proximos[0];
+      // Rellenar rival, jornada y condición automáticamente
+      var rivalInput = document.getElementById('p-rival');
+      var jornadaInput = document.getElementById('p-jornada');
+      var condInput = document.getElementById('p-condicion');
+      if (rivalInput && !rivalInput.value) rivalInput.value = p.rival || '';
+      if (jornadaInput && !jornadaInput.value) jornadaInput.value = p.j_num || '';
+      if (condInput) condInput.value = p.es_local ? 'Local' : 'Visitante';
+      document.getElementById('marcador-nombre-rival').textContent = (p.rival||'RIVAL').substring(0,14);
+    }
+  } catch(e) {}
+}
+
 function setSistema(s) {
   document.getElementById('p-sistema').value = s;
   document.querySelectorAll('.sis-btn').forEach(function(b){ b.classList.remove('on'); });
@@ -298,7 +355,7 @@ function cambiarGol(tipo, delta) {
 
 // ── CONVOCATORIA ───────────────────────────────────────────────────
 async function cargarPlantilla() {
-  var cat = cfg.equipo || 'amateur';
+  var cat = getCatActual();
   document.getElementById('top-cat').textContent = cat.replace(/_/g,' ').toUpperCase();
 
   // Determinar modo de cambios
@@ -321,6 +378,7 @@ async function cargarPlantilla() {
 
   renderConvocatoria();
   renderStatsGrid();
+  cargarProximoPartido(cat);
 }
 
 function renderConvocatoria() {
@@ -617,7 +675,7 @@ async function guardarFicha() {
 
   var datos = {
     tipo:'guardar_ficha_partido',
-    categoria: cfg.equipo||'amateur',
+    categoria: getCatActual(),
     entrenador: cfg.nombre||'',
     jornada: jornada, fecha: fecha,
     rival: rival, condicion: condicion, resultado: resultado,
@@ -672,6 +730,17 @@ function resetForm() {
 // INIT
 window.addEventListener('DOMContentLoaded', function() {
   document.getElementById('p-fecha').value = new Date().toISOString().split('T')[0];
+  // Mostrar selector de equipo para superadmin/director/presidente
+  var esSup = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente';
+  var bar = document.getElementById('selector-equipo-bar');
+  if (bar && esSup) {
+    bar.style.display = 'block';
+    var sel = document.getElementById('sel-equipo-ficha');
+    // Preseleccionar el equipo si viene de la URL o si el cfg tiene equipo
+    var catPref = new URLSearchParams(window.location.search).get('categoria') ||
+                  (cfg.equipo && cfg.equipo!=='todos' ? cfg.equipo : 'amateur');
+    if (sel) sel.value = catPref;
+  }
   cargarPlantilla();
 });
 </script>
