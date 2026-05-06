@@ -281,11 +281,17 @@ async function cargar() {
   } catch(e) { mostrarError('Error de conexión'); }
 }
 
+var _usuarios_map = {};
+
 function renderUsuarios(usuarios) {
   var cont = document.getElementById('lista-usuarios');
   if (!usuarios.length) { cont.innerHTML = '<div class="empty">Sin usuarios registrados</div>'; return; }
   var orden = ['superadmin','presidente','director','coordinador','entrenador'];
   usuarios.sort(function(a,b){ return orden.indexOf(a.rol)-orden.indexOf(b.rol)||a.nombre.localeCompare(b.nombre); });
+
+  // Guardar en mapa para evitar problemas con caracteres especiales en onclick
+  _usuarios_map = {};
+  usuarios.forEach(function(u){ _usuarios_map[u.usuario] = u; });
 
   cont.innerHTML = usuarios.map(function(u) {
     var rol  = u.rol || 'entrenador';
@@ -294,7 +300,7 @@ function renderUsuarios(usuarios) {
     var dots  = MODULOS.map(function(m){
       return '<div class="perm-dot ' + (perms[m.key]?'perm-on':'perm-off') + '" title="'+m.label+'"></div>';
     }).join('');
-    return '<div class="usuario-card" onclick="abrirModal(' + JSON.stringify(u) + ')">' +
+    return '<div class="usuario-card" onclick="abrirModal(\''+u.usuario+'\')">' +
       '<div class="usuario-avatar av-'+rol+'">'+inic+'</div>' +
       '<div class="usuario-info">' +
         '<div class="usuario-nombre">'+u.nombre+'</div>' +
@@ -307,7 +313,9 @@ function renderUsuarios(usuarios) {
   }).join('');
 }
 
-function abrirModal(u) {
+function abrirModal(usuario_key) {
+  var u = _usuarios_map[usuario_key];
+  if (!u) return;
   usuarioEditando = u.usuario;
   document.getElementById('modal-sub').textContent = '@' + u.usuario;
   document.getElementById('m-nombre').value  = u.nombre || '';
