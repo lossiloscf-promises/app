@@ -166,6 +166,7 @@ input:checked + .toggle-slider:before{transform:translateX(20px)}
     <h2>✏️ Editar usuario</h2>
     <div class="modal-sub" id="modal-sub"></div>
     <div class="field"><label>Nombre</label><input type="text" id="m-nombre"></div>
+    <div class="field"><label>Usuario</label><input type="text" id="m-usuario" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
     <div class="field"><label>Nueva contraseña <span style="color:var(--texto3)">(vacío = no cambiar)</span></label><input type="password" id="m-pass" placeholder="Nueva contraseña"></div>
     <div class="grid-2">
       <div class="field"><label>Rol base</label>
@@ -319,6 +320,7 @@ function abrirModal(usuario_key) {
   usuarioEditando = u.usuario;
   document.getElementById('modal-sub').textContent = '@' + u.usuario;
   document.getElementById('m-nombre').value  = u.nombre || '';
+  document.getElementById('m-usuario').value = u.usuario || '';
   document.getElementById('m-pass').value    = '';
   document.getElementById('m-rol').value     = u.rol || 'entrenador';
   document.getElementById('m-equipo').value  = u.equipo || '';
@@ -358,8 +360,11 @@ async function crearUsuario() {
 }
 
 async function guardarEdicion() {
+  var nuevo_usuario = document.getElementById('m-usuario').value.trim().toLowerCase();
+  if (!nuevo_usuario) { alert('El usuario no puede estar vacío'); return; }
   var datos = {
     tipo:'actualizar_usuario', usuario:usuarioEditando,
+    nuevo_usuario: nuevo_usuario,
     nombre:  document.getElementById('m-nombre').value.trim(),
     rol:     document.getElementById('m-rol').value,
     equipo:  document.getElementById('m-equipo').value,
