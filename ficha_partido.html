@@ -60,10 +60,12 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 .btn-no-convocado.on{background:var(--gris);color:var(--texto3);border-color:var(--borde)}
 
 /* CAMBIOS */
-.cambio-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;background:var(--gris);border-radius:var(--radio-sm);padding:8px 10px}
-.cambio-min{width:52px;padding:7px 6px;border:.5px solid var(--borde);border-radius:6px;font-size:13px;text-align:center;outline:none;font-family:var(--font);background:#fff}
-.cambio-sel{flex:1;padding:7px 8px;border:.5px solid var(--borde);border-radius:6px;font-size:13px;outline:none;font-family:var(--font);background:#fff;-webkit-appearance:none}
-.cambio-ico{font-size:14px;flex-shrink:0}
+.cambio-row{background:var(--gris);border-radius:var(--radio-sm);padding:10px;margin-bottom:8px}
+.cambio-row-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.cambio-min{width:58px;padding:9px 6px;border:.5px solid var(--borde);border-radius:6px;font-size:14px;text-align:center;outline:none;font-family:var(--font);background:#fff;flex-shrink:0}
+.cambio-row-sels{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.cambio-sel{width:100%;padding:9px 10px;border:.5px solid var(--borde);border-radius:6px;font-size:13px;outline:none;font-family:var(--font);background:#fff;-webkit-appearance:none;color:var(--texto)}
+.cambio-ico{font-size:14px;flex-shrink:0;text-align:center}
 .del-btn{width:28px;height:28px;border-radius:50%;border:.5px solid var(--borde);background:#fff;color:var(--texto3);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .add-btn{width:100%;padding:10px;border:1px dashed var(--borde);border-radius:var(--radio-sm);background:transparent;color:var(--azul2);font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;font-family:var(--font)}
 
@@ -444,33 +446,45 @@ function addCambio() {
   var titulares = getTitulares();
   var suplentes = getSuplentes();
 
-  // Para cambios NO libres: excluir jugadores que ya salieron
-  var ya_salidos = [];
-  var ya_entrados = [];
-  if (!cambiosLibres) {
+  var jugadores_disponibles;
+  if (cambiosLibres) {
+    // Cambios libres: todos los convocados (titulares + suplentes)
+    jugadores_disponibles = plantilla.filter(function(n){ return convocatoria[n]==='titular' || convocatoria[n]==='suplente'; });
+    if (!jugadores_disponibles.length) jugadores_disponibles = plantilla; // si no hay convocatoria, todos
+    var opts_todos = '<option value="">— Jugador —</option>' + jugadores_disponibles.map(function(n){ return '<option>'+n+'</option>'; }).join('');
+    var opts_sale  = opts_todos;
+    var opts_entra = opts_todos;
+  } else {
+    // Para cambios NO libres: excluir jugadores que ya salieron
+    var ya_salidos = [];
+    var ya_entrados = [];
     document.querySelectorAll('.cambio-sale').forEach(function(s){ ya_salidos.push(s.value); });
     document.querySelectorAll('.cambio-entra').forEach(function(s){ ya_entrados.push(s.value); });
     titulares = titulares.filter(function(n){ return ya_salidos.indexOf(n)===-1; });
     suplentes = suplentes.filter(function(n){ return ya_entrados.indexOf(n)===-1; });
-  }
-
-  var opts_sale   = '<option value="">— Jugador que sale —</option>' + titulares.map(function(n){ return '<option>'+n+'</option>'; }).join('');
-  var opts_entra  = '<option value="">— Jugador que entra —</option>' + suplentes.map(function(n){ return '<option>'+n+'</option>'; }).join('');
-
-  if (!titulares.length && !plantilla.length) {
-    opts_sale = opts_entra = '<option value="">Añade jugadores en Plantilla</option>';
+    var opts_sale  = '<option value="">— Jugador que sale —</option>' + titulares.map(function(n){ return '<option>'+n+'</option>'; }).join('');
+    var opts_entra = '<option value="">— Jugador que entra —</option>' + suplentes.map(function(n){ return '<option>'+n+'</option>'; }).join('');
   }
 
   var div = document.createElement('div');
   div.className = 'cambio-row';
   div.id = 'cambio_'+id;
   div.innerHTML =
-    '<input class="cambio-min" type="number" min="1" max="120" placeholder="Min">' +
-    '<span class="cambio-ico">⬇️</span>' +
-    '<select class="cambio-sel cambio-sale" onchange="actualizarSelectsCambios()">'+opts_sale+'</select>' +
-    '<span class="cambio-ico">⬆️</span>' +
-    '<select class="cambio-sel cambio-entra" onchange="actualizarSelectsCambios()">'+opts_entra+'</select>' +
-    '<button class="del-btn" onclick="eliminarCambio(\'cambio_'+id+'\')">×</button>';
+    '<div class="cambio-row-top">' +
+      '<input class="cambio-min" type="number" min="1" max="120" placeholder="Min">' +
+      '<span style="font-size:12px;color:var(--texto3);flex:1;text-align:center">Minuto del cambio</span>' +
+      '<button class="del-btn" onclick="eliminarCambio(\'cambio_'+id+'\')">×</button>' +
+    '</div>' +
+    '<div class="cambio-row-sels">' +
+      '<div>' +
+        '<div style="font-size:10px;font-weight:700;color:var(--texto3);margin-bottom:4px">⬇️ SALE</div>' +
+        '<select class="cambio-sel cambio-sale" onchange="actualizarSelectsCambios()">'+opts_sale+'</select>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:10px;font-weight:700;color:var(--texto3);margin-bottom:4px">⬆️ ENTRA</div>' +
+        '<select class="cambio-sel cambio-entra" onchange="actualizarSelectsCambios()">'+opts_entra+'</select>' +
+      '</div>' +
+    '</div>';
 
   document.getElementById('cambios-list').appendChild(div);
   actualizarBadgeCambios();
