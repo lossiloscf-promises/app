@@ -127,7 +127,7 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 </div>
 
 <div class="topbar">
-  <button class="btn-back" onclick="history.back()">‹</button>
+  <button class="btn-back" onclick="volverAtras()">‹</button>
   <div>
     <h1>⚽ Ficha de partido</h1>
     <p id="top-cat">—</p>
@@ -262,7 +262,7 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
     <div class="success-icon">⚽</div>
     <h2 style="font-size:20px;font-weight:700;color:var(--verde);margin-bottom:8px">Ficha guardada</h2>
     <p style="font-size:14px;color:var(--texto2);margin-bottom:24px">Los datos se han enviado al sistema y se integrarán en el informe propio.</p>
-    <button class="btn-main btn-verde" style="max-width:300px;margin:0 auto" onclick="history.back()">Volver al inicio</button>
+    <button class="btn-main btn-verde" style="max-width:300px;margin:0 auto" onclick="volverAtras()">Volver al inicio</button>
     <button class="btn-main btn-outline" style="max-width:300px;margin:8px auto 0" onclick="resetForm()">Registrar otro partido</button>
   </div>
 
@@ -287,6 +287,14 @@ var STATS = [
   ['Duelos ganados','duelos'],['Centros al área','centros'],
   ['Contragolpes','contragolpes'],['Paradas portero','paradas']
 ];
+
+function volverAtras() {
+  if (window.history.length > 1) {
+    history.back();
+  } else {
+    window.location.href = 'index.html';
+  }
+}
 
 window.addEventListener('DOMContentLoaded', function() {
   document.getElementById('p-fecha').value = new Date().toISOString().split('T')[0];
