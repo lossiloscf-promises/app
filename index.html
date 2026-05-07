@@ -872,7 +872,6 @@ function buildStatsPartido() {
 
 // ── ENTRENAMIENTO ────────────────────────────────────
 function buildEntrenoUI() {
-async function initEntreno() {
   var cat = CATEGORIAS[equipoActual] || {nombre:equipoActual, formato:'F11', duracion:45, jugadores:[]};
   var hoy = new Date();
   document.getElementById('e-fecha').value    = hoy.toISOString().split('T')[0];
@@ -880,21 +879,10 @@ async function initEntreno() {
   document.getElementById('e-duracion').value = cat.duracion * 2;
   playerStatus = {};
   var lista = document.getElementById('lista-jugadores-entreno');
-  lista.innerHTML = '<div style="padding:16px 0;color:var(--texto3);font-size:13px;text-align:center">Cargando plantilla...</div>';
-
-  // Cargar plantilla desde API
-  var jugadores = cat.jugadores || [];
-  try {
-    var r = await fetch(GOOGLE_SCRIPT_URL+'?action=plantilla&categoria='+equipoActual).then(function(r){return r.json();});
-    if (r.ok && r.jugadores && r.jugadores.length) {
-      jugadores = r.jugadores.map(function(j){ return typeof j==='string'?j:j.nombre||j; });
-    }
-  } catch(e) {}
-
-  if (!jugadores.length) {
-    lista.innerHTML = '<div style="padding:16px 0;color:var(--texto3);font-size:13px;text-align:center">Sin jugadores en plantilla.<br>Añádelos en la sección Plantilla.</div>';
+  if (!cat.jugadores || !cat.jugadores.length) {
+    lista.innerHTML = '<div style="padding:16px 0;color:var(--texto3);font-size:13px;text-align:center">Plantilla pendiente de configurar.</div>';
   } else {
-    lista.innerHTML = jugadores.map(function(p, i) {
+    lista.innerHTML = cat.jugadores.map(function(p, i) {
       playerStatus[p] = 'presente';
       var ini = p.split(',')[0].trim().split(' ').map(function(w){ return w[0]||''; }).join('').slice(0,2).toUpperCase();
       var motOpts = MOTIVOS.map(function(m){ return '<option value="'+m+'">'+m+'</option>'; }).join('');
