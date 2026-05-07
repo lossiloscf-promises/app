@@ -195,6 +195,30 @@
     <div><h1>Entrenamiento</h1><p id="entreno-cat-label">-</p></div>
   </div>
   <div class="scroll-body">
+    <!-- Selector equipo (superadmin/director/presidente) -->
+    <div id="entreno-selector-equipo" style="display:none;margin-bottom:12px">
+      <div class="field" style="margin:0">
+        <label>Equipo</label>
+        <select id="entreno-equipo-sel" onchange="cambiarEquipoEntreno(this.value)" style="width:100%;padding:13px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:16px;font-family:inherit;background:#fff;-webkit-appearance:none">
+          <option value="amateur">Amateur</option>
+          <option value="juvenil_a">Juvenil A</option>
+          <option value="juvenil_b">Juvenil B</option>
+          <option value="cadete_a">Cadete A</option>
+          <option value="cadete_b">Cadete B</option>
+          <option value="cadete_femenino">Cadete Femenino</option>
+          <option value="infantil_a">Infantil A</option>
+          <option value="infantil_b">Infantil B</option>
+          <option value="infantil_femenino">Infantil Femenino</option>
+          <option value="alevin_a">Alevín A</option>
+          <option value="alevin_b">Alevín B</option>
+          <option value="alevin_femenino">Alevín Femenino</option>
+          <option value="benjamin_a">Benjamín A</option>
+          <option value="benjamin_b">Benjamín B</option>
+          <option value="prebenjamin_a">Prebenjamín A</option>
+          <option value="prebenjamin_b">Prebenjamín B</option>
+        </select>
+      </div>
+    </div>
     <p class="section-label">Informacion de la sesion</p>
     <div class="card"><div class="card-body">
       <div class="grid-2">
@@ -704,14 +728,33 @@ function buildStatsPartido() {
     }).join('') + '</div></div>';
 }
 function buildEntrenoUI() {
+  // Mostrar selector para superadmin/director/presidente
+  var esSup = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente';
+  var selBar = document.getElementById('entreno-selector-equipo');
+  if (selBar) selBar.style.display = esSup ? 'block' : 'none';
+  if (esSup) {
+    var sel = document.getElementById('entreno-equipo-sel');
+    var catPref = cfg.equipo && cfg.equipo!=='todos' ? cfg.equipo : 'amateur';
+    if (sel) sel.value = catPref;
+  }
+  initEntreno();
+}
+
+function cambiarEquipoEntreno(cat) {
+  equipoActual = cat;
   initEntreno();
 }
 function initEntreno() {
-  var cat = CATEGORIAS[equipoActual] || {nombre:equipoActual, formato:'F11', duracion:45, jugadores:[]};
+  // Usar equipo del selector si es superadmin, si no usar equipoActual
+  var esSup = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente';
+  var sel = document.getElementById('entreno-equipo-sel');
+  var catEntreno = (esSup && sel) ? sel.value : equipoActual;
+  var cat = CATEGORIAS[catEntreno] || {nombre:catEntreno, formato:'F11', duracion:45};
+  document.getElementById('entreno-cat-label').textContent = cat.nombre || catEntreno;
   var hoy = new Date();
   document.getElementById('e-fecha').value    = hoy.toISOString().split('T')[0];
   document.getElementById('e-hora').value     = hoy.toTimeString().slice(0,5);
-  document.getElementById('e-duracion').value = cat.duracion * 2;
+  document.getElementById('e-duracion').value = (cat.duracion||45) * 2;
   playerStatus = {};
   selectedPills = {tac:[],fis:[],tec:[]};
   buildPills('pills-tacticos', TACTICOS, 'tac', 'p-tac');
@@ -719,7 +762,7 @@ function initEntreno() {
   buildPills('pills-tecnicos', TECNICOS, 'tec', 'p-tec');
   var lista = document.getElementById('lista-jugadores-entreno');
   lista.innerHTML = '<div style="padding:16px 0;color:var(--texto3);font-size:13px;text-align:center">Cargando plantilla...</div>';
-  fetch(GOOGLE_SCRIPT_URL + '?action=plantilla&categoria=' + encodeURIComponent(equipoActual))
+  fetch(GOOGLE_SCRIPT_URL + '?action=plantilla&categoria=' + encodeURIComponent(catEntreno))
     .then(function(r){ return r.json(); })
     .then(function(r) {
       var jugadores = [];
@@ -737,17 +780,17 @@ function initEntreno() {
             '<div class="avatar" style="background:'+COLORES[i%COLORES.length]+'">'+ini+'</div>' +
             '<span class="player-name-txt">'+p+'</span>' +
             '<div class="status-buttons">' +
-              '<button class="status-btn sp" onclick="setPresente(\''+p.replace(/'/g,"\\'")+'\',' +i+')">Asiste</button>' +
-              '<button class="status-btn" onclick="mostrarMotivo(\''+p.replace(/'/g,"\\'")+'\',' +i+')">No asiste</button>' +
+              '<button class="status-btn sp" onclick="setPresente(\''+p.replace(/'/g,"\\'")+'\','+i+')">Asiste</button>' +
+              '<button class="status-btn" onclick="mostrarMotivo(\''+p.replace(/'/g,"\\'")+'\','+i+')">No asiste</button>' +
             '</div>' +
-            '<select id="mot-'+i+'" onchange="setMotivo(\''+p.replace(/'/g,"\\'")+'\',' +'this.value)" style="display:none;margin-top:6px;width:100%;padding:8px 10px;border:0.5px solid var(--borde);border-radius:8px;font-size:13px;-webkit-appearance:none;background:#fff">'+motOpts+'</select>' +
+            '<select id="mot-'+i+'" onchange="setMotivo(\''+p.replace(/'/g,"\\'")+'\',this.value)" style="display:none;margin-top:6px;width:100%;padding:8px 10px;border:0.5px solid var(--borde);border-radius:8px;font-size:13px;-webkit-appearance:none;background:#fff">'+motOpts+'</select>' +
           '</div>';
         }).join('');
       }
       actualizarResumen();
     })
     .catch(function() {
-      lista.innerHTML = '<div style="padding:16px 0;color:var(--texto3);font-size:13px;text-align:center">Error cargando plantilla.</div>';
+      lista.innerHTML = '<div style="padding:16px 0;color:var(--texto3);font-size:13px;text-align:center">Error al cargar plantilla.</div>';
     });
 }
 function setPresente(player, i) {

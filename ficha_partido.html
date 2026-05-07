@@ -360,19 +360,23 @@ async function cargarProximoPartido(cat) {
     var r = await fetch(WEBAPP_URL+'?action=proximos&categoria='+cat).then(function(r){return r.json();});
     if (r.ok && r.proximos && r.proximos.length) {
       var p = r.proximos[0];
-      // Rellenar rival, jornada y condición automáticamente
-      var rivalInput = document.getElementById('p-rival');
-      var jornadaInput = document.getElementById('p-jornada');
-      var condInput = document.getElementById('p-condicion');
-      if (rivalInput && !rivalInput.value) rivalInput.value = p.rival || '';
+      var rivalInput  = document.getElementById('p-rival');
+      var jornadaInput= document.getElementById('p-jornada');
+      var condInput   = document.getElementById('p-condicion');
+      if (rivalInput  && !rivalInput.value)  rivalInput.value  = p.rival  || '';
       if (jornadaInput && !jornadaInput.value) jornadaInput.value = p.j_num || '';
-      if (condInput) condInput.value = p.es_local ? 'Local' : 'Visitante';
-      var esLocal = p.es_local;
-      document.getElementById('marcador-nombre-local').textContent = esLocal ? 'LOS SILOS CF' : (p.rival||'RIVAL');
-      document.getElementById('marcador-nombre-local').className = 'team-name ' + (esLocal ? 'silos' : 'rival');
-      document.getElementById('marcador-nombre-visitante').textContent = esLocal ? (p.rival||'RIVAL') : 'LOS SILOS CF';
-      document.getElementById('marcador-nombre-visitante').className = 'team-name ' + (esLocal ? 'rival' : 'silos');
-      document.getElementById('p-condicion').value = esLocal ? 'Local' : 'Visitante';
+      // condicion viene como "Local" o "Visitante" desde el Sheets
+      var esLocal = (p.condicion || p.es_local) === 'Local' || p.es_local === true;
+      if (condInput) condInput.value = esLocal ? 'Local' : 'Visitante';
+      // Actualizar marcador
+      var elLocal = document.getElementById('marcador-nombre-local');
+      var elVisit = document.getElementById('marcador-nombre-visitante');
+      if (elLocal && elVisit) {
+        elLocal.textContent = esLocal ? 'LOS SILOS CF' : (p.rival||'RIVAL');
+        elLocal.className   = 'team-name ' + (esLocal ? 'silos' : 'rival');
+        elVisit.textContent = esLocal ? (p.rival||'RIVAL') : 'LOS SILOS CF';
+        elVisit.className   = 'team-name ' + (esLocal ? 'rival' : 'silos');
+      }
     }
   } catch(e) {}
 }
