@@ -704,6 +704,8 @@ function buildStatsPartido() {
     }).join('') + '</div></div>';
 }
 function buildEntrenoUI() {
+  initEntreno();
+}
 function initEntreno() {
   var cat = CATEGORIAS[equipoActual] || {nombre:equipoActual, formato:'F11', duracion:45, jugadores:[]};
   var hoy = new Date();
