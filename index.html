@@ -40,7 +40,7 @@
       <div id="login-error" class="login-error">Usuario o contrasena incorrectos</div>
       <div class="field"><label>Usuario</label><input type="text" id="l-usuario" placeholder="tu.usuario" autocomplete="username" autocapitalize="none"></div>
       <div class="field"><label>Contrasena</label><input type="password" id="l-contrasena" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="btn-main btn-azul" onclick="hacerLogin()" style="margin-top:8px">Entrar</button>
+      <button class="btn-main btn-azul" onclick="hacerLogin()" ontouchend="event.preventDefault();hacerLogin()" style="margin-top:8px">Entrar</button>
       <p class="login-footer">Si no recuerdas tu acceso contacta con el director deportivo</p>
     </div>
   </div>
