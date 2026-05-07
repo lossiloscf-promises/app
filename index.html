@@ -40,7 +40,7 @@
       <div id="login-error" class="login-error">Usuario o contrasena incorrectos</div>
       <div class="field"><label>Usuario</label><input type="text" id="l-usuario" placeholder="tu.usuario" autocomplete="username" autocapitalize="none"></div>
       <div class="field"><label>Contrasena</label><input type="password" id="l-contrasena" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="btn-main btn-azul" onclick="hacerLogin()" ontouchend="event.preventDefault();hacerLogin()" style="margin-top:8px">Entrar</button>
+      <button class="btn-main btn-azul" onclick="hacerLogin()" style="margin-top:8px;cursor:pointer">Entrar</button>
       <p class="login-footer">Si no recuerdas tu acceso contacta con el director deportivo</p>
     </div>
   </div>
@@ -453,8 +453,10 @@ async function hacerLogin() {
   document.getElementById('overlay-txt').textContent = 'Verificando acceso...';
   document.getElementById('overlay').classList.add('show');
   try {
-    var resp = await fetch(GOOGLE_SCRIPT_URL + '?usuario=' + encodeURIComponent(usuario) + '&contrasena=' + encodeURIComponent(contrasena));
-    var data = await resp.json();
+    var url = GOOGLE_SCRIPT_URL + '?usuario=' + encodeURIComponent(usuario) + '&contrasena=' + encodeURIComponent(contrasena);
+    var resp = await fetch(url);
+    var txt  = await resp.text();
+    var data = JSON.parse(txt);
     document.getElementById('overlay').classList.remove('show');
     if (data.ok) {
       cfg = {nombre:data.nombre, equipo:data.equipo||'', rol:data.rol, usuario:usuario};
@@ -466,7 +468,7 @@ async function hacerLogin() {
     }
   } catch(e) {
     document.getElementById('overlay').classList.remove('show');
-    errorEl.textContent = 'Error de conexion. Comprueba internet.';
+    errorEl.textContent = 'Error: ' + e.message;
     errorEl.style.display = 'block';
   }
 }
