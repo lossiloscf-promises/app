@@ -96,6 +96,37 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 
 <div class="body">
 
+  <!-- SELECTOR EQUIPO (superadmin/director) -->
+  <div id="selector-cat-plantilla" style="display:none;margin-bottom:12px">
+    <select id="sel-cat-plantilla" onchange="cambiarCategoria(this.value)"
+      style="width:100%;padding:12px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-weight:600;color:var(--azul);font-family:var(--font);background:#fff;-webkit-appearance:none;outline:none">
+      <option value="amateur">Amateur</option>
+      <option value="juvenil_a">Juvenil A</option>
+      <option value="juvenil_b">Juvenil B</option>
+      <option value="cadete_a">Cadete A</option>
+      <option value="cadete_b">Cadete B</option>
+      <option value="cadete_femenino">Cadete Femenino</option>
+      <option value="infantil_a">Infantil A</option>
+      <option value="infantil_b">Infantil B</option>
+      <option value="infantil_femenino">Infantil Femenino</option>
+      <option value="alevin_a">Alevín A</option>
+      <option value="alevin_b">Alevín B</option>
+      <option value="alevin_femenino">Alevín Femenino</option>
+      <option value="benjamin_a">Benjamín A</option>
+      <option value="benjamin_b">Benjamín B</option>
+      <option value="prebenjamin_a">Prebenjamín A</option>
+      <option value="prebenjamin_b">Prebenjamín B</option>
+    </select>
+  </div>
+
+  <!-- RECARGAR PLANTILLA -->
+  <div id="btn-recargar-wrap" style="margin-bottom:12px">
+    <button onclick="recargarDesdeFfcv()" style="width:100%;padding:12px;border-radius:var(--radio-sm);border:1.5px solid var(--azul);background:var(--azul-c);color:var(--azul);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font)">
+      🔄 Recargar plantilla desde FFCV
+    </button>
+    <p id="recarga-estado" style="font-size:11px;color:var(--texto3);text-align:center;margin-top:6px"></p>
+  </div>
+
   <!-- AÑADIR JUGADOR -->
   <div class="sec-label">Añadir jugador</div>
   <div class="add-card">
@@ -125,7 +156,10 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 <div class="modal-overlay hidden" id="modal-overlay" onclick="cerrarModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <h2>Editar jugador</h2>
-    <div class="modal-nombre" id="modal-nombre"></div>
+    <div class="field" style="margin-bottom:12px">
+      <label style="font-size:11px;font-weight:700;color:var(--texto2);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Nombre</label>
+      <input type="text" id="modal-nombre-input" style="width:100%;padding:11px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:14px;font-family:var(--font);outline:none" autocapitalize="words">
+    </div>
     <div class="estado-grid">
       <div class="estado-opt" data-estado="activo" onclick="selEstado(this)">✅ Activo</div>
       <div class="estado-opt" data-estado="cedido_arriba" onclick="selEstado(this)">⬆️ Cedido arriba</div>
@@ -138,6 +172,7 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
       <button class="btn-modal btn-modal-cancel" onclick="cerrarModal()">Cancelar</button>
       <button class="btn-modal btn-modal-ok" onclick="guardarCambio()">Guardar</button>
     </div>
+    <button onclick="eliminarJugador()" style="width:100%;margin-top:8px;padding:12px;border-radius:var(--radio-sm);border:none;background:var(--rojo-c);color:var(--rojo);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">🗑️ Eliminar jugador</button>
   </div>
 </div>
 
@@ -166,7 +201,7 @@ var NOMBRES_CAT = {
   prebenjamin_a:'Prebenjamín A', prebenjamin_b:'Prebenjamín B'
 };
 
-window.addEventListener('DOMContentLoaded', cargar);
+
 
 async function cargar() {
   document.getElementById('top-cat').textContent = NOMBRES_CAT[categoria] || categoria;
@@ -174,6 +209,18 @@ async function cargar() {
     var r = await fetch(WEBAPP_URL + '?action=plantilla&categoria=' + encodeURIComponent(categoria)).then(r=>r.json());
     if (!r.ok) { mostrarError(r.error); return; }
     jugadoresData = r.jugadores || [];
+    if (!jugadoresData.length) {
+      // Plantilla vacía — cargar automáticamente desde FFCV
+      var estado = document.getElementById('recarga-estado');
+      if (estado) estado.textContent = 'Cargando plantilla desde FFCV por primera vez...';
+      document.getElementById('lista-jugadores').innerHTML = '<div class="loading"><span class="spin"></span>Cargando desde FFCV...</div>';
+      var r2 = await fetch(WEBAPP_URL + '?action=scraping_plantilla&categoria=' + encodeURIComponent(categoria)).then(r=>r.json());
+      if (r2.ok) {
+        var r3 = await fetch(WEBAPP_URL + '?action=plantilla&categoria=' + encodeURIComponent(categoria)).then(r=>r.json());
+        jugadoresData = (r3.ok ? r3.jugadores : []) || [];
+        if (estado) estado.textContent = '';
+      }
+    }
     renderLista();
   } catch(e) { mostrarError('Error de conexión'); }
 }
@@ -219,7 +266,7 @@ function setFiltro(f, btn) {
 
 function abrirModal(nombre, estado, notas) {
   jugadorEditando = nombre;
-  document.getElementById('modal-nombre').textContent = nombre;
+  document.getElementById('modal-nombre-input').value = nombre;
   document.getElementById('modal-notas').value = notas || '';
   document.querySelectorAll('.estado-opt').forEach(function(opt) {
     opt.classList.toggle('sel', opt.dataset.estado === estado);
@@ -242,8 +289,10 @@ function selEstado(el) {
 async function guardarCambio() {
   var estadoEl = document.querySelector('.estado-opt.sel');
   if (!estadoEl) return;
-  var estado = estadoEl.dataset.estado;
-  var notas  = document.getElementById('modal-notas').value.trim();
+  var estado     = estadoEl.dataset.estado;
+  var notas      = document.getElementById('modal-notas').value.trim();
+  var nuevoNombre = document.getElementById('modal-nombre-input').value.trim();
+  if (!nuevoNombre) { alert('El nombre no puede estar vacío'); return; }
 
   document.getElementById('modal-overlay').classList.add('hidden');
 
@@ -251,13 +300,27 @@ async function guardarCambio() {
     await fetch(WEBAPP_URL, {
       method:'POST', mode:'no-cors',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({tipo:'actualizar_jugador', categoria:categoria, nombre:jugadorEditando, estado:estado, notas:notas})
+      body: JSON.stringify({tipo:'actualizar_jugador', categoria:categoria, nombre:jugadorEditando, nuevo_nombre:nuevoNombre, estado:estado, notas:notas})
     });
-    // Actualizar local
     var j = jugadoresData.find(function(j){ return j.nombre===jugadorEditando; });
-    if (j) { j.estado=estado; j.notas=notas; }
+    if (j) { j.nombre=nuevoNombre; j.estado=estado; j.notas=notas; }
     renderLista();
   } catch(e) { alert('Error al guardar'); }
+  jugadorEditando = null;
+}
+
+async function eliminarJugador() {
+  if (!confirm('¿Eliminar a ' + jugadorEditando + ' de la plantilla?')) return;
+  document.getElementById('modal-overlay').classList.add('hidden');
+  try {
+    await fetch(WEBAPP_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({tipo:'eliminar_jugador', categoria:categoria, nombre:jugadorEditando})
+    });
+    jugadoresData = jugadoresData.filter(function(j){ return j.nombre !== jugadorEditando; });
+    renderLista();
+  } catch(e) { alert('Error al eliminar'); }
   jugadorEditando = null;
 }
 
@@ -279,9 +342,59 @@ async function añadirJugador() {
   } catch(e) { alert('Error al añadir'); }
 }
 
+async function recargarDesdeFfcv() {
+  var btn = document.querySelector('#btn-recargar-wrap button');
+  var estado = document.getElementById('recarga-estado');
+  btn.disabled = true;
+  btn.textContent = '⏳ Recargando...';
+  estado.textContent = 'Solicitando scraping a la FFCV, puede tardar 1-2 minutos...';
+  try {
+    var r = await fetch(WEBAPP_URL + '?action=scraping_plantilla&categoria=' + encodeURIComponent(categoria)).then(function(r){return r.json();});
+    if (r.ok) {
+      estado.textContent = '✅ Plantilla actualizada. Recargando...';
+      setTimeout(function() {
+        jugadoresData = [];
+        document.getElementById('lista-jugadores').innerHTML = '<div class="loading"><span class="spin"></span>Cargando...</div>';
+        cargar();
+        btn.disabled = false;
+        btn.textContent = '🔄 Recargar plantilla desde FFCV';
+        estado.textContent = '';
+      }, 1500);
+    } else {
+      estado.textContent = '⚠️ ' + (r.error || 'Error al recargar');
+      btn.disabled = false;
+      btn.textContent = '🔄 Recargar plantilla desde FFCV';
+    }
+  } catch(e) {
+    estado.textContent = '❌ Error de conexión';
+    btn.disabled = false;
+    btn.textContent = '🔄 Recargar plantilla desde FFCV';
+  }
+}
+
+function cambiarCategoria(cat) {
+  categoria = cat;
+  document.getElementById('top-cat').textContent = NOMBRES_CAT[cat] || cat;
+  jugadoresData = [];
+  document.getElementById('lista-jugadores').innerHTML = '<div class="loading"><span class="spin"></span>Cargando...</div>';
+  cargar();
+}
+
 function mostrarError(msg) {
   document.getElementById('lista-jugadores').innerHTML = '<div class="empty">⚠️ ' + (msg||'Error') + '</div>';
 }
+
+window.addEventListener('DOMContentLoaded', function() {
+  // Mostrar selector para superadmin/director/presidente
+  var esSup = cfg.rol==='superadmin'||cfg.rol==='director'||cfg.rol==='presidente'||cfg.rol==='coordinador';
+  var bar = document.getElementById('selector-cat-plantilla');
+  if (bar && esSup) {
+    bar.style.display = 'block';
+    var sel = document.getElementById('sel-cat-plantilla');
+    if (sel) sel.value = categoria;
+  }
+  cargar();
+});
 </script>
 </body>
 </html>
