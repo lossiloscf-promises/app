@@ -181,7 +181,7 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
       <div class="field"><label>Jornada</label><input type="number" id="p-jornada" placeholder="27" min="1"></div>
       <div class="field"><label>Fecha</label><input type="date" id="p-fecha"></div>
     </div>
-    <div class="field"><label>Rival</label><input type="text" id="p-rival" placeholder="Nombre del equipo rival" oninput="document.getElementById('marcador-nombre-rival').textContent=this.value.substring(0,14)||'RIVAL'"></div>
+    <div class="field"><label>Rival</label><input type="text" id="p-rival" placeholder="Nombre del equipo rival" oninput="document.getElementById('marcador-nombre-rival').textContent=this.value.substring(0,20)||'RIVAL'"></div>
     <div class="grid-2">
       <div class="field"><label>Condición</label><select id="p-condicion"><option>Local</option><option>Visitante</option></select></div>
       <div class="field"><label>Resultado</label><input type="text" id="p-resultado" placeholder="2-1" maxlength="6"></div>
@@ -339,7 +339,7 @@ async function cargarProximoPartido(cat) {
       if (rivalInput && !rivalInput.value) rivalInput.value = p.rival || '';
       if (jornadaInput && !jornadaInput.value) jornadaInput.value = p.j_num || '';
       if (condInput) condInput.value = p.es_local ? 'Local' : 'Visitante';
-      document.getElementById('marcador-nombre-rival').textContent = (p.rival||'RIVAL').substring(0,14);
+      document.getElementById('marcador-nombre-rival').textContent = (p.rival||'RIVAL').substring(0,20);
     }
   } catch(e) {}
 }
