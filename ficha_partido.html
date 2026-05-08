@@ -93,7 +93,8 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 .sis-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
 
 /* STATS */
-.cnt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.cnt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.cnt-grid > div[style*="grid-column"]{grid-column:1/-1}
 .cnt-item{background:#fff;border-radius:var(--radio-sm);border:.5px solid var(--borde);padding:12px;text-align:center}
 .cnt-item-lbl{font-size:11px;color:var(--texto3);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.3px}
 .cnt-item-ctrl{display:flex;align-items:center;justify-content:center;gap:8px}
@@ -383,7 +384,7 @@ var STATS_EN_CONTRA = [
 
 function actualizarNombresMarcador() {
   var rival = document.getElementById('p-rival').value || 'RIVAL';
-  var esLocal = document.getElementById('p-condicion').value === 'Local';
+  var esLocal = (document.getElementById('p-condicion').value+'').trim() === 'Local';
   var elLocal = document.getElementById('marcador-nombre-local');
   var elVisit = document.getElementById('marcador-nombre-visitante');
   if (elLocal && elVisit) {
@@ -425,7 +426,7 @@ async function cargarProximoPartido(cat) {
       if (rivalInput  && !rivalInput.value)  rivalInput.value  = p.rival  || '';
       if (jornadaInput && !jornadaInput.value) jornadaInput.value = p.j_num || '';
       // condicion viene como "Local" o "Visitante" desde el Sheets
-      var esLocal = (p.condicion || p.es_local) === 'Local' || p.es_local === true;
+      var esLocal = (p.condicion+'').trim() === 'Local';
       if (condInput) condInput.value = esLocal ? 'Local' : 'Visitante';
       // Actualizar marcador
       var elLocal = document.getElementById('marcador-nombre-local');
@@ -657,16 +658,23 @@ function addTarjeta(color) {
 
 // ── STATS ──────────────────────────────────────────────────────────
 function renderStatsGrid() {
-  var html = STATS_DEF.map(function(s) {
-    return '<div class="cnt-item">' +
-      '<div class="cnt-item-lbl">'+s.lbl+'</div>' +
-      '<div class="cnt-item-ctrl">' +
-        '<button class="cnt-btn" onclick="cambiarStat(\''+s.key+'\',-1)">−</button>' +
-        '<div class="cnt-num" id="stat-'+s.key+'">0</div>' +
-        '<button class="cnt-btn" onclick="cambiarStat(\''+s.key+'\',1)">+</button>' +
-      '</div></div>';
-  }).join('');
-  document.getElementById('stats-grid').innerHTML = html;
+  function seccion(lista, titulo, color) {
+    var cabecera = '<div style="grid-column:1/-1;background:'+color+';color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">'+titulo+'</div>';
+    var items = lista.map(function(s) {
+      if (!stats[s.key]) stats[s.key] = 0;
+      return '<div class="cnt-item">' +
+        '<div class="cnt-item-lbl">'+s.lbl+'</div>' +
+        '<div class="cnt-item-ctrl">' +
+          '<button class="cnt-btn" onclick="cambiarStat(\''+s.key+'\',-1)">−</button>' +
+          '<div class="cnt-num" id="stat-'+s.key+'">0</div>' +
+          '<button class="cnt-btn" onclick="cambiarStat(\''+s.key+'\',1)">+</button>' +
+        '</div></div>';
+    }).join('');
+    return cabecera + items;
+  }
+  document.getElementById('stats-grid').innerHTML =
+    seccion(STATS_A_FAVOR,   '⚽ A favor',   '#1E7B34') +
+    seccion(STATS_EN_CONTRA, '🛡️ En contra', '#C0392B');
 }
 
 function cambiarStat(key, delta) {
