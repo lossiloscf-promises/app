@@ -261,6 +261,23 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 
   <!-- ESTADÍSTICAS -->
   <div class="sec-label">Estadísticas</div>
+  <div class="card"><div class="card-body" style="padding-bottom:4px">
+    <div class="grid-2" style="margin-bottom:12px">
+      <div class="field" style="margin:0">
+        <label>Posesión estimada</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="range" id="pt-posesion" min="0" max="100" value="50" style="flex:1;height:6px;-webkit-appearance:none;accent-color:var(--azul)" oninput="document.getElementById('posesion-val').textContent=this.value+'%'">
+          <span id="posesion-val" style="font-size:18px;font-weight:800;color:var(--azul);min-width:44px;text-align:right">50%</span>
+        </div>
+      </div>
+      <div></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:12px">
+      <div class="field" style="margin:0"><label>Resultado 1ª parte</label><input type="text" id="pt-res-1p" placeholder="0-0" maxlength="6" style="text-align:center;font-size:18px;font-weight:700"></div>
+      <div class="field" style="margin:0"><label>Resultado 2ª parte</label><input type="text" id="pt-res-2p" placeholder="0-0" maxlength="6" style="text-align:center;font-size:18px;font-weight:700"></div>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>Resultado final</label><input type="text" id="pt-res-final" placeholder="2-1" maxlength="6" style="text-align:center;font-size:22px;font-weight:900;color:var(--azul)"></div>
+  </div></div>
   <div class="cnt-grid" id="stats-grid"></div>
 
   <!-- ANÁLISIS -->
@@ -806,6 +823,10 @@ async function guardarFicha() {
     tipo_ataque: document.getElementById('pt-tipo-ataque').value,
     tipo_defensa: document.getElementById('pt-tipo-defensa').value,
     valoracion: document.getElementById('pt-valoracion').value,
+    posesion:   document.getElementById('pt-posesion').value,
+    res_1p:     document.getElementById('pt-res-1p').value,
+    res_2p:     document.getElementById('pt-res-2p').value,
+    res_final:  document.getElementById('pt-res-final').value,
     notas: document.getElementById('pt-notas').value,
     destacados: [
       document.getElementById('pt-destacado1').value,
