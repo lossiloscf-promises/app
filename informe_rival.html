@@ -359,6 +359,12 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
       <div id="patrones-cont"></div>
     </div>
 
+    <!-- OBSERVACIÓN TÁCTICA DIRECTA -->
+    <div id="sec-tactico-obs" style="display:none;margin-bottom:16px">
+      <div class="sec-label">👁️ Observación táctica directa</div>
+      <div style="background:#fff;border-radius:12px;border:.5px solid #E0E0E0;padding:14px 16px" id="tactico-obs-body"></div>
+    </div>
+
     <!-- CONCLUSIONES -->
     <div class="sec-label">🎯 Plan de partido</div>
     <div class="conclusion-card">
@@ -462,7 +468,13 @@ async function cargarTodo() {
       fetch(WEBAPP_URL + '?action=stats_propias&categoria=' + encodeURIComponent(categoria)).then(r=>r.json()).catch(()=>({ok:false}))
     ]);
     if (!rRival.ok) { mostrarError(rRival.error || 'Sin informe. Pulsa generar.'); return; }
-    renderTodo(rRival.data, rRival.generado, rAnom, rStats);
+    // Cargar análisis táctico observado si existe rival
+    var rivalNombre = rRival.data && rRival.data.partido ? (rRival.data.partido.rival||'') : '';
+    var rTac = {ok:false};
+    if (rivalNombre) {
+      try { rTac = await fetch(WEBAPP_URL+'?action=tactico_rival&categoria='+encodeURIComponent(categoria)+'&rival='+encodeURIComponent(rivalNombre)).then(r=>r.json()); } catch(e){}
+    }
+    renderTodo(rRival.data, rRival.generado, rAnom, rStats, rTac);
   } catch(e) { mostrarError('Error: ' + e.message); }
 }
 
@@ -479,7 +491,7 @@ async function generarYCargar() {
   } catch(e) { mostrarError('Error de conexión.'); }
 }
 
-function renderTodo(d, generado, anomResp, statsResp) {
+function renderTodo(d, generado, anomResp, statsResp, tacResp) {
   var p   = d.partido      || {};
   var s   = d.estadisticas || {};
   var lv  = d.local_visitante || {};
@@ -615,6 +627,39 @@ function renderTodo(d, generado, anomResp, statsResp) {
 
   // Cargar scouting manual si existe
   cargarScoutingGuardado(getJornada());
+
+  // Mostrar análisis táctico observado si existe
+  var secTac = document.getElementById('sec-tactico-obs');
+  var bodyTac = document.getElementById('tactico-obs-body');
+  if (secTac && bodyTac && tacResp && tacResp.ok && tacResp.observaciones && tacResp.observaciones.length) {
+    var obs = tacResp.observaciones[tacResp.observaciones.length - 1]; // más reciente
+    var html = '';
+    var campos = [
+      {k:'sistema_ofensivo',  l:'Sistema ofensivo'},
+      {k:'sistema_defensivo', l:'Sistema defensivo'},
+      {k:'tipo_ataque',       l:'Tipo de ataque'},
+      {k:'tipo_defensa',      l:'Tipo de defensa'},
+      {k:'def_corner',        l:'Defensa córner'},
+      {k:'def_falta_lateral', l:'Defensa falta lateral'},
+      {k:'def_falta_cercana', l:'Defensa falta cercana'},
+      {k:'jugadas_ensayadas', l:'Jugadas ensayadas'}
+    ];
+    campos.forEach(function(c) {
+      if (obs[c.k]) {
+        html += '<div style="margin-bottom:10px">' +
+          '<div style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">'+c.l+'</div>' +
+          '<div style="font-size:14px;color:#1A1A1A;line-height:1.4">'+obs[c.k]+'</div>' +
+        '</div>';
+      }
+    });
+    if (html) {
+      html = '<div style="font-size:11px;color:#999;margin-bottom:10px">Observado en J'+obs.jornada+' ('+obs.fecha+')</div>' + html;
+      bodyTac.innerHTML = html;
+      secTac.style.display = 'block';
+    }
+  } else if (secTac) {
+    secTac.style.display = 'none';
+  }
 
   ocultar('pantalla-carga'); ocultar('pantalla-error'); mostrar('informe');
 }

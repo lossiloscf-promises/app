@@ -271,7 +271,52 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
       <div class="val-labels"><span>Muy mal</span><span>Regular</span><span>Bien</span><span>Excelente</span></div>
     </div>
     <div class="field"><label>Notas tácticas y análisis</label><textarea id="pt-notas" rows="4" placeholder="Aspectos positivos, cosas a mejorar, situaciones clave..."></textarea></div>
-    <div class="field"><label>Jugador destacado</label><input type="text" id="pt-destacado" placeholder="Nombre del jugador"></div>
+    <div class="field"><label>Jugadores destacados</label>
+      <input type="text" id="pt-destacado1" placeholder="1er jugador destacado" style="margin-bottom:6px">
+      <input type="text" id="pt-destacado2" placeholder="2º jugador destacado" style="margin-bottom:6px">
+      <input type="text" id="pt-destacado3" placeholder="3er jugador destacado">
+    </div>
+  </div></div>
+
+  <!-- ANÁLISIS TÁCTICO RIVAL -->
+  <div class="sec-label">Análisis táctico del rival</div>
+  <div class="card"><div class="card-body">
+    <div class="grid-2">
+      <div class="field"><label>Sistema ofensivo rival</label>
+        <input type="text" id="r-sis-ofensivo" placeholder="4-3-3, 4-4-2...">
+      </div>
+      <div class="field"><label>Sistema defensivo rival</label>
+        <input type="text" id="r-sis-defensivo" placeholder="4-4-2, 5-3-2...">
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Tipo ataque rival</label>
+        <select id="r-tipo-ataque">
+          <option value="">— Seleccionar —</option>
+          <option>Posicional</option><option>Directo</option>
+          <option>Contraataque</option><option>Mixto</option><option>Presión alta</option>
+        </select>
+      </div>
+      <div class="field"><label>Tipo defensa rival</label>
+        <select id="r-tipo-defensa">
+          <option value="">— Seleccionar —</option>
+          <option>Zonal</option><option>Individual</option>
+          <option>Mixta</option><option>Presión alta</option><option>Bloque bajo</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Estructura defensiva córner rival</label>
+      <textarea id="r-def-corner" rows="2" placeholder="Ej: zona mixta, dos marcadores en zona 6..."></textarea>
+    </div>
+    <div class="field"><label>Estructura defensiva falta lateral rival</label>
+      <textarea id="r-def-falta-lat" rows="2" placeholder="Ej: barrera de 4, portero avanzado..."></textarea>
+    </div>
+    <div class="field"><label>Estructura defensiva falta cercana rival</label>
+      <textarea id="r-def-falta-cerca" rows="2" placeholder="Ej: barrera de 5, marcaje individual al lanzador..."></textarea>
+    </div>
+    <div class="field"><label>Jugadas ensayadas detectadas</label>
+      <textarea id="r-jugadas-ensayadas" rows="3" placeholder="Describe combinaciones o jugadas ensayadas observadas..."></textarea>
+    </div>
   </div></div>
 
   <!-- FOTO ACTA -->
@@ -311,15 +356,29 @@ var plantilla = [];
 var convocatoria = {}; // {nombre: 'titular'|'suplente'|'no'}
 var cambios = []; // [{min, sale, entra}]
 var fotoBase64 = null;
-var stats = {tiros:0,tiros_puerta:0,corners:0,faltas:0,fueras_juego:0,recuperaciones:0};
+var stats = {};
 
-var STATS_DEF = [
-  {key:'tiros',lbl:'Tiros'},
-  {key:'tiros_puerta',lbl:'A puerta'},
-  {key:'corners',lbl:'Córners'},
-  {key:'faltas',lbl:'Faltas'},
-  {key:'fueras_juego',lbl:'Fueras juego'},
-  {key:'recuperaciones',lbl:'Recuperaciones'}
+// Stats a favor (nuestras)
+var STATS_A_FAVOR = [
+  {key:'goles_corner_f',    lbl:'Gol córner'},
+  {key:'goles_falta_f',     lbl:'Gol falta'},
+  {key:'penaltis_f',        lbl:'Penalti'},
+  {key:'corners_f',         lbl:'Córners'},
+  {key:'tiros_f',           lbl:'Tiros'},
+  {key:'tiros_puerta_f',    lbl:'A portería'},
+  {key:'fueras_juego_f',    lbl:'Fuera juego'},
+  {key:'faltas_f',          lbl:'Faltas'}
+];
+// Stats en contra (rival)
+var STATS_EN_CONTRA = [
+  {key:'goles_corner_c',    lbl:'Gol córner'},
+  {key:'goles_falta_c',     lbl:'Gol falta'},
+  {key:'penaltis_c',        lbl:'Penalti'},
+  {key:'corners_c',         lbl:'Córners'},
+  {key:'tiros_c',           lbl:'Tiros'},
+  {key:'tiros_puerta_c',    lbl:'A portería'},
+  {key:'fueras_juego_c',    lbl:'Fuera juego'},
+  {key:'faltas_c',          lbl:'Faltas'}
 ];
 
 function actualizarNombresMarcador() {
@@ -740,8 +799,22 @@ async function guardarFicha() {
     tipo_defensa: document.getElementById('pt-tipo-defensa').value,
     valoracion: document.getElementById('pt-valoracion').value,
     notas: document.getElementById('pt-notas').value,
-    destacado: document.getElementById('pt-destacado').value,
-    stats: stats
+    destacados: [
+      document.getElementById('pt-destacado1').value,
+      document.getElementById('pt-destacado2').value,
+      document.getElementById('pt-destacado3').value
+    ].filter(function(d){return d.trim()!==''}),
+    stats: stats,
+    tactico_rival: {
+      sistema_ofensivo:   document.getElementById('r-sis-ofensivo').value,
+      sistema_defensivo:  document.getElementById('r-sis-defensivo').value,
+      tipo_ataque:        document.getElementById('r-tipo-ataque').value,
+      tipo_defensa:       document.getElementById('r-tipo-defensa').value,
+      def_corner:         document.getElementById('r-def-corner').value,
+      def_falta_lateral:  document.getElementById('r-def-falta-lat').value,
+      def_falta_cercana:  document.getElementById('r-def-falta-cerca').value,
+      jugadas_ensayadas:  document.getElementById('r-jugadas-ensayadas').value
+    }
   };
 
   // Subir foto si hay
@@ -767,7 +840,7 @@ async function guardarFicha() {
 }
 
 function resetForm() {
-  convocatoria = {}; cambios = []; stats = {tiros:0,tiros_puerta:0,corners:0,faltas:0,fueras_juego:0,recuperaciones:0};
+  convocatoria = {}; cambios = []; stats = {};
   goles_nuestros=0; goles_rival_cnt=0;
   document.getElementById('form-body').style.display='block';
   document.getElementById('success-wrap').style.display='none';
