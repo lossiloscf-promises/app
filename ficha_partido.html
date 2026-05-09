@@ -284,8 +284,8 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
             <rect x="142" y="4" width="56" height="8" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="2"/>
             <!-- Punto penalti RIVAL -->
             <circle cx="170" cy="71" r="3" fill="rgba(255,255,255,0.9)"/>
-            <!-- Arco área rival -->
-            <path d="M 95,102 A 55,55 0 0,1 245,102" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+            <!-- Arco área rival (apunta hacia centro campo) -->
+            <path d="M 110,102 A 45,45 0 0,0 230,102" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
             <!-- Área grande NUESTRA (abajo) -->
             <rect x="69" y="408" width="202" height="92" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
             <!-- Área pequeña NUESTRA -->
@@ -294,8 +294,8 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
             <rect x="142" y="498" width="56" height="8" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="2"/>
             <!-- Punto penalti NUESTRA -->
             <circle cx="170" cy="439" r="3" fill="rgba(255,255,255,0.9)"/>
-            <!-- Arco área nuestra -->
-            <path d="M 95,408 A 55,55 0 0,0 245,408" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+            <!-- Arco área nuestra (apunta hacia centro campo) -->
+            <path d="M 110,408 A 45,45 0 0,1 230,408" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
             <!-- Córners -->
             <path d="M 10,22 A 12,12 0 0,1 22,10" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>
             <path d="M 318,10 A 12,12 0 0,1 330,22" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>
@@ -493,7 +493,9 @@ function renderPitch() {
     var jugador = alineacion[i] || null;
     if (jugador) {
       var initials = jugador.split(',').map(function(s){return (s.trim()[0]||'').toUpperCase();}).join('').substring(0,2);
-      var apellido = (jugador.split(',')[0]||jugador).trim().split(' ')[0].substring(0,9);
+      // Si formato "Apellido, Nombre" → mostrar Nombre; si no → primera palabra
+      var partes = jugador.split(',');
+      var apellido = partes.length > 1 ? partes[1].trim().split(' ')[0].substring(0,9) : partes[0].trim().split(' ')[0].substring(0,9);
       html += '<div class="pitch-player" style="left:'+p.x+'%;top:'+p.y+'%" onclick="clickSlot('+i+')">' +
         '<div class="pp-dot">'+initials+'</div>' +
         '<div class="pp-name">'+apellido+'</div>' +
@@ -517,7 +519,7 @@ function renderLineupSidebar() {
   sb.innerHTML = todos.map(function(j) {
     var colocado = colocados.indexOf(j)!==-1;
     var sel = jugadorSeleccionado===j;
-    var nom = (j.split(',')[0]||j).trim().split(' ')[0].substring(0,10);
+    var pp = j.split(','); var nom = pp.length>1 ? pp[1].trim().split(' ')[0].substring(0,10) : pp[0].trim().split(' ')[0].substring(0,10);
     return '<div class="sidebar-player'+(colocado?' placed':sel?' sel':'')+'" onclick="seleccionarJugador(\''+j.replace(/'/g,"\\'")+'\')">'+nom+'</div>';
   }).join('');
 }
