@@ -585,12 +585,18 @@ function getAlineacionData() {
   });
 }
 
-// Actualizar sidebar cuando cambia la convocatoria
-var _orig_setEstadoJugador = setEstadoJugador;
 function setEstadoJugador(nombre_enc, estado) {
-  _orig_setEstadoJugador(nombre_enc, estado);
-  renderLineupSidebar();
-  renderPitch();
+  var nombre = plantilla.find(function(n){ return encodeNombre(n)===nombre_enc; }) || nombre_enc;
+  convocatoria[nombre] = estado;
+  var row = document.getElementById('jrow_'+nombre_enc);
+  if (!row) return;
+  var btns = row.querySelectorAll('button');
+  btns[0].classList.toggle('on', estado==='titular');
+  btns[1].classList.toggle('on', estado==='suplente');
+  btns[2].classList.toggle('on', estado==='no');
+  actualizarSelectsCambios();
+  // Actualizar alineación
+  if (typeof renderLineupSidebar === 'function') { renderLineupSidebar(); renderPitch(); }
 }
 
 function volverAtras() {
@@ -678,9 +684,11 @@ async function cargarPlantilla() {
   cargarProximoPartido(cat);
   // Inicializar alineación
   setTimeout(function() {
-    renderPitch();
-    renderLineupSidebar();
-  }, 100);
+    if (typeof renderPitch === 'function') {
+      renderPitch();
+      renderLineupSidebar();
+    }
+  }, 200);
 }
 
 function renderConvocatoria() {
@@ -710,18 +718,6 @@ function renderConvocatoria() {
 }
 
 function encodeNombre(n) { return n.replace(/[^a-zA-Z0-9]/g,'_'); }
-
-function setEstadoJugador(nombre_enc, estado) {
-  var nombre = plantilla.find(function(n){ return encodeNombre(n)===nombre_enc; }) || nombre_enc;
-  convocatoria[nombre] = estado;
-  var row = document.getElementById('jrow_'+nombre_enc);
-  if (!row) return;
-  var btns = row.querySelectorAll('button');
-  btns[0].classList.toggle('on', estado==='titular');
-  btns[1].classList.toggle('on', estado==='suplente');
-  btns[2].classList.toggle('on', estado==='no');
-  actualizarSelectsCambios();
-}
 
 // ── CAMBIOS ────────────────────────────────────────────────────────
 function getTitulares() { return plantilla.filter(function(n){ return convocatoria[n]==='titular'; }); }
