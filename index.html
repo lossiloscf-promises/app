@@ -578,6 +578,7 @@ function cargarMenuEquipo() {
   var bMU = document.getElementById('btn-mensajes-urgentes');
   if (bU)  bU.style.display  = esSuperAdmin ? '' : 'none';
   if (bP)  bP.style.display  = esPagos ? '' : 'none';
+  if (bPD) bPD.style.display = (esSuperAdmin || esPresidente || esDirector) ? '' : 'none';
   if (bMU) bMU.style.display = (esSuperAdmin || esPresidente || esDirector) ? '' : 'none';
   var bD = document.getElementById('btn-directo');
   if (bD) bD.style.display = (cfg.permisos && cfg.permisos.directo) || esSuperAdmin || esPresidente || esDirector || esEntrenador ? '' : 'none';
