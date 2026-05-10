@@ -115,6 +115,11 @@
         <div><h3>Gestionar plantilla</h3><p>Añadir jugadores, bajas y estados</p></div>
         <span class="chevron">›</span>
       </div>
+      <div class="home-card" id="btn-panel-director" style="display:none;border-left:3px solid #8E44AD" onclick="window.location.href='panel_director.html'">
+        <div class="home-card-icon" style="background:#F5EEF8">&#128204;</div>
+        <div><h3>Panel director</h3><p>Semáforo de fichas por equipo</p></div>
+        <span class="chevron">›</span>
+      </div>
       <div class="home-card" id="btn-usuarios" style="display:none;border-left:3px solid #6C3483" onclick="window.location.href='usuarios.html'">
         <div class="home-card-icon" style="background:#F5EEF8">🔑</div>
         <div><h3>Gestionar usuarios</h3><p>Crear y editar accesos al sistema</p></div>
@@ -569,6 +574,7 @@ function cargarMenuEquipo() {
   if (esF11 || esDirector) cargarProximosPartidos();
   var bU  = document.getElementById('btn-usuarios');
   var bP  = document.getElementById('btn-pagos');
+  var bPD = document.getElementById('btn-panel-director');
   var bMU = document.getElementById('btn-mensajes-urgentes');
   if (bU)  bU.style.display  = esSuperAdmin ? '' : 'none';
   if (bP)  bP.style.display  = esPagos ? '' : 'none';
