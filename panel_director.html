@@ -176,7 +176,7 @@ async function cargarPanel() {
       var j_txt = info.jornada ? ('J' + info.jornada + (info.fecha ? ' · ' + info.fecha : '')) : '';
 
       html += '<div>';
-      html += '<div class="equipo-row" onclick="toggleDetalle('' + eq.cat + '')">';
+      html += '<div class="equipo-row" onclick="toggleDetalle(' + JSON.stringify(eq.cat) + ')">';
       html += '<div class="semaforo ' + sem_cls + '"></div>';
       html += '<div class="equipo-info">';
       html += '<div class="equipo-nombre">' + eq.nombre + '</div>';
@@ -192,7 +192,7 @@ async function cargarPanel() {
       if (info.resultado) html += '<div class="detalle-row"><span>Resultado</span><strong>' + info.resultado + '</strong></div>';
       if (info.rival)     html += '<div class="detalle-row"><span>Rival</span><span>' + info.rival + '</span></div>';
       if (estado === 'pendiente' && info.entrenador) {
-        html += '<button class="btn-recordatorio" onclick="enviarRecordatorio('' + eq.cat + '','' + info.entrenador + '')">📲 Recordatorio a ' + info.entrenador + '</button>';
+        html += '<button class="btn-recordatorio" onclick="enviarRecordatorio(' + JSON.stringify(eq.cat) + ',' + JSON.stringify(info.entrenador) + ')">&#128242; Recordatorio a ' + info.entrenador + '</button>';
       }
       html += '</div></div>';
     });
