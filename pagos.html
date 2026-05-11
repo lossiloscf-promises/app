@@ -124,6 +124,8 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
     <button class="filtro-btn" onclick="filtrarCat('infantil_a',this)">Infantil A</button>
     <button class="filtro-btn" onclick="filtrarCat('alevin_a',this)">Alevín A</button>
     <button class="filtro-btn" onclick="filtrarCat('benjamin_a',this)">Benjamín A</button>
+    <button class="filtro-btn" onclick="filtrarCat('prebenjamin_a',this)">Prebenjamín</button>
+    <button class="filtro-btn" onclick="filtrarCat('querubines_a',this)">Querubines</button>
   </div>
 
   <!-- FILTRO ESTADO -->
@@ -146,6 +148,40 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
     <div class="loading-wrap"><div class="spin"></div><br>Cargando pagos...</div>
   </div>
 
+</div>
+
+<!-- BOTÓN AÑADIR -->
+<div style="position:fixed;bottom:20px;right:20px;z-index:50">
+  <button onclick="abrirModalAnyadir()" style="width:56px;height:56px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3)">+</button>
+</div>
+
+<!-- MODAL AÑADIR JUGADOR -->
+<div class="modal-overlay hidden" id="modal-anyadir" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-sheet">
+    <div class="modal-title">➕ Añadir jugador</div>
+    <div class="modal-field"><label>Categoría</label>
+      <select id="anyadir-cat">
+        <option value="amateur">Amateur</option><option value="juvenil_a">Juvenil A</option>
+        <option value="juvenil_b">Juvenil B</option><option value="cadete_a">Cadete A</option>
+        <option value="cadete_b">Cadete B</option><option value="cadete_femenino">Cadete Femenino</option>
+        <option value="infantil_a">Infantil A</option><option value="infantil_b">Infantil B</option>
+        <option value="infantil_femenino">Infantil Femenino</option>
+        <option value="alevin_a">Alevín A</option><option value="alevin_b">Alevín B</option>
+        <option value="alevin_femenino">Alevín Femenino</option>
+        <option value="benjamin_a">Benjamín A</option><option value="benjamin_b">Benjamín B</option>
+        <option value="prebenjamin_a">Prebenjamín A</option><option value="prebenjamin_b">Prebenjamín B</option>
+        <option value="querubines_a">Querubines A</option><option value="querubines_b">Querubines B</option>
+      </select>
+    </div>
+    <div class="modal-field"><label>Nombre (Apellidos, Nombre)</label><input type="text" id="anyadir-nombre" placeholder="García López, Juan" autocapitalize="words"></div>
+    <div class="modal-field"><label>DNI</label><input type="text" id="anyadir-dni" placeholder="12345678A"></div>
+    <div class="modal-field"><label>Teléfono 1</label><input type="tel" id="anyadir-tel" placeholder="600000000"></div>
+    <div class="modal-field"><label>Teléfono 2</label><input type="tel" id="anyadir-tel2" placeholder="600000001"></div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-cancel" onclick="document.getElementById('modal-anyadir').classList.add('hidden')">Cancelar</button>
+      <button class="modal-btn modal-ok" onclick="confirmarAnyadir()">✅ Añadir</button>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL REGISTRAR PAGO -->
@@ -365,6 +401,32 @@ async function confirmarPago() {
   } catch(e) {
     alert('Error al registrar pago');
   }
+}
+
+function abrirModalAnyadir() {
+  var sel = document.getElementById('anyadir-cat');
+  if (catFiltro && sel) sel.value = catFiltro;
+  document.getElementById('modal-anyadir').classList.remove('hidden');
+}
+
+async function confirmarAnyadir() {
+  var cat    = document.getElementById('anyadir-cat').value;
+  var nombre = document.getElementById('anyadir-nombre').value.trim();
+  var dni    = document.getElementById('anyadir-dni').value.trim();
+  var tel    = document.getElementById('anyadir-tel').value.trim();
+  var tel2   = document.getElementById('anyadir-tel2').value.trim();
+  if (!nombre) { alert('El nombre es obligatorio'); return; }
+  document.getElementById('modal-anyadir').classList.add('hidden');
+  try {
+    await fetch(WEBAPP_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({tipo:'anyadir_jugador_pagos',categoria:cat,nombre:nombre,dni:dni,telefono:tel,telefono2:tel2})
+    });
+    alert('Jugador añadido correctamente');
+    ['anyadir-nombre','anyadir-dni','anyadir-tel','anyadir-tel2'].forEach(function(id){ document.getElementById(id).value=''; });
+    setTimeout(cargarPagos, 2000);
+  } catch(e) { alert('Error al añadir jugador'); }
 }
 
 window.addEventListener('DOMContentLoaded', function() {

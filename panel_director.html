@@ -86,12 +86,7 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 
 <div class="body">
 
-  <!-- SELECTOR JORNADA -->
-  <div class="jornada-sel">
-    <label>Jornada</label>
-    <input type="number" id="sel-jornada" min="1" max="40" placeholder="Auto">
-    <button class="btn-buscar" onclick="cargarPanel()">Ver</button>
-  </div>
+  <!-- Jornada auto por equipo -->
 
   <!-- RESUMEN -->
   <div class="resumen-grid">
@@ -129,7 +124,10 @@ var EQUIPOS = [
   {cat:'benjamin_a',     nombre:'Benjamín A',      formato:'F8'},
   {cat:'benjamin_b',     nombre:'Benjamín B',      formato:'F8'},
   {cat:'prebenjamin_a',  nombre:'Prebenjamín A',   formato:'F8'},
-  {cat:'prebenjamin_b',  nombre:'Prebenjamín B',   formato:'F8'}
+  {cat:'prebenjamin_b',  nombre:'Prebenjamín B',   formato:'F8'},
+  {cat:'querubines_a',   nombre:'Querubines A',     formato:'F8'},
+  {cat:'querubines_b',   nombre:'Querubines B',     formato:'F8'},
+  {cat:'querubines_femenino', nombre:'Querubines Femenino', formato:'F8'}
 ];
 
 function volverAtras() {
@@ -138,24 +136,19 @@ function volverAtras() {
 }
 
 async function cargarPanel() {
-  var jornada = document.getElementById('sel-jornada').value || '';
   document.getElementById('equipos-lista').innerHTML = '<div class="loading-wrap"><div class="spin"></div><br>Cargando fichas...</div>';
   document.getElementById('top-fecha').textContent = 'Actualizando...';
 
   try {
-    var url = WEBAPP_URL + '?action=panel_director';
-    if (jornada) url += '&jornada=' + jornada;
-    var r = await fetch(url).then(function(res) { return res.json(); });
+    var r = await fetch(WEBAPP_URL + '?action=panel_director').then(function(res) { return res.json(); });
 
     if (!r.ok) {
-      document.getElementById('equipos-lista').innerHTML = '<div class="loading-wrap">Error al cargar datos</div>';
+      document.getElementById('equipos-lista').innerHTML = '<div class="loading-wrap">Error: ' + (r.error||'sin datos') + '</div>';
       return;
     }
 
     var datos = r.equipos || {};
-    var jornada_actual = r.jornada || '?';
-    document.getElementById('top-fecha').textContent = 'Jornada ' + jornada_actual;
-    document.getElementById('sel-jornada').placeholder = jornada_actual;
+    document.getElementById('top-fecha').textContent = 'Jornada por equipo (auto)';
 
     var subidas = 0, pendientes = 0, sin_partido = 0;
     var html = '';
@@ -168,58 +161,40 @@ async function cargarPanel() {
       else if (estado === 'pendiente') pendientes++;
       else sin_partido++;
 
-      var sem_cls, badge_cls, badge_txt, detalle_txt, entrenador;
+      var sem_cls, badge_cls, badge_txt, detalle_txt;
       if (estado === 'subida') {
-        sem_cls   = 'sem-verde';
-        badge_cls = 'badge-verde';
-        badge_txt = '✅ Subida';
-        detalle_txt = 'Ficha subida por ' + (info.entrenador || 'desconocido');
-        entrenador = info.entrenador || '';
+        sem_cls = 'sem-verde'; badge_cls = 'badge-verde'; badge_txt = '✅ Subida';
+        detalle_txt = 'Ficha subida' + (info.entrenador ? ' por ' + info.entrenador : '');
       } else if (estado === 'pendiente') {
-        sem_cls   = 'sem-rojo';
-        badge_cls = 'badge-rojo';
-        badge_txt = '❌ Pendiente';
+        sem_cls = 'sem-rojo'; badge_cls = 'badge-rojo'; badge_txt = '❌ Pendiente';
         detalle_txt = 'Sin ficha registrada';
-        entrenador = info.entrenador || '';
-      } else if (estado === 'sin_calendario') {
-        sem_cls   = 'sem-naranja';
-        badge_cls = 'badge-naranja';
-        badge_txt = '⚠️ Sin calendario';
-        detalle_txt = 'No hay partido registrado en el calendario';
-        entrenador = '';
       } else {
-        sem_cls   = 'sem-gris';
-        badge_cls = 'badge-gris';
-        badge_txt = '— Sin partido';
-        detalle_txt = 'No tenía partido esta jornada';
-        entrenador = '';
+        sem_cls = 'sem-gris'; badge_cls = 'badge-gris'; badge_txt = '— Sin partido';
+        detalle_txt = 'No tenía partido';
       }
 
+      var j_txt = info.jornada ? ('J' + info.jornada + (info.fecha ? ' · ' + info.fecha : '')) : '';
+
       html += '<div>';
-      html += '<div class="equipo-row" onclick="toggleDetalle(\'' + eq.cat + '\')">';
+      html += '<div class="equipo-row" onclick="toggleDetalle('' + eq.cat + '')">';
       html += '<div class="semaforo ' + sem_cls + '"></div>';
       html += '<div class="equipo-info">';
       html += '<div class="equipo-nombre">' + eq.nombre + '</div>';
-      html += '<div class="equipo-detalle">' + eq.formato + (entrenador ? ' · ' + entrenador : '') + '</div>';
+      html += '<div class="equipo-detalle">' + eq.formato + (info.entrenador ? ' · ' + info.entrenador : '') + '</div>';
       html += '</div>';
       html += '<div class="equipo-estado">';
       html += '<div class="estado-badge ' + badge_cls + '">' + badge_txt + '</div>';
-      if (info.fecha) html += '<div class="equipo-jornada">' + info.fecha + '</div>';
+      if (j_txt) html += '<div class="equipo-jornada">' + j_txt + '</div>';
       html += '</div></div>';
 
       html += '<div class="detalle-panel" id="det_' + eq.cat + '">';
       html += '<div class="detalle-row"><span>' + detalle_txt + '</span></div>';
-      if (estado === 'subida' && info.resultado) {
-        html += '<div class="detalle-row"><span>Resultado</span><strong>' + info.resultado + '</strong></div>';
+      if (info.resultado) html += '<div class="detalle-row"><span>Resultado</span><strong>' + info.resultado + '</strong></div>';
+      if (info.rival)     html += '<div class="detalle-row"><span>Rival</span><span>' + info.rival + '</span></div>';
+      if (estado === 'pendiente' && info.entrenador) {
+        html += '<button class="btn-recordatorio" onclick="enviarRecordatorio('' + eq.cat + '','' + info.entrenador + '')">📲 Recordatorio a ' + info.entrenador + '</button>';
       }
-      if (estado === 'subida' && info.rival) {
-        html += '<div class="detalle-row"><span>Rival</span><span>' + info.rival + '</span></div>';
-      }
-      if (estado === 'pendiente' && entrenador) {
-        html += '<button class="btn-recordatorio" onclick="enviarRecordatorio(\'' + eq.cat + '\',\'' + entrenador + '\')">📲 Enviar recordatorio a ' + entrenador + '</button>';
-      }
-      html += '</div>';
-      html += '</div>';
+      html += '</div></div>';
     });
 
     document.getElementById('equipos-lista').innerHTML = html;
@@ -231,6 +206,7 @@ async function cargarPanel() {
     document.getElementById('equipos-lista').innerHTML = '<div class="loading-wrap">Error de conexión</div>';
   }
 }
+
 
 function toggleDetalle(cat) {
   var panel = document.getElementById('det_' + cat);
