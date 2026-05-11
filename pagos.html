@@ -117,15 +117,13 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
   <div class="filtros" id="filtros-cat">
     <button class="filtro-btn on" onclick="filtrarCat('',this)">Todos</button>
     <button class="filtro-btn" onclick="filtrarCat('amateur',this)">Amateur</button>
-    <button class="filtro-btn" onclick="filtrarCat('juvenil_a',this)">Juvenil A</button>
-    <button class="filtro-btn" onclick="filtrarCat('juvenil_b',this)">Juvenil B</button>
-    <button class="filtro-btn" onclick="filtrarCat('cadete_a',this)">Cadete A</button>
-    <button class="filtro-btn" onclick="filtrarCat('cadete_b',this)">Cadete B</button>
-    <button class="filtro-btn" onclick="filtrarCat('infantil_a',this)">Infantil A</button>
-    <button class="filtro-btn" onclick="filtrarCat('alevin_a',this)">Alevín A</button>
-    <button class="filtro-btn" onclick="filtrarCat('benjamin_a',this)">Benjamín A</button>
-    <button class="filtro-btn" onclick="filtrarCat('prebenjamin_a',this)">Prebenjamín</button>
-    <button class="filtro-btn" onclick="filtrarCat('querubines_a',this)">Querubines</button>
+    <button class="filtro-btn" onclick="filtrarCat('juvenil',this)">Juvenil</button>
+    <button class="filtro-btn" onclick="filtrarCat('cadete',this)">Cadete</button>
+    <button class="filtro-btn" onclick="filtrarCat('infantil',this)">Infantil</button>
+    <button class="filtro-btn" onclick="filtrarCat('alevin',this)">Alevín</button>
+    <button class="filtro-btn" onclick="filtrarCat('benjamin',this)">Benjamín</button>
+    <button class="filtro-btn" onclick="filtrarCat('prebenjamin',this)">Prebenjamín</button>
+    <button class="filtro-btn" onclick="filtrarCat('querubin',this)">Querubín</button>
   </div>
 
   <!-- FILTRO ESTADO -->
@@ -161,16 +159,14 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
     <div class="modal-title">➕ Añadir jugador</div>
     <div class="modal-field"><label>Categoría</label>
       <select id="anyadir-cat">
-        <option value="amateur">Amateur</option><option value="juvenil_a">Juvenil A</option>
-        <option value="juvenil_b">Juvenil B</option><option value="cadete_a">Cadete A</option>
-        <option value="cadete_b">Cadete B</option><option value="cadete_femenino">Cadete Femenino</option>
-        <option value="infantil_a">Infantil A</option><option value="infantil_b">Infantil B</option>
-        <option value="infantil_femenino">Infantil Femenino</option>
-        <option value="alevin_a">Alevín A</option><option value="alevin_b">Alevín B</option>
-        <option value="alevin_femenino">Alevín Femenino</option>
-        <option value="benjamin_a">Benjamín A</option><option value="benjamin_b">Benjamín B</option>
-        <option value="prebenjamin_a">Prebenjamín A</option><option value="prebenjamin_b">Prebenjamín B</option>
-        <option value="querubines_a">Querubines A</option><option value="querubines_b">Querubines B</option>
+        <option value="amateur">Amateur</option>
+        <option value="juvenil">Juvenil</option>
+        <option value="cadete">Cadete</option>
+        <option value="infantil">Infantil</option>
+        <option value="alevin">Alevín</option>
+        <option value="benjamin">Benjamín</option>
+        <option value="prebenjamin">Prebenjamín</option>
+        <option value="querubin">Querubín</option>
       </select>
     </div>
     <div class="modal-field"><label>Nombre (Apellidos, Nombre)</label><input type="text" id="anyadir-nombre" placeholder="García López, Juan" autocapitalize="words"></div>
@@ -226,11 +222,14 @@ var cfg = {};
 try { cfg = JSON.parse(localStorage.getItem('silos_sesion') || '{}'); } catch(e) {}
 
 var COLORES_CAT = {
-  'amateur':'#1A3A6B','juvenil_a':'#2E5FAC','juvenil_b':'#3498DB',
-  'cadete_a':'#1E7B34','cadete_b':'#27AE60','cadete_femenino':'#E91E8C',
-  'infantil_a':'#E8771A','infantil_b':'#F39C12','infantil_femenino':'#E74C3C',
-  'alevin_a':'#8E44AD','alevin_b':'#9B59B6','alevin_femenino':'#D35400',
-  'benjamin_a':'#16A085','benjamin_b':'#1ABC9C','prebenjamin_a':'#2C3E50','prebenjamin_b':'#7F8C8D'
+  'amateur':'#1A3A6B',
+  'juvenil':'#2E5FAC',
+  'cadete':'#1E7B34',
+  'infantil':'#E8771A',
+  'alevin':'#8E44AD',
+  'benjamin':'#16A085',
+  'prebenjamin':'#2C3E50',
+  'querubin':'#C0392B'
 };
 
 var todosJugadores = [];
