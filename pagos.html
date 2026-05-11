@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Pagos — Los Silos CF</title>
 <style>
 :root{
@@ -20,313 +20,356 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font);background:var(--gris);color:var(--texto);min-height:100vh}
 .topbar{background:var(--azul);color:#fff;padding:env(safe-area-inset-top,14px) 16px 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
-.btn-back{width:36px;height:36px;border-radius:50%;border:none;background:#fff2;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font)}
-.topbar h1{font-size:16px;font-weight:700}
-.topbar p{font-size:11px;opacity:.7;margin-top:1px}
-.body{padding:12px 16px 80px}
-.sec-label{font-size:11px;font-weight:700;color:var(--texto3);text-transform:uppercase;letter-spacing:.6px;margin:18px 0 8px 2px;display:flex;align-items:center;gap:8px}
+.btn-back{width:36px;height:36px;border-radius:50%;border:none;background:#fff2;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.topbar h1{font-size:16px;font-weight:700}.topbar p{font-size:11px;opacity:.7;margin-top:1px}
+.topbar-right{margin-left:auto;display:flex;gap:8px}
+.btn-top{background:#fff2;border:none;color:#fff;font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer}
+.body{padding:12px 16px 40px}
+.sec-label{font-size:11px;font-weight:700;color:var(--texto3);text-transform:uppercase;letter-spacing:.6px;margin:16px 0 8px 2px;display:flex;align-items:center;gap:8px}
 .sec-label::after{content:'';flex:1;height:.5px;background:var(--borde)}
 
-/* FILTROS CATEGORIA */
-.cat-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch}
-.cat-tabs::-webkit-scrollbar{display:none}
-.cat-tab{padding:7px 14px;border-radius:20px;border:.5px solid var(--borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;color:var(--texto2);white-space:nowrap;font-family:var(--font);flex-shrink:0}
-.cat-tab.on{background:var(--azul);color:#fff;border-color:var(--azul)}
-
-/* RESUMEN */
-.resumen-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.resumen-box{background:#fff;border-radius:var(--radio-sm);border:.5px solid var(--borde);padding:10px;text-align:center}
-.resumen-val{font-size:24px;font-weight:800}
-.resumen-val.verde{color:var(--verde)}
-.resumen-val.rojo{color:var(--rojo)}
-.resumen-val.naranja{color:var(--naranja)}
-.resumen-lbl{font-size:10px;color:var(--texto3);margin-top:2px;text-transform:uppercase}
-
-/* FILTROS ESTADO */
-.filtros{display:flex;gap:6px;margin-bottom:12px}
-.filtro-btn{padding:6px 14px;border-radius:20px;border:.5px solid var(--borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;color:var(--texto2);font-family:var(--font)}
+/* FILTROS */
+.filtros{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px}
+.filtro-btn{padding:6px 14px;border-radius:20px;border:.5px solid var(--borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--font);color:var(--texto2)}
 .filtro-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
 
-/* JUGADOR CARD */
-.jugador-card{background:#fff;border-radius:var(--radio-sm);border:.5px solid var(--borde);padding:12px 14px;margin-bottom:8px;border-left:3px solid}
-.jugador-card.al-dia{border-left-color:var(--verde)}
-.jugador-card.pendiente{border-left-color:var(--rojo)}
-.jugador-card.parcial{border-left-color:var(--naranja)}
-.jugador-header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.jugador-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
-.av-verde{background:var(--verde)}
-.av-rojo{background:var(--rojo)}
-.av-naranja{background:var(--naranja)}
-.jugador-nombre{flex:1;font-size:14px;font-weight:600;line-height:1.2}
-.jugador-equipo{font-size:11px;color:var(--texto3)}
-.badge-estado{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;flex-shrink:0}
-.badge-al-dia{background:var(--verde-c);color:var(--verde)}
-.badge-pendiente{background:var(--rojo-c);color:var(--rojo)}
-.badge-parcial{background:var(--naranja-c);color:var(--naranja)}
-.meses-grid{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
-.mes-chip{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600}
-.mes-pagado{background:var(--verde-c);color:var(--verde)}
-.mes-pendiente{background:var(--rojo-c);color:var(--rojo)}
-.mes-especial{background:var(--azul-c);color:var(--azul2)}
-.jugador-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:.5px solid var(--borde)}
-.jugador-tel{font-size:12px;color:var(--texto3)}
-.btn-wa{padding:6px 14px;border-radius:20px;border:none;background:#25D366;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)}
-.btn-wa:active{opacity:.8}
+/* RESUMEN */
+.resumen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.res-card{background:#fff;border-radius:var(--radio-sm);border:.5px solid var(--borde);padding:12px;text-align:center}
+.res-num{font-size:26px;font-weight:800;line-height:1}
+.res-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-top:4px;font-weight:600}
+.res-card.v .res-num{color:var(--verde)}.res-card.v .res-lbl{color:var(--verde)}
+.res-card.r .res-num{color:var(--rojo)}.res-card.r .res-lbl{color:var(--rojo)}
+.res-card.g .res-num{color:var(--texto3)}.res-card.g .res-lbl{color:var(--texto3)}
 
-.empty{text-align:center;color:var(--texto3);padding:30px;font-size:13px}
+/* BUSCADOR */
+.search-wrap{position:relative;margin-bottom:12px}
+.search-wrap input{width:100%;padding:12px 14px 12px 40px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:var(--font);outline:none;background:#fff}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--texto3);font-size:16px}
+
+/* JUGADOR ROW */
+.jugador-card{background:#fff;border-radius:var(--radio);border:.5px solid var(--borde);margin-bottom:8px;overflow:hidden;cursor:pointer}
+.jugador-header{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.jugador-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.jugador-info{flex:1;min-width:0}
+.jugador-nombre{font-size:14px;font-weight:600;margin-bottom:2px}
+.jugador-cat{font-size:11px;color:var(--texto3)}
+.jugador-right{text-align:right;flex-shrink:0}
+.jugador-pendiente{font-size:13px;font-weight:700}
+.jugador-total{font-size:11px;color:var(--texto3)}
+.estado-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot-verde{background:var(--verde)}.dot-rojo{background:var(--rojo)}
+.dot-azul{background:var(--azul2)}.dot-amarillo{background:#F39C12}
+.dot-gris{background:#ccc}
+
+/* DETALLE EXPANDIDO */
+.jugador-detalle{display:none;border-top:.5px solid var(--borde);padding:12px 14px;background:var(--gris)}
+.jugador-detalle.open{display:block}
+.meses-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.mes-item{background:#fff;border-radius:8px;border:.5px solid var(--borde);padding:8px 4px;text-align:center;cursor:pointer}
+.mes-item.pagado{background:var(--verde-c);border-color:var(--verde)}
+.mes-item.sin-pagar{background:var(--rojo-c);border-color:var(--rojo)}
+.mes-lbl{font-size:10px;font-weight:700;color:var(--texto2);text-transform:uppercase}
+.mes-val{font-size:12px;font-weight:700;margin-top:3px;color:var(--texto)}
+.mes-item.pagado .mes-lbl{color:var(--verde)}.mes-item.pagado .mes-val{color:var(--verde)}
+.mes-item.sin-pagar .mes-lbl{color:var(--rojo)}.mes-item.sin-pagar .mes-val{color:var(--rojo)}
+.btn-pago{width:100%;padding:12px;border:none;border-radius:var(--radio-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);background:var(--azul);color:#fff}
+
+/* MODAL PAGO */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal-sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:480px}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px;text-align:center}
+.modal-field{margin-bottom:12px}
+.modal-field label{display:block;font-size:12px;font-weight:600;color:var(--texto2);margin-bottom:5px;text-transform:uppercase}
+.modal-field select,.modal-field input{width:100%;padding:12px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:var(--font);outline:none;-webkit-appearance:none;background:#fff}
+.modal-btns{display:flex;gap:8px;margin-top:16px}
+.modal-btn{flex:1;padding:14px;border-radius:var(--radio-sm);border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font)}
+.modal-cancel{background:var(--gris);color:var(--texto2)}
+.modal-ok{background:var(--verde);color:#fff}
+
+/* LOADING */
+.loading-wrap{text-align:center;padding:40px 20px;color:var(--texto3)}
+.spin{display:inline-block;width:24px;height:24px;border:3px solid var(--borde);border-top-color:var(--azul);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.spin{display:inline-block;width:20px;height:20px;border:2px solid #eee;border-top-color:var(--azul);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <button class="btn-back" onclick="history.back()">&#8249;</button>
-  <div>
-    <h1>💰 Pagos temporada</h1>
-    <p id="top-sub">Cargando...</p>
+  <button class="btn-back" onclick="volverAtras()">&#8249;</button>
+  <div><h1>&#128176; Pagos</h1><p id="top-sub">Temporada 2025/26</p></div>
+  <div class="topbar-right">
+    <button class="btn-top" onclick="cargarPagos()">&#8635;</button>
   </div>
 </div>
 
 <div class="body">
 
-  <!-- SELECTOR CATEGORÍA -->
-  <div class="cat-tabs" id="cat-tabs"></div>
-
   <!-- RESUMEN -->
   <div class="resumen-grid">
-    <div class="resumen-box"><div class="resumen-val verde" id="r-aldia">—</div><div class="resumen-lbl">Al día</div></div>
-    <div class="resumen-box"><div class="resumen-val rojo" id="r-pend">—</div><div class="resumen-lbl">Pendientes</div></div>
-    <div class="resumen-box"><div class="resumen-val naranja" id="r-total">—</div><div class="resumen-lbl">Jugadores</div></div>
+    <div class="res-card v"><div class="res-num" id="cnt-al-dia">—</div><div class="res-lbl">Al día</div></div>
+    <div class="res-card r"><div class="res-num" id="cnt-pendientes">—</div><div class="res-lbl">Pendiente</div></div>
+    <div class="res-card g"><div class="res-num" id="cnt-total">—</div><div class="res-lbl">Total</div></div>
   </div>
 
-  <!-- FILTROS -->
+  <!-- FILTRO CATEGORÍA -->
+  <div class="filtros" id="filtros-cat">
+    <button class="filtro-btn on" onclick="filtrarCat('',this)">Todos</button>
+    <button class="filtro-btn" onclick="filtrarCat('amateur',this)">Amateur</button>
+    <button class="filtro-btn" onclick="filtrarCat('juvenil_a',this)">Juvenil A</button>
+    <button class="filtro-btn" onclick="filtrarCat('juvenil_b',this)">Juvenil B</button>
+    <button class="filtro-btn" onclick="filtrarCat('cadete_a',this)">Cadete A</button>
+    <button class="filtro-btn" onclick="filtrarCat('cadete_b',this)">Cadete B</button>
+    <button class="filtro-btn" onclick="filtrarCat('infantil_a',this)">Infantil A</button>
+    <button class="filtro-btn" onclick="filtrarCat('alevin_a',this)">Alevín A</button>
+    <button class="filtro-btn" onclick="filtrarCat('benjamin_a',this)">Benjamín A</button>
+  </div>
+
+  <!-- FILTRO ESTADO -->
   <div class="filtros">
-    <button class="filtro-btn on" onclick="setFiltro('todos',this)">Todos</button>
-    <button class="filtro-btn" onclick="setFiltro('pendiente',this)">⚠️ Pendientes</button>
-    <button class="filtro-btn" onclick="setFiltro('al-dia',this)">✅ Al día</button>
+    <button class="filtro-btn on" id="fest-todos" onclick="filtrarEstado('',this)">Todos</button>
+    <button class="filtro-btn" onclick="filtrarEstado('AL DÍA',this)">🟢 Al día</button>
+    <button class="filtro-btn" onclick="filtrarEstado('PENDIENTE',this)">🔴 Pendiente</button>
+    <button class="filtro-btn" onclick="filtrarEstado('EN PLAZO',this)">🔵 En plazo</button>
+    <button class="filtro-btn" onclick="filtrarEstado('TEMPORADA',this)">🟡 Temporada</button>
   </div>
 
-  <!-- WHATSAPP MASIVO -->
-  <div class="sec-label">📢 Aviso masivo de pagos</div>
-  <div style="background:#fff;border-radius:var(--radio-sm);border:.5px solid var(--borde);padding:12px;margin-bottom:12px">
-    <p style="font-size:12px;color:var(--texto2);margin-bottom:10px">Genera avisos para todos los pendientes de pago. Se abrirá WhatsApp uno a uno.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-      <button class="filtro-btn" style="background:var(--azul);color:#fff;border-color:var(--azul)" onclick="masivo('club')">🌐 Todo el club</button>
-      <button class="filtro-btn" style="background:var(--azul2);color:#fff;border-color:var(--azul2)" onclick="masivo('f11')">F11</button>
-      <button class="filtro-btn" style="background:var(--verde);color:#fff;border-color:var(--verde)" onclick="masivo('f8')">F8</button>
-    </div>
-    <div id="masivo-resultado" style="margin-top:10px;font-size:12px;color:var(--texto3)"></div>
+  <!-- BUSCADOR -->
+  <div class="search-wrap">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="buscador" placeholder="Buscar jugador..." oninput="renderLista()">
   </div>
 
   <!-- LISTA -->
-  <div id="lista-jugadores"><div class="empty"><span class="spin"></span>Cargando...</div></div>
+  <div id="pagos-lista">
+    <div class="loading-wrap"><div class="spin"></div><br>Cargando pagos...</div>
+  </div>
 
 </div>
 
+<!-- MODAL REGISTRAR PAGO -->
+<div class="modal-overlay hidden" id="modal-pago" onclick="cerrarModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-title">Registrar pago</div>
+    <div id="modal-jugador-nombre" style="text-align:center;font-size:13px;color:var(--texto2);margin-bottom:12px"></div>
+    <div class="modal-field">
+      <label>Mes</label>
+      <select id="modal-mes">
+        <option value="INSCR.">Inscripción</option>
+        <option value="SEPT.">Septiembre</option>
+        <option value="OCT.">Octubre</option>
+        <option value="NOV.">Noviembre</option>
+        <option value="DIC.">Diciembre</option>
+        <option value="ENE.">Enero</option>
+        <option value="FEB.">Febrero</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Importe (€)</label>
+      <input type="number" id="modal-importe" placeholder="70" min="0">
+    </div>
+    <div class="modal-field">
+      <label>Tipo de pago</label>
+      <select id="modal-tipo">
+        <option value="">Efectivo</option>
+        <option value="BANCO">Transferencia</option>
+        <option value="DOM">Domiciliación</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-cancel" onclick="document.getElementById('modal-pago').classList.add('hidden')">Cancelar</button>
+      <button class="modal-btn modal-ok" onclick="confirmarPago()">✅ Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <script>
-var PAGOS_URL = 'https://script.google.com/macros/s/AKfycbwarl68BTPnFPblQpfmQwpX7W694iixk2FFDrHxpAVJBpIBn6VwW_nSB8cOUv90xsSY/exec';
+var WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzccJuHc7_dNEJluOJL4-2HGnPvHX-UvzHIMCNPBmfJi5Q-dwFnyAKT0aatXCay3Ygm/exec';
+var cfg = {};
+try { cfg = JSON.parse(localStorage.getItem('silos_sesion') || '{}'); } catch(e) {}
 
-var CATEGORIAS = ['AMATEUR','JUVENIL','CADETE','INFANTIL','ALEVIN','BENJAMIN','PREBENJAMIN','QUERUBIN'];
-var MESES      = ['INSCR.','SEPT.','OCT.','NOV.','DIC.','ENE.','FEB.','MARZO'];
-var MESES_KEYS = ['inscr','sept','oct','nov','dic','ene','feb','marzo'];
+var COLORES_CAT = {
+  'amateur':'#1A3A6B','juvenil_a':'#2E5FAC','juvenil_b':'#3498DB',
+  'cadete_a':'#1E7B34','cadete_b':'#27AE60','cadete_femenino':'#E91E8C',
+  'infantil_a':'#E8771A','infantil_b':'#F39C12','infantil_femenino':'#E74C3C',
+  'alevin_a':'#8E44AD','alevin_b':'#9B59B6','alevin_femenino':'#D35400',
+  'benjamin_a':'#16A085','benjamin_b':'#1ABC9C','prebenjamin_a':'#2C3E50','prebenjamin_b':'#7F8C8D'
+};
 
-var categoriaActual = 'AMATEUR';
-var filtroActual    = 'todos';
-var datosActuales   = [];
+var todosJugadores = [];
+var catFiltro = '';
+var estadoFiltro = '';
+var jugadorModal = null;
 
-window.addEventListener('DOMContentLoaded', function() {
-  // Tabs categorías
-  var tabs = document.getElementById('cat-tabs');
-  CATEGORIAS.forEach(function(cat) {
-    var btn = document.createElement('button');
-    btn.className = 'cat-tab' + (cat === categoriaActual ? ' on' : '');
-    btn.textContent = cat;
-    btn.onclick = function() {
-      document.querySelectorAll('.cat-tab').forEach(function(b){b.classList.remove('on');});
-      btn.classList.add('on');
-      categoriaActual = cat;
-      cargar();
-    };
-    tabs.appendChild(btn);
-  });
-  cargar();
-});
+function volverAtras() {
+  if (window.history.length > 1) history.back();
+  else window.location.href = 'index.html';
+}
 
-async function cargar() {
-  document.getElementById('top-sub').textContent = categoriaActual;
-  document.getElementById('lista-jugadores').innerHTML = '<div class="empty"><span class="spin"></span>Cargando...</div>';
-
-  // Si no hay URL configurada
-  if (!PAGOS_URL) {
-    document.getElementById('lista-jugadores').innerHTML = '<div class="empty">⚙️ Sistema de pagos pendiente de configurar.<br><br>Contacta con el administrador.</div>';
-    return;
-  }
-
+async function cargarPagos() {
+  document.getElementById('pagos-lista').innerHTML = '<div class="loading-wrap"><div class="spin"></div><br>Cargando pagos...</div>';
   try {
-    var r = await fetch(PAGOS_URL + '?action=pagos&categoria=' + categoriaActual).then(function(r){return r.json();});
-    if (!r.ok) { document.getElementById('lista-jugadores').innerHTML = '<div class="empty">⚠️ ' + (r.error||'Sin datos') + '</div>'; return; }
-    datosActuales = r.jugadores || [];
+    var r = await fetch(WEBAPP_URL + '?action=pagos').then(function(res){ return res.json(); });
+    if (!r.ok) { document.getElementById('pagos-lista').innerHTML = '<div class="loading-wrap">Error: ' + (r.error||'desconocido') + '</div>'; return; }
+    todosJugadores = r.jugadores || [];
+    actualizarResumen();
     renderLista();
   } catch(e) {
-    document.getElementById('lista-jugadores').innerHTML = '<div class="empty">⚠️ Sin conexión con el sistema de pagos</div>';
+    document.getElementById('pagos-lista').innerHTML = '<div class="loading-wrap">Error de conexión</div>';
   }
 }
 
-function mostrarEjemplo() {
-  // Datos de ejemplo para mostrar el diseño
-  datosActuales = [
-    {nombre:'García Pérez, Juan', telefono:'654321987', equipo:'AMATEUR', al_dia:true, meses_pendientes:[], pagos:{inscr:150,sept:50,oct:50,nov:50,dic:50,ene:50,feb:50,marzo:50}},
-    {nombre:'Martínez López, Carlos', telefono:'687654321', equipo:'AMATEUR', al_dia:false, meses_pendientes:['ENE','FEB','MARZO'], pagos:{inscr:150,sept:50,oct:50,nov:50,dic:50,ene:'pendiente',feb:'pendiente',marzo:'pendiente'}},
-    {nombre:'Sánchez Torres, David', telefono:'612345678', equipo:'AMATEUR', al_dia:false, meses_pendientes:['FEB','MARZO'], pagos:{inscr:150,sept:50,oct:50,nov:50,dic:50,ene:50,feb:'pendiente',marzo:'pendiente'}},
-  ];
-  renderLista();
+function getEstadoInfo(estado) {
+  var e = (estado || '').toUpperCase();
+  if (e.indexOf('AL') !== -1 || e === 'AL DÍA') return {cls:'dot-verde', txt:'AL DÍA', color:'#D4F0DC', borde:'#A8D5B5', texto:'#1E7B34'};
+  if (e.indexOf('TEMPORADA') !== -1) return {cls:'dot-amarillo', txt:'TEMPORADA', color:'#FFF9C4', borde:'#F5E27A', texto:'#856D00'};
+  if (e.indexOf('EN PLAZO') !== -1 || e.indexOf('PLAZO') !== -1) return {cls:'dot-azul', txt:'EN PLAZO', color:'#DAEEFF', borde:'#B5D4F4', texto:'#1A3A6B'};
+  if (e.indexOf('BAJA') !== -1) return {cls:'dot-gris', txt:'BAJA', color:'#EEE', borde:'#DDD', texto:'#999'};
+  if (e.indexOf('PENDIENTE') !== -1 || e.indexOf('ROJO') !== -1) return {cls:'dot-rojo', txt:'PENDIENTE', color:'#FAD7D3', borde:'#F1B0B4', texto:'#C0392B'};
+  return {cls:'dot-gris', txt:estado||'—', color:'#F5F5F5', borde:'#DDD', texto:'#666'};
 }
 
-function renderLista() {
-  var aldia = datosActuales.filter(function(j){ return j.al_dia; }).length;
-  var pend  = datosActuales.filter(function(j){ return !j.al_dia; }).length;
-  document.getElementById('r-aldia').textContent = aldia;
-  document.getElementById('r-pend').textContent  = pend;
-  document.getElementById('r-total').textContent = datosActuales.length;
-
-  var filtrados = datosActuales.filter(function(j) {
-    if (filtroActual === 'al-dia')    return j.al_dia;
-    if (filtroActual === 'pendiente') return !j.al_dia;
-    return true;
+function actualizarResumen() {
+  var al_dia = 0, pendiente = 0;
+  todosJugadores.forEach(function(j) {
+    var info = getEstadoInfo(j.estado);
+    if (info.txt === 'AL DÍA' || info.txt === 'TEMPORADA' || info.txt === 'EN PLAZO') al_dia++;
+    else if (info.txt === 'PENDIENTE') pendiente++;
   });
-
-  if (!filtrados.length) {
-    document.getElementById('lista-jugadores').innerHTML = '<div class="empty">Sin jugadores en este estado</div>';
-    return;
-  }
-
-  // Ordenar: pendientes primero
-  filtrados.sort(function(a,b){ return (a.al_dia?1:0)-(b.al_dia?1:0) || a.nombre.localeCompare(b.nombre); });
-
-  var html = filtrados.map(function(j) {
-    var estado = j.al_dia ? 'al-dia' : (j.meses_pendientes && j.meses_pendientes.length < 3 ? 'parcial' : 'pendiente');
-    var iniciales = j.nombre.split(' ').map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase();
-    var avColor   = estado==='al-dia'?'av-verde':estado==='parcial'?'av-naranja':'av-rojo';
-    var badgeClass= estado==='al-dia'?'badge-al-dia':estado==='parcial'?'badge-parcial':'badge-pendiente';
-    var badgeTxt  = estado==='al-dia'?'✅ Al día':estado==='parcial'?'⚠️ Parcial':'❌ Pendiente';
-
-    var mesesHTML = MESES.map(function(mes, idx) {
-      var key = MESES_KEYS[idx];
-      var val = j.pagos ? j.pagos[key] : '';
-      var cls = val === 'pendiente' || val === '' || val === null ? 'mes-pendiente' :
-                typeof val === 'number' ? 'mes-pagado' : 'mes-especial';
-      var lbl = mes.replace('.','');
-      if (val === 'pendiente' || val === '' || val === null) lbl = '✗ ' + lbl;
-      else if (typeof val === 'number') lbl = '✓ ' + lbl;
-      else lbl = val.substring(0,6) + ' ' + lbl;
-      return '<span class="mes-chip ' + cls + '">' + lbl + '</span>';
-    }).join('');
-
-    var tel = (j.telefono||'').toString().replace('.0','').replace(/[^0-9+]/g,'');
-    var waMsg = encodeURIComponent('🔵 *Los Silos CF*\n\nHola, te recordamos que tienes pagos pendientes de la categoría ' + categoriaActual + '.\n\nMeses pendientes: ' + (j.meses_pendientes||[]).join(', ') + '\n\nGracias 🙏');
-    var waTel = tel.startsWith('+') ? tel : '+34'+tel;
-
-    return '<div class="jugador-card ' + estado + '">' +
-      '<div class="jugador-header">' +
-        '<div class="jugador-avatar ' + avColor + '">' + iniciales + '</div>' +
-        '<div style="flex:1">' +
-          '<div class="jugador-nombre">' + j.nombre + '</div>' +
-          '<div class="jugador-equipo">' + (j.equipo||categoriaActual) + '</div>' +
-        '</div>' +
-        '<span class="badge-estado ' + badgeClass + '">' + badgeTxt + '</span>' +
-      '</div>' +
-      '<div class="meses-grid">' + mesesHTML + '</div>' +
-      '<div class="jugador-footer">' +
-        '<span class="jugador-tel">📞 ' + (tel||'Sin teléfono') + '</span>' +
-        (tel && !j.al_dia ? '<button class="btn-wa" onclick="enviarWA(\'' + waTel + '\',\'' + waMsg + '\')">💬 WhatsApp</button>' : '') +
-      '</div>' +
-    '</div>';
-  }).join('');
-
-  document.getElementById('lista-jugadores').innerHTML = html;
+  document.getElementById('cnt-al-dia').textContent = al_dia;
+  document.getElementById('cnt-pendientes').textContent = pendiente;
+  document.getElementById('cnt-total').textContent = todosJugadores.filter(function(j){ return getEstadoInfo(j.estado).txt !== 'BAJA'; }).length;
 }
 
-var HORARIO_OFICINA = 'Lunes y Miércoles de 17:30 a 20:00 en Campo de las Oliveras y Martes y Jueves de 17:30 a 20:00 en Polideportivo de Burjassot.';
-var INFO_PAGO = 'Puedes regularizarlo en oficinas o por transferencia bancaria. Te recordamos que el horario de oficina es: ' + HORARIO_OFICINA + ' Estamos a vuestra disposición para cualquier consulta.';
-
-function generarMensaje(jugador) {
-  var meses = jugador.meses_pendientes || [];
-  var n = meses.length;
-  if (n === 0) return '';
-
-  var nombre = (jugador.nombre || '').split(',')[0].trim();
-  var meses_txt = meses.join(' y ');
-
-  if (n === 1) {
-    return 'Hola, os recordamos que el pago de *' + meses_txt + '* está pendiente. ' + INFO_PAGO;
-  } else if (n === 2) {
-    return 'Hola, os recordamos que los pagos de *' + meses_txt + '* están pendientes. ' +
-      'Os rogamos que regularicéis el pago antes del día 15, de lo contrario el jugador no podrá entrenar o jugar hasta regularizar dicho pago. ' + INFO_PAGO;
-  } else {
-    return 'Hola, llevamos *' + n + ' meses* con los pagos pendientes (' + meses_txt + '). ' +
-      'Lamentamos comunicaros que hasta regularizar la situación el jugador *no podrá participar en entrenamientos ni partidos*. ' + INFO_PAGO;
-  }
-}
-
-function enviarWA(tel, msg) {
-  window.open('https://wa.me/' + tel.replace('+','').replace(/[^0-9]/g,'') + '?text=' + encodeURIComponent(msg), '_blank');
-}
-
-function enviarWAJugador(jugador) {
-  var tel = (jugador.telefono||'').toString().replace('.0','').replace(/[^0-9+]/g,'');
-  if (!tel) { alert('Sin teléfono registrado'); return; }
-  if (!tel.startsWith('+')) tel = '+34' + tel;
-  var msg = generarMensaje(jugador);
-  if (!msg) { alert('Este jugador está al día'); return; }
-  enviarWA(tel, msg);
-}
-
-function setFiltro(f, btn) {
-  filtroActual = f;
-  document.querySelectorAll('.filtro-btn').forEach(function(b){b.classList.remove('on');});
+function filtrarCat(cat, btn) {
+  catFiltro = cat;
+  document.querySelectorAll('#filtros-cat .filtro-btn').forEach(function(b){ b.classList.remove('on'); });
   btn.classList.add('on');
   renderLista();
 }
 
-var CATS_F11 = ['AMATEUR','JUVENIL','CADETE','INFANTIL'];
-var CATS_F8  = ['ALEVIN','BENJAMIN','PREBENJAMIN','QUERUBIN'];
-
-async function masivo(tipo) {
-  var cats = tipo==='f11' ? CATS_F11 : tipo==='f8' ? CATS_F8 : CATS_F11.concat(CATS_F8);
-  var pendientes = [];
-  document.getElementById('masivo-resultado').textContent = 'Cargando datos...';
-  for (var i = 0; i < cats.length; i++) {
-    try {
-      var r = await fetch(PAGOS_URL+'?action=pagos&categoria='+cats[i]).then(function(r){return r.json();});
-      if (r.ok && r.jugadores) {
-        r.jugadores.forEach(function(j){
-          if (!j.al_dia && j.telefono && j.meses_pendientes && j.meses_pendientes.length>0) pendientes.push(j);
-        });
-      }
-    } catch(e){}
-  }
-  if (!pendientes.length) { document.getElementById('masivo-resultado').textContent='✅ Sin pendientes de pago'; return; }
-  document.getElementById('masivo-resultado').textContent = pendientes.length+' pendientes. Abriendo WhatsApp...';
-  var enviados = 0;
-  for (var j = 0; j < pendientes.length; j++) {
-    var jug = pendientes[j];
-    var tel = (jug.telefono||'').toString().replace('.0','').replace(/[^0-9+]/g,'');
-    if (!tel) continue;
-    if (!tel.startsWith('+')) tel = '+34'+tel;
-    var msg = generarMensaje(jug);
-    if (!msg) continue;
-    await new Promise(function(res){setTimeout(res,800);});
-    window.open('https://wa.me/'+tel.replace('+','')+' ?text='+encodeURIComponent(msg),'_blank');
-    enviados++;
-    document.getElementById('masivo-resultado').textContent = enviados+' de '+pendientes.length+' enviados...';
-  }
-  document.getElementById('masivo-resultado').textContent = '✅ '+enviados+' mensajes generados';
+function filtrarEstado(estado, btn) {
+  estadoFiltro = estado;
+  document.querySelectorAll('.filtros:last-of-type .filtro-btn').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  renderLista();
 }
 
-function mostrarError(msg) {
-  document.getElementById('lista-jugadores').innerHTML = '<div class="empty">⚠️ '+(msg||'Error')+'</div>';
+function renderLista() {
+  var busq = (document.getElementById('buscador').value || '').toLowerCase();
+  var lista = todosJugadores.filter(function(j) {
+    if (catFiltro && j.categoria !== catFiltro) return false;
+    var info = getEstadoInfo(j.estado);
+    if (estadoFiltro && info.txt !== estadoFiltro) return false;
+    if (busq && j.nombre.toLowerCase().indexOf(busq) === -1) return false;
+    return true;
+  });
+
+  if (!lista.length) {
+    document.getElementById('pagos-lista').innerHTML = '<div class="loading-wrap">Sin resultados</div>';
+    return;
+  }
+
+  var html = '';
+  lista.forEach(function(j, idx) {
+    var info = getEstadoInfo(j.estado);
+    var nom_parts = j.nombre.split(',');
+    var ini = nom_parts.map(function(p){ return (p.trim()[0]||''); }).join('').substring(0,2).toUpperCase();
+    var color_cat = COLORES_CAT[j.categoria] || '#1A3A6B';
+    var pendiente_txt = j.pendiente ? j.pendiente + '€' : '—';
+    var total_txt = j.total ? j.total + '€' : '0€';
+
+    html += '<div class="jugador-card" style="border-left:3px solid ' + info.texto + '">';
+    html += '<div class="jugador-header" onclick="toggleDetalle(\'det_' + idx + '\')">';
+    html += '<div class="jugador-avatar" style="background:' + color_cat + '">' + ini + '</div>';
+    html += '<div class="jugador-info">';
+    html += '<div class="jugador-nombre">' + j.nombre + '</div>';
+    html += '<div class="jugador-cat">' + j.categoria.replace(/_/g,' ') + '</div>';
+    html += '</div>';
+    html += '<div class="jugador-right">';
+    html += '<div class="jugador-pendiente" style="color:' + info.texto + '">' + pendiente_txt + '</div>';
+    html += '<div class="jugador-total">Pagado: ' + total_txt + '</div>';
+    html += '</div>';
+    html += '<div class="estado-dot ' + info.cls + '" style="margin-left:8px"></div>';
+    html += '</div>';
+
+    // Detalle meses
+    html += '<div class="jugador-detalle" id="det_' + idx + '">';
+    html += '<div class="meses-grid">';
+    var MESES = ['INSCR.','SEPT.','OCT.','NOV.','DIC.','ENE.','FEB.'];
+    MESES.forEach(function(mes) {
+      var val = j.meses && j.meses[mes] !== undefined ? j.meses[mes].toString() : '';
+      var pagado = val !== '' && val !== '0' && val.toLowerCase() !== 'nan';
+      var cls = pagado ? 'pagado' : 'sin-pagar';
+      var lbl = mes === 'INSCR.' ? 'INSC' : mes.replace('.','');
+      html += '<div class="mes-item ' + cls + '" onclick="abrirPago(\'' + idx + '\',\'' + mes + '\')">';
+      html += '<div class="mes-lbl">' + lbl + '</div>';
+      html += '<div class="mes-val">' + (pagado ? (val || '✓') : '—') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<button class="btn-pago" onclick="abrirPago(\'' + idx + '\',null)">💳 Registrar pago</button>';
+    html += '</div>';
+    html += '</div>';
+  });
+
+  document.getElementById('pagos-lista').innerHTML = html;
+  document.getElementById('pagos-lista')._lista = lista;
 }
+
+function toggleDetalle(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+function abrirPago(idx, mes) {
+  var lista = document.getElementById('pagos-lista')._lista;
+  jugadorModal = lista[idx];
+  document.getElementById('modal-jugador-nombre').textContent = jugadorModal.nombre;
+  if (mes) document.getElementById('modal-mes').value = mes;
+  document.getElementById('modal-pago').classList.remove('hidden');
+}
+
+function cerrarModal(e) {
+  if (e.target === document.getElementById('modal-pago')) {
+    document.getElementById('modal-pago').classList.add('hidden');
+  }
+}
+
+async function confirmarPago() {
+  if (!jugadorModal) return;
+  var mes     = document.getElementById('modal-mes').value;
+  var importe = document.getElementById('modal-importe').value;
+  var tipo    = document.getElementById('modal-tipo').value;
+  var valor   = tipo ? tipo : (importe || '');
+  if (!valor) { alert('Introduce el importe'); return; }
+
+  document.getElementById('modal-pago').classList.add('hidden');
+  try {
+    await fetch(WEBAPP_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        tipo: 'registrar_pago',
+        nombre: jugadorModal.nombre,
+        categoria: jugadorModal.categoria,
+        mes: mes,
+        importe: valor
+      })
+    });
+    // Actualizar local
+    if (jugadorModal.meses) jugadorModal.meses[mes] = valor;
+    renderLista();
+    setTimeout(cargarPagos, 2000); // recargar para tener estado actualizado
+  } catch(e) {
+    alert('Error al registrar pago');
+  }
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  cargarPagos();
+});
 </script>
 </body>
 </html>
