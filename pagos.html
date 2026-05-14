@@ -324,6 +324,21 @@ function volverAtras() {
   else window.location.href = 'index.html';
 }
 
+var configPagos = {};
+
+async function cargarConfigPagos() {
+  try {
+    var r = await fetch(WEBAPP_URL + '?action=config_pagos').then(function(res){ return res.json(); });
+    if (r.ok && r.config) configPagos = r.config;
+  } catch(e) {}
+}
+
+function getMesesCat(cat) {
+  if (configPagos[cat] && configPagos[cat].meses) return configPagos[cat].meses;
+  var defaults = {amateur:3,juvenil:4,cadete:6,infantil:6,alevin:6,benjamin:6,prebenjamin:6,querubin:6};
+  return defaults[cat] || 6;
+}
+
 async function cargarPagos() {
   document.getElementById('pagos-lista').innerHTML = '<div class="loading-wrap"><div class="spin"></div><br>Cargando pagos...</div>';
   try {
@@ -569,51 +584,48 @@ function selInscr(val) {
 
 function renderMesesAnyadir() {
   var cat = document.getElementById('an-cat').value;
-  var mesesCount = 6; // default
-  // Calcular cuántos meses según categoría (simple)
-  if (cat === 'amateur') mesesCount = 3;
-  else if (cat === 'juvenil') mesesCount = 4;
-
-  var ESTADOS = ['Pendiente','Pagado','Beca','Hermano','Banco','Baja'];
+  // Meses según categoría (refleja CONFIG)
+  var mesesCount = getMesesCat(cat);
+  var TODOS_MESES = [
+    {key:'SEPT.', nom:'Septiembre'},
+    {key:'OCT.',  nom:'Octubre'},
+    {key:'NOV.',  nom:'Noviembre'},
+    {key:'DIC.',  nom:'Diciembre'},
+    {key:'ENE.',  nom:'Enero'},
+    {key:'FEB.',  nom:'Febrero'}
+  ];
   var html = '';
-
   // Inscripción
-  var ins_est = _anTipo === 'beca' ? 'Beca' : (_anInscr === 'pagada' ? 'Pagado' : _anInscr === 'banco' ? 'Banco' : 'Pendiente');
+  var ins_est = _anTipo === 'beca' ? 'Beca' : (_anInscr === 'pagada' ? 'Pagado' : 'Pendiente');
   html += renderMesItem('INSCR.', 'Inscripción', ins_est, 0);
-
-  // Meses
-  var hoy_mes = new Date().getMonth(); // 0=ene
-  // Meses de temporada: sept(8), oct(9), nov(10), dic(11), ene(0), feb(1)
-  var TEMP_MESES = [8,9,10,11,0,1];
+  // Meses activos según categoría
   for (var i = 0; i < mesesCount; i++) {
-    var mes_label = MESES_LABELS_AN[i+1];
-    var mes_nombre = MESES_NOMBRES_AN[i+1];
-    // Auto-detectar si el mes ya pasó
-    var mes_num = TEMP_MESES[i];
-    var es_actual = mes_num === hoy_mes;
-    var ha_pasado = (mes_num >= 8) ? (hoy_mes >= mes_num || hoy_mes <= 1) : (hoy_mes >= mes_num);
-    var estado_auto = _anTipo==='beca' ? 'Beca' : (es_actual ? 'Pendiente' : (ha_pasado ? 'Pendiente' : 'Pendiente'));
-    html += renderMesItem(mes_label, mes_nombre, _anMesesEstado[mes_label]?_anMesesEstado[mes_label].estado:estado_auto, i+1);
+    var m = TODOS_MESES[i];
+    var est = _anTipo === 'beca' ? 'Beca' : (_anMesesEstado[m.key] ? _anMesesEstado[m.key].estado : 'Pendiente');
+    html += renderMesItem(m.key, m.nom, est, i+1);
   }
-
   document.getElementById('meses-grid-anyadir').innerHTML = html;
 }
 
 function renderMesItem(key, nombre, estadoActual, idx) {
-  var ESTADOS = ['Pendiente','Pagado','Banco','Beca','Hermano','Baja'];
-  var COLORES = {Pendiente:'#F8D7DA',Pagado:'#D4F0DC',Banco:'#DAEEFF',Beca:'#E8EAF6',Hermano:'#FFF9C4',Baja:'#EEE'};
+  var ESTADOS = ['Pendiente','Pagado','Beca','Baja'];
+  var COLORES = {Pendiente:'#fff',Pagado:'#D4F0DC',Beca:'#E8EAF6',Baja:'#EEE'};
   var bg = COLORES[estadoActual] || '#fff';
+  var isPagado = estadoActual === 'Pagado';
   var html = '<div style="background:'+bg+';border-radius:var(--radio-sm);padding:10px;margin-bottom:8px;border:.5px solid var(--borde)">';
-  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
-  html += '<span style="font-size:13px;font-weight:700">'+nombre+'</span>';
-  html += '<input type="number" placeholder="€" min="0" id="importe-'+key.replace('.','_')+'" style="width:80px;padding:6px 8px;border:.5px solid var(--borde);border-radius:6px;font-size:14px;text-align:right;outline:none">';
-  html += '</div>';
-  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">';
+  html += '<div style="font-size:13px;font-weight:700;margin-bottom:8px">'+nombre+'</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px">';
   ESTADOS.forEach(function(est) {
     var on = est === estadoActual;
     html += '<button data-key="'+key+'" data-est="'+est+'" onclick="selMesEstadoBtn(this)" class="mes-estado-btn'+(on?' on':'')+'">'+est+'</button>';
   });
-  html += '</div></div>';
+  html += '</div>';
+  // Si pagado: selector forma de pago + importe
+  html += '<div id="pago-detail-'+key.replace('.','_')+'" style="display:'+(isPagado?'flex':'none')+';gap:6px;align-items:center">';
+  html += '<select id="forma-'+key.replace('.','_')+'" style="flex:1;padding:7px 8px;border:.5px solid var(--borde);border-radius:6px;font-size:13px;font-family:var(--font);background:#fff;outline:none"><option value="METALICO">💵 Metálico</option><option value="BANCO">🏦 Banco</option><option value="TARJETA">💳 Tarjeta</option></select>';
+  html += '<input type="number" placeholder="€" min="0" id="importe-'+key.replace('.','_')+'" style="width:72px;padding:7px 8px;border:.5px solid var(--borde);border-radius:6px;font-size:14px;text-align:right;outline:none">';
+  html += '</div>';
+  html += '</div>';
   return html;
 }
 
@@ -625,13 +637,15 @@ function selMesEstadoBtn(btn) {
 
 function selMesEstado(key, estado, btn) {
   _anMesesEstado[key] = {estado: estado};
-  // Actualizar botones del mes
   var container = btn.parentElement.parentElement;
   container.querySelectorAll('.mes-estado-btn').forEach(function(b){ b.classList.remove('on'); });
   btn.classList.add('on');
-  // Actualizar color de fondo
-  var COLORES = {Pendiente:'#F8D7DA',Pagado:'#D4F0DC',Banco:'#DAEEFF',Beca:'#E8EAF6',Hermano:'#FFF9C4',Baja:'#EEE'};
+  var COLORES = {Pendiente:'#fff', Pagado:'#D4F0DC', Beca:'#E8EAF6', Baja:'#EEE'};
   container.style.background = COLORES[estado] || '#fff';
+  // Mostrar/ocultar selector de pago
+  var detId = 'pago-detail-' + key.replace('.','_');
+  var det = document.getElementById(detId);
+  if (det) det.style.display = estado === 'Pagado' ? 'flex' : 'none';
 }
 
 async function confirmarAnyadir() {
@@ -647,16 +661,20 @@ async function confirmarAnyadir() {
 
   // Recoger estado de cada mes
   var meses_data = {};
-  MESES_LABELS_AN.forEach(function(m) {
-    var key = m.replace('.','_');
-    var el = document.getElementById('importe-'+key);
-    var importe = el ? el.value : '';
-    var estado = _anMesesEstado[m] ? _anMesesEstado[m].estado : 'Pendiente';
+  var TODOS_KEYS = ['INSCR.','SEPT.','OCT.','NOV.','DIC.','ENE.','FEB.'];
+  TODOS_KEYS.forEach(function(m) {
+    var keyId = m.replace('.','_');
+    var estado = _anMesesEstado[m] ? _anMesesEstado[m].estado : '';
     var valor = '';
-    if (estado === 'Pagado' || estado === 'Banco') valor = importe || 'BANCO';
-    else if (estado === 'Beca') valor = 'BECA';
-    else if (estado === 'Hermano') valor = 'HERMANO';
-    else if (estado === 'Baja') valor = 'BAJA';
+    if (estado === 'Pagado') {
+      var forma = document.getElementById('forma-'+keyId);
+      var importe = document.getElementById('importe-'+keyId);
+      valor = (importe && importe.value) ? importe.value : (forma ? forma.value : 'METALICO');
+    } else if (estado === 'Beca') {
+      valor = 'BECA';
+    } else if (estado === 'Baja') {
+      valor = 'BAJA';
+    }
     meses_data[m] = valor;
   });
 
@@ -680,6 +698,7 @@ async function confirmarAnyadir() {
 }
 
 window.addEventListener('DOMContentLoaded', function() {
+  cargarConfigPagos();
   cargarPagos();
 });
 </script>
