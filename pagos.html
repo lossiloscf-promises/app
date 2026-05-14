@@ -611,10 +611,16 @@ function renderMesItem(key, nombre, estadoActual, idx) {
   html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">';
   ESTADOS.forEach(function(est) {
     var on = est === estadoActual;
-    html += '<button onclick="selMesEstado(''+key+'',''+est+'',this)" class="mes-estado-btn'+(on?' on':'')+'">'+est+'</button>';
+    html += '<button data-key="'+key+'" data-est="'+est+'" onclick="selMesEstadoBtn(this)" class="mes-estado-btn'+(on?' on':'')+'">'+est+'</button>';
   });
   html += '</div></div>';
   return html;
+}
+
+function selMesEstadoBtn(btn) {
+  var key   = btn.getAttribute('data-key');
+  var estado = btn.getAttribute('data-est');
+  selMesEstado(key, estado, btn);
 }
 
 function selMesEstado(key, estado, btn) {
