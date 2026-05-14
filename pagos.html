@@ -58,6 +58,15 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 .jugador-pendiente{font-size:13px;font-weight:700}
 .jugador-total{font-size:11px;color:var(--texto3)}
 .estado-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.paso-dot{width:28px;height:28px;border-radius:50%;background:var(--borde);color:var(--texto3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.paso-dot.active{background:var(--azul);color:#fff}
+.tipo-btn{padding:10px 6px;border-radius:var(--radio-sm);border:1.5px solid var(--borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--texto2);text-align:center;transition:all .15s}
+.tipo-btn.active{background:var(--azul);color:#fff;border-color:var(--azul)}
+.mes-cuota{padding:12px 8px;border-radius:var(--radio-sm);border:1.5px solid var(--borde);text-align:center;cursor:pointer;background:#fff}
+.mes-cuota.pagado{background:var(--verde-c);border-color:var(--verde)}
+.mes-cuota.beca{background:#E8EAF6;border-color:#9FA8DA}
+.mes-cuota.hermano{background:var(--naranja-c);border-color:var(--naranja)}
+.mes-cuota.pendiente{background:#fff}
 .dot-verde{background:var(--verde)}.dot-rojo{background:var(--rojo)}
 .dot-azul{background:var(--azul2)}.dot-amarillo{background:#F39C12}
 .dot-gris{background:#ccc}.dot-beca{background:#3949AB}
@@ -87,6 +96,12 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 .modal-btn{flex:1;padding:14px;border-radius:var(--radio-sm);border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font)}
 .modal-cancel{background:var(--gris);color:var(--texto2)}
 .modal-ok{background:var(--verde);color:#fff}
+.tipo-btn{padding:10px 8px;border-radius:var(--radio-sm);border:1.5px solid var(--borde);background:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--texto2);text-align:center}
+.tipo-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+.mes-estado-btn{padding:5px 4px;border-radius:6px;border:.5px solid var(--borde);background:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--texto2)}
+.mes-estado-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+.mes-estado-btn{padding:6px 4px;border-radius:6px;border:1px solid var(--borde);background:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--texto2);text-align:center;width:100%}
+.mes-estado-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
 
 /* LOADING */
 .loading-wrap{text-align:center;padding:40px 20px;color:var(--texto3)}
@@ -156,33 +171,94 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 
 <!-- BOTÓN AÑADIR -->
 <div style="position:fixed;bottom:20px;right:20px;z-index:50">
-  <button onclick="abrirModalAnyadir()" style="width:56px;height:56px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3)">+</button>
+  <button onclick="abrirModalAnyadir()" style="width:56px;height:56px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center">+</button>
 </div>
 
-<!-- MODAL AÑADIR JUGADOR -->
-<div class="modal-overlay hidden" id="modal-anyadir" onclick="if(event.target===this)this.classList.add('hidden')">
-  <div class="modal-sheet">
-    <div class="modal-title">➕ Añadir jugador</div>
-    <div class="modal-field"><label>Categoría</label>
-      <select id="anyadir-cat">
-        <option value="amateur">Amateur</option>
-        <option value="juvenil">Juvenil</option>
-        <option value="cadete">Cadete</option>
-        <option value="infantil">Infantil</option>
-        <option value="alevin">Alevín</option>
-        <option value="benjamin">Benjamín</option>
-        <option value="prebenjamin">Prebenjamín</option>
-        <option value="querubin">Querubín</option>
-      </select>
+<!-- MODAL AÑADIR JUGADOR — 3 PASOS -->
+<div class="modal-overlay hidden" id="modal-anyadir" onclick="if(event.target===this)cerrarAnyadir()">
+  <div class="modal-sheet" style="max-height:90vh;overflow-y:auto">
+
+    <!-- Indicador de pasos -->
+    <div style="display:flex;gap:6px;margin-bottom:16px;justify-content:center">
+      <div class="paso-dot" id="dot-1" style="width:28px;height:28px;border-radius:50%;background:var(--azul);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">1</div>
+      <div style="flex:1;height:2px;background:var(--borde);margin:auto"></div>
+      <div class="paso-dot" id="dot-2" style="width:28px;height:28px;border-radius:50%;background:var(--borde);color:var(--texto3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">2</div>
+      <div style="flex:1;height:2px;background:var(--borde);margin:auto"></div>
+      <div class="paso-dot" id="dot-3" style="width:28px;height:28px;border-radius:50%;background:var(--borde);color:var(--texto3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">3</div>
     </div>
-    <div class="modal-field"><label>Nombre (Apellidos, Nombre)</label><input type="text" id="anyadir-nombre" placeholder="García López, Juan" autocapitalize="words"></div>
-    <div class="modal-field"><label>DNI</label><input type="text" id="anyadir-dni" placeholder="12345678A"></div>
-    <div class="modal-field"><label>Teléfono 1</label><input type="tel" id="anyadir-tel" placeholder="600000000"></div>
-    <div class="modal-field"><label>Teléfono 2</label><input type="tel" id="anyadir-tel2" placeholder="600000001"></div>
-    <div class="modal-btns">
-      <button class="modal-btn modal-cancel" onclick="document.getElementById('modal-anyadir').classList.add('hidden')">Cancelar</button>
-      <button class="modal-btn modal-ok" onclick="confirmarAnyadir()">✅ Añadir</button>
+
+    <!-- PASO 1: Datos personales -->
+    <div id="paso-1">
+      <div class="modal-title">👤 Datos del jugador</div>
+      <div class="modal-field"><label>Categoría</label>
+        <select id="an-cat">
+          <option value="amateur">Amateur</option>
+          <option value="juvenil">Juvenil</option>
+          <option value="cadete">Cadete</option>
+          <option value="infantil">Infantil</option>
+          <option value="alevin">Alevín</option>
+          <option value="benjamin">Benjamín</option>
+          <option value="prebenjamin">Prebenjamín</option>
+          <option value="querubin">Querubín</option>
+        </select>
+      </div>
+      <div class="modal-field"><label>Apellidos y Nombre</label><input type="text" id="an-nombre" placeholder="García López, Juan" autocapitalize="words"></div>
+      <div class="modal-field"><label>Fecha de nacimiento</label><input type="date" id="an-fnac"></div>
+      <div class="modal-field"><label>DNI</label><input type="text" id="an-dni" placeholder="12345678A"></div>
+      <div class="modal-field"><label>Teléfono 1</label><input type="tel" id="an-tel1" placeholder="600000000"></div>
+      <div class="modal-field"><label>Teléfono 2</label><input type="tel" id="an-tel2" placeholder="600000001"></div>
+      <div class="modal-btns">
+        <button class="modal-btn modal-cancel" onclick="cerrarAnyadir()">Cancelar</button>
+        <button class="modal-btn modal-ok" onclick="paso1Siguiente()">Siguiente →</button>
+      </div>
     </div>
+
+    <!-- PASO 2: Tipo de pago e inscripción -->
+    <div id="paso-2" style="display:none">
+      <div class="modal-title">💳 Tipo de pago</div>
+      <div class="modal-field">
+        <label>Tipo de jugador</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <button class="tipo-btn on" id="tipo-normal" onclick="selTipo('normal')">👤 Normal</button>
+          <button class="tipo-btn" id="tipo-beca" onclick="selTipo('beca')">🟣 Becado</button>
+          <button class="tipo-btn" id="tipo-hermano" onclick="selTipo('hermano')">👨‍👩‍👦 Hermano</button>
+          <button class="tipo-btn" id="tipo-baja" onclick="selTipo('baja')">⬛ Baja</button>
+        </div>
+      </div>
+      <div class="modal-field" id="campo-inscr">
+        <label>Inscripción</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <button class="tipo-btn on" id="inscr-si" onclick="selInscr('pagada')">✅ Pagada</button>
+          <button class="tipo-btn" id="inscr-no" onclick="selInscr('pendiente')">⏳ Pendiente</button>
+          <button class="tipo-btn" id="inscr-beca" onclick="selInscr('beca')">🟣 Beca</button>
+          <button class="tipo-btn" id="inscr-banco" onclick="selInscr('banco')">🏦 Banco</button>
+        </div>
+      </div>
+      <div class="modal-field" id="campo-importe-inscr" style="display:none">
+        <label>Importe inscripción (€)</label>
+        <input type="number" id="an-importe-inscr" placeholder="100">
+      </div>
+      <div class="modal-btns">
+        <button class="modal-btn modal-cancel" onclick="irPaso(1)">← Atrás</button>
+        <button class="modal-btn modal-ok" onclick="paso2Siguiente()">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- PASO 3: Estado de cada mes -->
+    <div id="paso-3" style="display:none">
+      <div class="modal-title">📅 Cuotas mensuales</div>
+      <p style="font-size:12px;color:var(--texto3);margin-bottom:12px">Marca el estado de cada mes</p>
+      <div id="meses-grid-anyadir"></div>
+      <div class="modal-field" style="margin-top:12px">
+        <label>Notas</label>
+        <textarea id="an-notas" rows="2" placeholder="Observaciones..." style="width:100%;padding:10px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-family:var(--font);font-size:14px;resize:none;outline:none"></textarea>
+      </div>
+      <div class="modal-btns">
+        <button class="modal-btn modal-cancel" onclick="irPaso(2)">← Atrás</button>
+        <button class="modal-btn modal-ok" onclick="confirmarAnyadir()">✅ Guardar jugador</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -418,28 +494,181 @@ async function confirmarPago() {
   }
 }
 
+// ── MODAL AÑADIR JUGADOR ─────────────────────────────────────────
+var _anTipo = 'normal';
+var _anInscr = 'pagada';
+var MESES_LABELS_AN = ['INSCR.','SEPT.','OCT.','NOV.','DIC.','ENE.','FEB.'];
+var MESES_NOMBRES_AN = ['Inscripción','Septiembre','Octubre','Noviembre','Diciembre','Enero','Febrero'];
+var _anMesesEstado = {}; // mes -> {estado, importe}
+
 function abrirModalAnyadir() {
-  var sel = document.getElementById('anyadir-cat');
+  _anTipo = 'normal'; _anInscr = 'pagada'; _anMesesEstado = {};
+  var sel = document.getElementById('an-cat');
   if (catFiltro && sel) sel.value = catFiltro;
+  // Reset tipo btns
+  ['tipo-normal','tipo-beca','tipo-hermano','tipo-baja'].forEach(function(id){
+    document.getElementById(id).classList.remove('on');
+  });
+  document.getElementById('tipo-normal').classList.add('on');
+  document.getElementById('campo-inscr').style.display = '';
+  irPaso(1);
   document.getElementById('modal-anyadir').classList.remove('hidden');
 }
 
-async function confirmarAnyadir() {
-  var cat    = document.getElementById('anyadir-cat').value;
-  var nombre = document.getElementById('anyadir-nombre').value.trim();
-  var dni    = document.getElementById('anyadir-dni').value.trim();
-  var tel    = document.getElementById('anyadir-tel').value.trim();
-  var tel2   = document.getElementById('anyadir-tel2').value.trim();
-  if (!nombre) { alert('El nombre es obligatorio'); return; }
+function cerrarAnyadir() {
   document.getElementById('modal-anyadir').classList.add('hidden');
+}
+
+function irPaso(n) {
+  [1,2,3].forEach(function(i) {
+    document.getElementById('paso-'+i).style.display = i===n ? '' : 'none';
+    var dot = document.getElementById('dot-'+i);
+    dot.style.background = i <= n ? 'var(--azul)' : 'var(--borde)';
+    dot.style.color = i <= n ? '#fff' : 'var(--texto3)';
+  });
+}
+
+function paso1Siguiente() {
+  var nombre = document.getElementById('an-nombre').value.trim();
+  if (!nombre) { alert('El nombre es obligatorio'); return; }
+  irPaso(2);
+}
+
+function paso2Siguiente() {
+  renderMesesAnyadir();
+  irPaso(3);
+}
+
+function selTipo(tipo) {
+  _anTipo = tipo;
+  ['normal','beca','hermano','baja'].forEach(function(t){
+    document.getElementById('tipo-'+t).classList.toggle('on', t===tipo);
+  });
+  // Si beca completa, ocultar inscripción
+  var campoInscr = document.getElementById('campo-inscr');
+  if (tipo === 'beca') {
+    campoInscr.style.display = 'none';
+    _anInscr = 'beca';
+  } else if (tipo === 'baja') {
+    campoInscr.style.display = 'none';
+    _anInscr = 'baja';
+  } else {
+    campoInscr.style.display = '';
+  }
+}
+
+function selInscr(val) {
+  _anInscr = val;
+  ['si','no','beca','banco'].forEach(function(t){
+    document.getElementById('inscr-'+t).classList.remove('on');
+  });
+  var map = {pagada:'si', pendiente:'no', beca:'beca', banco:'banco'};
+  if (map[val]) document.getElementById('inscr-'+map[val]).classList.add('on');
+  document.getElementById('campo-importe-inscr').style.display = (val==='pagada'||val==='banco') ? '' : 'none';
+}
+
+function renderMesesAnyadir() {
+  var cat = document.getElementById('an-cat').value;
+  var mesesCount = 6; // default
+  // Calcular cuántos meses según categoría (simple)
+  if (cat === 'amateur') mesesCount = 3;
+  else if (cat === 'juvenil') mesesCount = 4;
+
+  var ESTADOS = ['Pendiente','Pagado','Beca','Hermano','Banco','Baja'];
+  var html = '';
+
+  // Inscripción
+  var ins_est = _anTipo === 'beca' ? 'Beca' : (_anInscr === 'pagada' ? 'Pagado' : _anInscr === 'banco' ? 'Banco' : 'Pendiente');
+  html += renderMesItem('INSCR.', 'Inscripción', ins_est, 0);
+
+  // Meses
+  var hoy_mes = new Date().getMonth(); // 0=ene
+  // Meses de temporada: sept(8), oct(9), nov(10), dic(11), ene(0), feb(1)
+  var TEMP_MESES = [8,9,10,11,0,1];
+  for (var i = 0; i < mesesCount; i++) {
+    var mes_label = MESES_LABELS_AN[i+1];
+    var mes_nombre = MESES_NOMBRES_AN[i+1];
+    // Auto-detectar si el mes ya pasó
+    var mes_num = TEMP_MESES[i];
+    var es_actual = mes_num === hoy_mes;
+    var ha_pasado = (mes_num >= 8) ? (hoy_mes >= mes_num || hoy_mes <= 1) : (hoy_mes >= mes_num);
+    var estado_auto = _anTipo==='beca' ? 'Beca' : (es_actual ? 'Pendiente' : (ha_pasado ? 'Pendiente' : 'Pendiente'));
+    html += renderMesItem(mes_label, mes_nombre, _anMesesEstado[mes_label]?_anMesesEstado[mes_label].estado:estado_auto, i+1);
+  }
+
+  document.getElementById('meses-grid-anyadir').innerHTML = html;
+}
+
+function renderMesItem(key, nombre, estadoActual, idx) {
+  var ESTADOS = ['Pendiente','Pagado','Banco','Beca','Hermano','Baja'];
+  var COLORES = {Pendiente:'#F8D7DA',Pagado:'#D4F0DC',Banco:'#DAEEFF',Beca:'#E8EAF6',Hermano:'#FFF9C4',Baja:'#EEE'};
+  var bg = COLORES[estadoActual] || '#fff';
+  var html = '<div style="background:'+bg+';border-radius:var(--radio-sm);padding:10px;margin-bottom:8px;border:.5px solid var(--borde)">';
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
+  html += '<span style="font-size:13px;font-weight:700">'+nombre+'</span>';
+  html += '<input type="number" placeholder="€" min="0" id="importe-'+key.replace('.','_')+'" style="width:80px;padding:6px 8px;border:.5px solid var(--borde);border-radius:6px;font-size:14px;text-align:right;outline:none">';
+  html += '</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">';
+  ESTADOS.forEach(function(est) {
+    var on = est === estadoActual;
+    html += '<button onclick="selMesEstado(''+key+'',''+est+'',this)" class="mes-estado-btn'+(on?' on':'')+'">'+est+'</button>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function selMesEstado(key, estado, btn) {
+  _anMesesEstado[key] = {estado: estado};
+  // Actualizar botones del mes
+  var container = btn.parentElement.parentElement;
+  container.querySelectorAll('.mes-estado-btn').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  // Actualizar color de fondo
+  var COLORES = {Pendiente:'#F8D7DA',Pagado:'#D4F0DC',Banco:'#DAEEFF',Beca:'#E8EAF6',Hermano:'#FFF9C4',Baja:'#EEE'};
+  container.style.background = COLORES[estado] || '#fff';
+}
+
+async function confirmarAnyadir() {
+  var nombre = document.getElementById('an-nombre').value.trim();
+  var cat    = document.getElementById('an-cat').value;
+  var dni    = document.getElementById('an-dni').value.trim();
+  var tel1   = document.getElementById('an-tel1').value.trim();
+  var tel2   = document.getElementById('an-tel2').value.trim();
+  var fnac   = document.getElementById('an-fnac').value;
+  var notas  = document.getElementById('an-notas').value.trim();
+
+  if (!nombre) { alert('El nombre es obligatorio'); return; }
+
+  // Recoger estado de cada mes
+  var meses_data = {};
+  MESES_LABELS_AN.forEach(function(m) {
+    var key = m.replace('.','_');
+    var el = document.getElementById('importe-'+key);
+    var importe = el ? el.value : '';
+    var estado = _anMesesEstado[m] ? _anMesesEstado[m].estado : 'Pendiente';
+    var valor = '';
+    if (estado === 'Pagado' || estado === 'Banco') valor = importe || 'BANCO';
+    else if (estado === 'Beca') valor = 'BECA';
+    else if (estado === 'Hermano') valor = 'HERMANO';
+    else if (estado === 'Baja') valor = 'BAJA';
+    meses_data[m] = valor;
+  });
+
+  cerrarAnyadir();
+
   try {
     await fetch(WEBAPP_URL, {
       method:'POST', mode:'no-cors',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({tipo:'anyadir_jugador_pagos',categoria:cat,nombre:nombre,dni:dni,telefono:tel,telefono2:tel2})
+      body: JSON.stringify({
+        tipo:'anyadir_jugador_pagos',
+        categoria: cat, nombre: nombre, dni: dni,
+        telefono: tel1, telefono2: tel2, fnac: fnac,
+        tipo_pago: _anTipo, inscripcion: _anInscr,
+        meses: meses_data, notas: notas
+      })
     });
-    alert('Jugador añadido correctamente');
-    ['anyadir-nombre','anyadir-dni','anyadir-tel','anyadir-tel2'].forEach(function(id){ document.getElementById(id).value=''; });
+    alert('✅ Jugador añadido correctamente');
     setTimeout(cargarPagos, 2000);
   } catch(e) { alert('Error al añadir jugador'); }
 }
