@@ -60,7 +60,7 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 .estado-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .dot-verde{background:var(--verde)}.dot-rojo{background:var(--rojo)}
 .dot-azul{background:var(--azul2)}.dot-amarillo{background:#F39C12}
-.dot-gris{background:#ccc}
+.dot-gris{background:#ccc}.dot-beca{background:#3949AB}
 
 /* DETALLE EXPANDIDO */
 .jugador-detalle{display:none;border-top:.5px solid var(--borde);padding:12px 14px;background:var(--gris)}
@@ -112,6 +112,11 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
     <div class="res-card r"><div class="res-num" id="cnt-pendientes">—</div><div class="res-lbl">Pendiente</div></div>
     <div class="res-card g"><div class="res-num" id="cnt-total">—</div><div class="res-lbl">Total</div></div>
   </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+    <div class="res-card" style="background:#fff"><div class="res-num" id="cnt-recaudado" style="font-size:16px;color:var(--verde)">—</div><div class="res-lbl" style="color:var(--verde)">Recaudado</div></div>
+    <div class="res-card" style="background:#fff"><div class="res-num" id="cnt-esperado" style="font-size:16px;color:var(--azul)">—</div><div class="res-lbl" style="color:var(--azul)">Esperado</div></div>
+    <div class="res-card" style="background:#fff"><div class="res-num" id="cnt-porCobrar" style="font-size:16px;color:var(--rojo)">—</div><div class="res-lbl" style="color:var(--rojo)">Por cobrar</div></div>
+  </div>
 
   <!-- FILTRO CATEGORÍA -->
   <div class="filtros" id="filtros-cat">
@@ -133,6 +138,7 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
     <button class="filtro-btn" onclick="filtrarEstado('PENDIENTE',this)">🔴 Pendiente</button>
     <button class="filtro-btn" onclick="filtrarEstado('EN PLAZO',this)">🔵 En plazo</button>
     <button class="filtro-btn" onclick="filtrarEstado('TEMPORADA',this)">🟡 Temporada</button>
+    <button class="filtro-btn" onclick="filtrarEstado('BECA',this)">🟣 Beca</button>
   </div>
 
   <!-- BUSCADOR -->
@@ -257,24 +263,34 @@ async function cargarPagos() {
 
 function getEstadoInfo(estado) {
   var e = (estado || '').toUpperCase();
-  if (e.indexOf('AL') !== -1 || e === 'AL DÍA') return {cls:'dot-verde', txt:'AL DÍA', color:'#D4F0DC', borde:'#A8D5B5', texto:'#1E7B34'};
-  if (e.indexOf('TEMPORADA') !== -1) return {cls:'dot-amarillo', txt:'TEMPORADA', color:'#FFF9C4', borde:'#F5E27A', texto:'#856D00'};
-  if (e.indexOf('EN PLAZO') !== -1 || e.indexOf('PLAZO') !== -1) return {cls:'dot-azul', txt:'EN PLAZO', color:'#DAEEFF', borde:'#B5D4F4', texto:'#1A3A6B'};
-  if (e.indexOf('BAJA') !== -1) return {cls:'dot-gris', txt:'BAJA', color:'#EEE', borde:'#DDD', texto:'#999'};
-  if (e.indexOf('PENDIENTE') !== -1 || e.indexOf('ROJO') !== -1) return {cls:'dot-rojo', txt:'PENDIENTE', color:'#FAD7D3', borde:'#F1B0B4', texto:'#C0392B'};
+  if (e.indexOf('AL') !== -1 || e === 'AL DÍA') return {cls:'dot-verde',    txt:'AL DÍA',    color:'#D4F0DC', borde:'#A8D5B5', texto:'#1E7B34'};
+  if (e.indexOf('TEMPORADA') !== -1)             return {cls:'dot-amarillo', txt:'TEMPORADA', color:'#FFF9C4', borde:'#F5E27A', texto:'#856D00'};
+  if (e.indexOf('EN PLAZO') !== -1)              return {cls:'dot-azul',     txt:'EN PLAZO',  color:'#DAEEFF', borde:'#B5D4F4', texto:'#1A3A6B'};
+  if (e === 'BECA')                              return {cls:'dot-beca',     txt:'BECA',      color:'#E8EAF6', borde:'#9FA8DA', texto:'#3949AB'};
+  if (e.indexOf('BAJA') !== -1)                  return {cls:'dot-gris',     txt:'BAJA',      color:'#EEE',    borde:'#DDD',    texto:'#999'};
+  if (e.indexOf('PENDIENTE') !== -1)             return {cls:'dot-rojo',     txt:'PENDIENTE', color:'#FAD7D3', borde:'#F1B0B4', texto:'#C0392B'};
   return {cls:'dot-gris', txt:estado||'—', color:'#F5F5F5', borde:'#DDD', texto:'#666'};
 }
 
 function actualizarResumen() {
-  var al_dia = 0, pendiente = 0;
+  var al_dia=0, pendiente=0, total=0, recaudado=0, esperado=0;
   todosJugadores.forEach(function(j) {
     var info = getEstadoInfo(j.estado);
+    if (info.txt === 'BAJA') return;
+    total++;
     if (info.txt === 'AL DÍA' || info.txt === 'TEMPORADA' || info.txt === 'EN PLAZO') al_dia++;
     else if (info.txt === 'PENDIENTE') pendiente++;
+    var pag = parseFloat(j.total) || 0;
+    var pend = parseFloat(j.pendiente) || 0;
+    recaudado += pag;
+    esperado  += pag + pend;
   });
   document.getElementById('cnt-al-dia').textContent = al_dia;
   document.getElementById('cnt-pendientes').textContent = pendiente;
-  document.getElementById('cnt-total').textContent = todosJugadores.filter(function(j){ return getEstadoInfo(j.estado).txt !== 'BAJA'; }).length;
+  document.getElementById('cnt-total').textContent = total;
+  document.getElementById('cnt-recaudado').textContent = recaudado.toFixed(0)+'€';
+  document.getElementById('cnt-esperado').textContent = esperado.toFixed(0)+'€';
+  document.getElementById('cnt-porCobrar').textContent = (esperado-recaudado).toFixed(0)+'€';
 }
 
 function filtrarCat(cat, btn) {
