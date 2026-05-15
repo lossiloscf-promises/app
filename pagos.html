@@ -30,59 +30,59 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 
 /* FILTROS */
 .filtros{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px}
-.filtro-btn{padding:6px 14px;border-radius:20px;border:.5px solid var(–borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(–font);color:var(–texto2)}
-.filtro-btn.on{background:var(–azul);color:#fff;border-color:var(–azul)}
+.filtro-btn{padding:6px 14px;border-radius:20px;border:.5px solid var(--borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--font);color:var(--texto2)}
+.filtro-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
 
 /* RESUMEN */
 .resumen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.res-card{background:#fff;border-radius:var(–radio-sm);border:.5px solid var(–borde);padding:12px;text-align:center}
+.res-card{background:#fff;border-radius:var(--radio-sm);border:.5px solid var(--borde);padding:12px;text-align:center}
 .res-num{font-size:26px;font-weight:800;line-height:1}
 .res-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-top:4px;font-weight:600}
-.res-card.v .res-num{color:var(–verde)}.res-card.v .res-lbl{color:var(–verde)}
-.res-card.r .res-num{color:var(–rojo)}.res-card.r .res-lbl{color:var(–rojo)}
-.res-card.g .res-num{color:var(–texto3)}.res-card.g .res-lbl{color:var(–texto3)}
+.res-card.v .res-num{color:var(--verde)}.res-card.v .res-lbl{color:var(--verde)}
+.res-card.r .res-num{color:var(--rojo)}.res-card.r .res-lbl{color:var(--rojo)}
+.res-card.g .res-num{color:var(--texto3)}.res-card.g .res-lbl{color:var(--texto3)}
 
 /* BUSCADOR */
 .search-wrap{position:relative;margin-bottom:12px}
-.search-wrap input{width:100%;padding:12px 14px 12px 40px;border:.5px solid var(–borde);border-radius:var(–radio-sm);font-size:15px;font-family:var(–font);outline:none;background:#fff}
-.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(–texto3);font-size:16px}
+.search-wrap input{width:100%;padding:12px 14px 12px 40px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:var(--font);outline:none;background:#fff}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--texto3);font-size:16px}
 
 /* JUGADOR ROW */
-.jugador-card{background:#fff;border-radius:var(–radio);border:.5px solid var(–borde);margin-bottom:8px;overflow:hidden;cursor:pointer}
+.jugador-card{background:#fff;border-radius:var(--radio);border:.5px solid var(--borde);margin-bottom:8px;overflow:hidden;cursor:pointer}
 .jugador-header{display:flex;align-items:center;gap:12px;padding:12px 14px}
 .jugador-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
 .jugador-info{flex:1;min-width:0}
 .jugador-nombre{font-size:14px;font-weight:600;margin-bottom:2px}
-.jugador-cat{font-size:11px;color:var(–texto3)}
+.jugador-cat{font-size:11px;color:var(--texto3)}
 .jugador-right{text-align:right;flex-shrink:0}
 .jugador-pendiente{font-size:13px;font-weight:700}
-.jugador-total{font-size:11px;color:var(–texto3)}
+.jugador-total{font-size:11px;color:var(--texto3)}
 .estado-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.paso-dot{width:28px;height:28px;border-radius:50%;background:var(–borde);color:var(–texto3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.paso-dot.active{background:var(–azul);color:#fff}
-.tipo-btn{padding:10px 6px;border-radius:var(–radio-sm);border:1.5px solid var(–borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(–font);color:var(–texto2);text-align:center;transition:all .15s}
-.tipo-btn.active{background:var(–azul);color:#fff;border-color:var(–azul)}
-.mes-cuota{padding:12px 8px;border-radius:var(–radio-sm);border:1.5px solid var(–borde);text-align:center;cursor:pointer;background:#fff}
-.mes-cuota.pagado{background:var(–verde-c);border-color:var(–verde)}
+.paso-dot{width:28px;height:28px;border-radius:50%;background:var(--borde);color:var(--texto3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.paso-dot.active{background:var(--azul);color:#fff}
+.tipo-btn{padding:10px 6px;border-radius:var(--radio-sm);border:1.5px solid var(--borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--texto2);text-align:center;transition:all .15s}
+.tipo-btn.active{background:var(--azul);color:#fff;border-color:var(--azul)}
+.mes-cuota{padding:12px 8px;border-radius:var(--radio-sm);border:1.5px solid var(--borde);text-align:center;cursor:pointer;background:#fff}
+.mes-cuota.pagado{background:var(--verde-c);border-color:var(--verde)}
 .mes-cuota.beca{background:#E8EAF6;border-color:#9FA8DA}
-.mes-cuota.hermano{background:var(–naranja-c);border-color:var(–naranja)}
+.mes-cuota.hermano{background:var(--naranja-c);border-color:var(--naranja)}
 .mes-cuota.pendiente{background:#fff}
-.dot-verde{background:var(–verde)}.dot-rojo{background:var(–rojo)}
-.dot-azul{background:var(–azul2)}.dot-amarillo{background:#F39C12}
+.dot-verde{background:var(--verde)}.dot-rojo{background:var(--rojo)}
+.dot-azul{background:var(--azul2)}.dot-amarillo{background:#F39C12}
 .dot-gris{background:#ccc}.dot-beca{background:#3949AB}
 
 /* DETALLE EXPANDIDO */
-.jugador-detalle{display:none;border-top:.5px solid var(–borde);padding:12px 14px;background:var(–gris)}
+.jugador-detalle{display:none;border-top:.5px solid var(--borde);padding:12px 14px;background:var(--gris)}
 .jugador-detalle.open{display:block}
 .meses-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
-.mes-item{background:#fff;border-radius:8px;border:.5px solid var(–borde);padding:8px 4px;text-align:center;cursor:pointer}
-.mes-item.pagado{background:var(–verde-c);border-color:var(–verde)}
-.mes-item.sin-pagar{background:var(–rojo-c);border-color:var(–rojo)}
-.mes-lbl{font-size:10px;font-weight:700;color:var(–texto2);text-transform:uppercase}
-.mes-val{font-size:12px;font-weight:700;margin-top:3px;color:var(–texto)}
-.mes-item.pagado .mes-lbl{color:var(–verde)}.mes-item.pagado .mes-val{color:var(–verde)}
-.mes-item.sin-pagar .mes-lbl{color:var(–rojo)}.mes-item.sin-pagar .mes-val{color:var(–rojo)}
-.btn-pago{width:100%;padding:12px;border:none;border-radius:var(–radio-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:var(–font);background:var(–azul);color:#fff}
+.mes-item{background:#fff;border-radius:8px;border:.5px solid var(--borde);padding:8px 4px;text-align:center;cursor:pointer}
+.mes-item.pagado{background:var(--verde-c);border-color:var(--verde)}
+.mes-item.sin-pagar{background:var(--rojo-c);border-color:var(--rojo)}
+.mes-lbl{font-size:10px;font-weight:700;color:var(--texto2);text-transform:uppercase}
+.mes-val{font-size:12px;font-weight:700;margin-top:3px;color:var(--texto)}
+.mes-item.pagado .mes-lbl{color:var(--verde)}.mes-item.pagado .mes-val{color:var(--verde)}
+.mes-item.sin-pagar .mes-lbl{color:var(--rojo)}.mes-item.sin-pagar .mes-val{color:var(--rojo)}
+.btn-pago{width:100%;padding:12px;border:none;border-radius:var(--radio-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);background:var(--azul);color:#fff}
 
 /* MODAL PAGO */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:flex-end;justify-content:center}
@@ -90,25 +90,24 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 .modal-sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:480px}
 .modal-title{font-size:16px;font-weight:700;margin-bottom:16px;text-align:center}
 .modal-field{margin-bottom:12px}
-.modal-field label{display:block;font-size:12px;font-weight:600;color:var(–texto2);margin-bottom:5px;text-transform:uppercase}
-.modal-field select,.modal-field input{width:100%;padding:12px 14px;border:.5px solid var(–borde);border-radius:var(–radio-sm);font-size:15px;font-family:var(–font);outline:none;-webkit-appearance:none;background:#fff}
+.modal-field label{display:block;font-size:12px;font-weight:600;color:var(--texto2);margin-bottom:5px;text-transform:uppercase}
+.modal-field select,.modal-field input{width:100%;padding:12px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:var(--font);outline:none;-webkit-appearance:none;background:#fff}
 .modal-btns{display:flex;gap:8px;margin-top:16px}
-.modal-btn{flex:1;padding:14px;border-radius:var(–radio-sm);border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:var(–font)}
-.modal-cancel{background:var(–gris);color:var(–texto2)}
-.modal-ok{background:var(–verde);color:#fff}
-.tipo-btn{padding:10px 8px;border-radius:var(–radio-sm);border:1.5px solid var(–borde);background:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(–font);color:var(–texto2);text-align:center}
-.tipo-btn.on{background:var(–azul);color:#fff;border-color:var(–azul)}
-.mes-estado-btn{padding:5px 4px;border-radius:6px;border:.5px solid var(–borde);background:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:var(–font);color:var(–texto2)}
-.mes-estado-btn.on{background:var(–azul);color:#fff;border-color:var(–azul)}
-.mes-estado-btn{padding:6px 4px;border-radius:6px;border:1px solid var(–borde);background:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:var(–font);color:var(–texto2);text-align:center;width:100%}
-.mes-estado-btn.on{background:var(–azul);color:#fff;border-color:var(–azul)}
+.modal-btn{flex:1;padding:14px;border-radius:var(--radio-sm);border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font)}
+.modal-cancel{background:var(--gris);color:var(--texto2)}
+.modal-ok{background:var(--verde);color:#fff}
+.tipo-btn{padding:10px 8px;border-radius:var(--radio-sm);border:1.5px solid var(--borde);background:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--texto2);text-align:center}
+.tipo-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+.mes-estado-btn{padding:5px 4px;border-radius:6px;border:.5px solid var(--borde);background:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--texto2)}
+.mes-estado-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+.mes-estado-btn{padding:6px 4px;border-radius:6px;border:1px solid var(--borde);background:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--texto2);text-align:center;width:100%}
+.mes-estado-btn.on{background:var(--azul);color:#fff;border-color:var(--azul)}
 
 /* LOADING */
-.loading-wrap{text-align:center;padding:40px 20px;color:var(–texto3)}
-.spin{display:inline-block;width:24px;height:24px;border:3px solid var(–borde);border-top-color:var(–azul);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px}
+.loading-wrap{text-align:center;padding:40px 20px;color:var(--texto3)}
+.spin{display:inline-block;width:24px;height:24px;border:3px solid var(--borde);border-top-color:var(--azul);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
-
 </head>
 <body>
 
@@ -123,7 +122,6 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 <div class="body">
 
   <!-- RESUMEN -->
-
   <div class="resumen-grid">
     <div class="res-card v"><div class="res-num" id="cnt-al-dia">—</div><div class="res-lbl">Al día</div></div>
     <div class="res-card r"><div class="res-num" id="cnt-pendientes">—</div><div class="res-lbl">Pendiente</div></div>
@@ -136,7 +134,6 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
   </div>
 
   <!-- FILTRO CATEGORÍA -->
-
   <div class="filtros" id="filtros-cat">
     <button class="filtro-btn on" onclick="filtrarCat('',this)">Todos</button>
     <button class="filtro-btn" onclick="filtrarCat('amateur',this)">Amateur</button>
@@ -150,7 +147,6 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
   </div>
 
   <!-- FILTRO ESTADO -->
-
   <div class="filtros">
     <button class="filtro-btn on" id="fest-todos" onclick="filtrarEstado('',this)">Todos</button>
     <button class="filtro-btn" onclick="filtrarEstado('AL DÍA',this)">🟢 Al día</button>
@@ -161,14 +157,12 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
   </div>
 
   <!-- BUSCADOR -->
-
   <div class="search-wrap">
     <span class="search-icon">&#128269;</span>
     <input type="text" id="buscador" placeholder="Buscar jugador..." oninput="renderLista()">
   </div>
 
   <!-- LISTA -->
-
   <div id="pagos-lista">
     <div class="loading-wrap"><div class="spin"></div><br>Cargando pagos...</div>
   </div>
@@ -176,71 +170,66 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 </div>
 
 <!-- BOTÓN AÑADIR -->
-
 <div style="position:fixed;bottom:20px;right:20px;z-index:50">
   <button onclick="abrirModalAnyadir()" style="width:56px;height:56px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center">+</button>
 </div>
 
 <!-- MODAL AÑADIR JUGADOR — 3 PASOS -->
-
 <div class="modal-overlay hidden" id="modal-anyadir" onclick="if(event.target===this)cerrarAnyadir()">
   <div class="modal-sheet" style="max-height:90vh;overflow-y:auto">
 
-```
-<!-- Indicador de pasos -->
-<div style="display:flex;gap:6px;margin-bottom:16px;justify-content:center">
-  <div class="paso-dot" id="dot-1" style="width:28px;height:28px;border-radius:50%;background:var(--azul);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">1</div>
-  <div style="flex:1;height:2px;background:var(--borde);margin:auto"></div>
-  <div class="paso-dot" id="dot-2" style="width:28px;height:28px;border-radius:50%;background:var(--borde);color:var(--texto3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">2</div>
-</div>
+    <!-- Indicador de pasos -->
+    <div style="display:flex;gap:6px;margin-bottom:16px;justify-content:center">
+      <div class="paso-dot" id="dot-1" style="width:28px;height:28px;border-radius:50%;background:var(--azul);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">1</div>
+      <div style="flex:1;height:2px;background:var(--borde);margin:auto"></div>
+      <div class="paso-dot" id="dot-2" style="width:28px;height:28px;border-radius:50%;background:var(--borde);color:var(--texto3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">2</div>
+    </div>
 
-<!-- PASO 1: Datos personales -->
-<div id="paso-1">
-  <div class="modal-title">👤 Datos del jugador</div>
-  <div class="modal-field"><label>Categoría</label>
-    <select id="an-cat">
-      <option value="amateur">Amateur</option>
-      <option value="juvenil">Juvenil</option>
-      <option value="cadete">Cadete</option>
-      <option value="infantil">Infantil</option>
-      <option value="alevin">Alevín</option>
-      <option value="benjamin">Benjamín</option>
-      <option value="prebenjamin">Prebenjamín</option>
-      <option value="querubin">Querubín</option>
-    </select>
-  </div>
-  <div class="modal-field"><label>Apellidos y Nombre</label><input type="text" id="an-nombre" placeholder="García López, Juan" autocapitalize="words"></div>
-  <div class="modal-field"><label>Fecha de nacimiento</label><input type="date" id="an-fnac"></div>
-  <div class="modal-field"><label>DNI</label><input type="text" id="an-dni" placeholder="12345678A"></div>
-  <div class="modal-field"><label>Teléfono 1</label><input type="tel" id="an-tel1" placeholder="600000000"></div>
-  <div class="modal-field"><label>Teléfono 2</label><input type="tel" id="an-tel2" placeholder="600000001"></div>
-  <div class="modal-btns">
-    <button class="modal-btn modal-cancel" onclick="cerrarAnyadir()">Cancelar</button>
-    <button class="modal-btn modal-ok" onclick="paso1Siguiente()">Siguiente →</button>
-  </div>
-</div>
+    <!-- PASO 1: Datos personales -->
+    <div id="paso-1">
+      <div class="modal-title">👤 Datos del jugador</div>
+      <div class="modal-field"><label>Categoría</label>
+        <select id="an-cat">
+          <option value="amateur">Amateur</option>
+          <option value="juvenil">Juvenil</option>
+          <option value="cadete">Cadete</option>
+          <option value="infantil">Infantil</option>
+          <option value="alevin">Alevín</option>
+          <option value="benjamin">Benjamín</option>
+          <option value="prebenjamin">Prebenjamín</option>
+          <option value="querubin">Querubín</option>
+        </select>
+      </div>
+      <div class="modal-field"><label>Apellidos y Nombre</label><input type="text" id="an-nombre" placeholder="García López, Juan" autocapitalize="words"></div>
+      <div class="modal-field"><label>Fecha de nacimiento</label><input type="date" id="an-fnac"></div>
+      <div class="modal-field"><label>DNI</label><input type="text" id="an-dni" placeholder="12345678A"></div>
+      <div class="modal-field"><label>Teléfono 1</label><input type="tel" id="an-tel1" placeholder="600000000"></div>
+      <div class="modal-field"><label>Teléfono 2</label><input type="tel" id="an-tel2" placeholder="600000001"></div>
+      <div class="modal-btns">
+        <button class="modal-btn modal-cancel" onclick="cerrarAnyadir()">Cancelar</button>
+        <button class="modal-btn modal-ok" onclick="paso1Siguiente()">Siguiente →</button>
+      </div>
+    </div>
 
-<!-- PASO 3: Estado de cada mes -->
-<div id="paso-2" style="display:none">
-  <div class="modal-title">📅 Cuotas mensuales</div>
-  <p style="font-size:12px;color:var(--texto3);margin-bottom:12px">Marca el estado de cada mes</p>
-  <div id="meses-grid-anyadir"></div>
-  <div class="modal-field" style="margin-top:12px">
-    <label>Notas</label>
-    <textarea id="an-notas" rows="2" placeholder="Observaciones..." style="width:100%;padding:10px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-family:var(--font);font-size:14px;resize:none;outline:none"></textarea>
-  </div>
-  <div class="modal-btns">
-    <button class="modal-btn modal-cancel" onclick="irPaso(1)">← Atrás</button>
-    <button class="modal-btn modal-ok" onclick="confirmarAnyadir()">✅ Guardar jugador</button>
-  </div>
-</div>
-```
+    <!-- PASO 3: Estado de cada mes -->
+    <div id="paso-2" style="display:none">
+      <div class="modal-title">📅 Cuotas mensuales</div>
+      <p style="font-size:12px;color:var(--texto3);margin-bottom:12px">Marca el estado de cada mes</p>
+      <div id="meses-grid-anyadir"></div>
+      <div class="modal-field" style="margin-top:12px">
+        <label>Notas</label>
+        <textarea id="an-notas" rows="2" placeholder="Observaciones..." style="width:100%;padding:10px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-family:var(--font);font-size:14px;resize:none;outline:none"></textarea>
+      </div>
+      <div class="modal-btns">
+        <button class="modal-btn modal-cancel" onclick="irPaso(1)">← Atrás</button>
+        <button class="modal-btn modal-ok" onclick="confirmarAnyadir()">✅ Guardar jugador</button>
+      </div>
+    </div>
 
   </div>
 </div>
 
 <!-- MODAL REGISTRAR PAGO -->
-
 <div class="modal-overlay hidden" id="modal-pago" onclick="cerrarModal(event)">
   <div class="modal-sheet">
     <div class="modal-title">Registrar pago</div>
@@ -676,6 +665,5 @@ window.addEventListener('DOMContentLoaded', function() {
   cargarPagos();
 });
 </script>
-
 </body>
 </html>
