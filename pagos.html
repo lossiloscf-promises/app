@@ -516,16 +516,16 @@ var MESES_LABELS_AN = ['INSCR.','SEPT.','OCT.','NOV.','DIC.','ENE.','FEB.'];
 var MESES_NOMBRES_AN = ['Inscripción','Septiembre','Octubre','Noviembre','Diciembre','Enero','Febrero'];
 var _anMesesEstado = {}; // mes -> {estado, importe}
 
-function abrirModalAnyadir() {
+async function abrirModalAnyadir() {
+  if (Object.keys(configPagos).length === 0) await cargarConfigPagos();
   _anTipo = 'normal'; _anInscr = 'pagada'; _anMesesEstado = {};
   var sel = document.getElementById('an-cat');
   if (catFiltro && sel) sel.value = catFiltro;
-  // Reset tipo btns
   ['tipo-normal','tipo-beca','tipo-hermano','tipo-baja'].forEach(function(id){
-    document.getElementById(id).classList.remove('on');
+    var el = document.getElementById(id); if(el) el.classList.remove('on');
   });
-  document.getElementById('tipo-normal').classList.add('on');
-  document.getElementById('campo-inscr').style.display = '';
+  var tn = document.getElementById('tipo-normal'); if(tn) tn.classList.add('on');
+  var ci = document.getElementById('campo-inscr'); if(ci) ci.style.display = '';
   irPaso(1);
   document.getElementById('modal-anyadir').classList.remove('hidden');
 }
