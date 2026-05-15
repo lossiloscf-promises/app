@@ -517,7 +517,7 @@ var MESES_NOMBRES_AN = ['Inscripción','Septiembre','Octubre','Noviembre','Dicie
 var _anMesesEstado = {}; // mes -> {estado, importe}
 
 async function abrirModalAnyadir() {
-  if (Object.keys(configPagos).length === 0) await cargarConfigPagos();
+  await cargarConfigPagos(); // siempre recargar — puede haber cambiado en CONFIG
   _anTipo = 'normal'; _anInscr = 'pagada'; _anMesesEstado = {};
   var sel = document.getElementById('an-cat');
   if (catFiltro && sel) sel.value = catFiltro;
