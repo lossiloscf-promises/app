@@ -213,37 +213,6 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
       </div>
     </div>
 
-    <!-- PASO 2: Tipo de pago e inscripción -->
-    <div id="paso-2" style="display:none">
-      <div class="modal-title">💳 Tipo de pago</div>
-      <div class="modal-field">
-        <label>Tipo de jugador</label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
-          <button class="tipo-btn on" id="tipo-normal" onclick="selTipo('normal')">👤 Normal</button>
-          <button class="tipo-btn" id="tipo-beca" onclick="selTipo('beca')">🟣 Becado</button>
-          <button class="tipo-btn" id="tipo-hermano" onclick="selTipo('hermano')">👨‍👩‍👦 Hermano</button>
-          <button class="tipo-btn" id="tipo-baja" onclick="selTipo('baja')">⬛ Baja</button>
-        </div>
-      </div>
-      <div class="modal-field" id="campo-inscr">
-        <label>Inscripción</label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
-          <button class="tipo-btn on" id="inscr-si" onclick="selInscr('pagada')">✅ Pagada</button>
-          <button class="tipo-btn" id="inscr-no" onclick="selInscr('pendiente')">⏳ Pendiente</button>
-          <button class="tipo-btn" id="inscr-beca" onclick="selInscr('beca')">🟣 Beca</button>
-          <button class="tipo-btn" id="inscr-banco" onclick="selInscr('banco')">🏦 Banco</button>
-        </div>
-      </div>
-      <div class="modal-field" id="campo-importe-inscr" style="display:none">
-        <label>Importe inscripción (€)</label>
-        <input type="number" id="an-importe-inscr" placeholder="100">
-      </div>
-      <div class="modal-btns">
-        <button class="modal-btn modal-cancel" onclick="irPaso(1)">← Atrás</button>
-        <button class="modal-btn modal-ok" onclick="paso2Siguiente()">Siguiente →</button>
-      </div>
-    </div>
-
     <!-- PASO 3: Estado de cada mes -->
     <div id="paso-3" style="display:none">
       <div class="modal-title">📅 Cuotas mensuales</div>
@@ -254,7 +223,7 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
         <textarea id="an-notas" rows="2" placeholder="Observaciones..." style="width:100%;padding:10px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-family:var(--font);font-size:14px;resize:none;outline:none"></textarea>
       </div>
       <div class="modal-btns">
-        <button class="modal-btn modal-cancel" onclick="irPaso(2)">← Atrás</button>
+        <button class="modal-btn modal-cancel" onclick="irPaso(1)">← Atrás</button>
         <button class="modal-btn modal-ok" onclick="confirmarAnyadir()">✅ Guardar jugador</button>
       </div>
     </div>
