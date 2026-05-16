@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Fisioterapia — Los Silos CF</title>
+<style>
+:root{
+  --azul:#1A3A6B;--azul2:#2E5FAC;--azul-c:#DAEEFF;
+  --verde:#1E7B34;--verde-c:#D4F0DC;
+  --rojo:#C0392B;--rojo-c:#FAD7D3;
+  --naranja:#E8771A;--naranja-c:#FFE5CC;
+  --gris:#F0F4F8;--borde:#E0E0E0;
+  --texto:#1A1A1A;--texto2:#666;--texto3:#999;
+  --radio:14px;--radio-sm:10px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--gris);color:var(--texto);min-height:100vh}
+.topbar{background:var(--azul);color:#fff;padding:env(safe-area-inset-top,14px) 16px 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.btn-back{width:36px;height:36px;border-radius:50%;border:none;background:#fff2;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.topbar h1{font-size:16px;font-weight:700}.topbar p{font-size:11px;opacity:.7;margin-top:1px}
+.topbar-right{margin-left:auto;display:flex;gap:8px}
+.btn-top{background:#fff2;border:none;color:#fff;font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:var(--font)}
+.body{padding:12px 16px 100px}
+
+/* TABS */
+.tabs{display:flex;background:#fff;border-radius:var(--radio);border:.5px solid var(--borde);margin-bottom:12px;overflow:hidden}
+.tab{flex:1;padding:12px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;color:var(--texto2);border:none;background:transparent;font-family:var(--font)}
+.tab.on{background:var(--azul);color:#fff}
+
+/* SEMANA */
+.semana-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.semana-nav h2{font-size:15px;font-weight:700;text-align:center}
+.btn-semana{width:36px;height:36px;border-radius:50%;border:.5px solid var(--borde);background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--azul)}
+
+/* DÍA */
+.dia-header{background:var(--azul);color:#fff;padding:10px 14px;border-radius:var(--radio) var(--radio) 0 0;font-size:14px;font-weight:700;margin-bottom:0}
+.dia-card{background:#fff;border-radius:var(--radio);border:.5px solid var(--borde);margin-bottom:12px;overflow:hidden}
+
+/* SLOTS */
+.slot{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--borde);cursor:pointer;transition:background .1s}
+.slot:last-child{border-bottom:none}
+.slot:active{background:var(--gris)}
+.slot-hora{font-size:13px;font-weight:700;color:var(--azul2);width:52px;flex-shrink:0}
+.slot-info{flex:1;min-width:0}
+.slot-jugador{font-size:13px;font-weight:600}
+.slot-detalle{font-size:11px;color:var(--texto3);margin-top:2px}
+.slot-estado{flex-shrink:0}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;text-transform:uppercase}
+.badge-libre{background:var(--gris);color:var(--texto3)}
+.badge-pend{background:var(--naranja-c);color:var(--naranja)}
+.badge-comp{background:var(--verde-c);color:var(--verde)}
+.badge-canc{background:var(--rojo-c);color:var(--rojo)}
+
+/* HISTORIAL */
+.histo-row{background:#fff;border-radius:var(--radio-sm);border:.5px solid var(--borde);padding:12px 14px;margin-bottom:8px}
+.histo-fecha{font-size:11px;color:var(--texto3);margin-bottom:4px}
+.histo-jugador{font-size:14px;font-weight:600}
+.histo-detalle{font-size:12px;color:var(--texto2);margin-top:3px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal-sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px env(safe-area-inset-bottom,20px);width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px;text-align:center}
+.modal-field{margin-bottom:12px}
+.modal-field label{display:block;font-size:12px;font-weight:600;color:var(--texto2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:12px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:var(--font);outline:none;-webkit-appearance:none;background:#fff;color:var(--texto)}
+.modal-field textarea{resize:none;font-size:14px;line-height:1.5}
+.modal-btns{display:flex;gap:8px;margin-top:16px}
+.modal-btn{flex:1;padding:14px;border-radius:var(--radio-sm);border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font)}
+.modal-cancel{background:var(--gris);color:var(--texto2)}
+.modal-ok{background:var(--azul);color:#fff}
+.modal-rojo{background:var(--rojo);color:#fff}
+.modal-verde{background:var(--verde);color:#fff}
+
+/* ACCIONES FISIO */
+.acciones-fisio{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.btn-accion{padding:12px;border-radius:var(--radio-sm);border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)}
+
+/* LOADING */
+.loading-wrap{text-align:center;padding:40px 20px;color:var(--texto3)}
+.spin{display:inline-block;width:24px;height:24px;border:3px solid var(--borde);border-top-color:var(--azul);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* BUSCADOR */
+.search-wrap{position:relative;margin-bottom:12px}
+.search-wrap input{width:100%;padding:12px 14px 12px 40px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:15px;font-family:var(--font);outline:none;background:#fff}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--texto3);font-size:16px}
+
+/* FAB */
+.fab{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));right:20px;z-index:50;width:56px;height:56px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="btn-back" onclick="volverAtras()">&#8249;</button>
+  <div><h1>🏥 Fisioterapia</h1><p id="top-sub">Los Silos CF</p></div>
+  <div class="topbar-right">
+    <button class="btn-top" onclick="cargarDatos()">&#8635;</button>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on" id="tab-agenda" onclick="switchTab('agenda')">📅 Agenda</button>
+    <button class="tab" id="tab-historial" onclick="switchTab('historial')">📋 Historial</button>
+    <button class="tab" id="tab-pacientes" onclick="switchTab('pacientes')" id="tab-pacientes-btn">👤 Pacientes</button>
+  </div>
+
+  <!-- AGENDA -->
+  <div id="vista-agenda">
+    <div class="semana-nav">
+      <button class="btn-semana" onclick="cambiarSemana(-1)">&#8249;</button>
+      <h2 id="semana-label">Cargando...</h2>
+      <button class="btn-semana" onclick="cambiarSemana(1)">&#8250;</button>
+    </div>
+    <div id="agenda-dias"></div>
+  </div>
+
+  <!-- HISTORIAL -->
+  <div id="vista-historial" style="display:none">
+    <div class="search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="histo-buscar" placeholder="Buscar jugador..." oninput="renderHistorial()">
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+      <button class="btn-top" style="background:var(--naranja);border-radius:20px;font-size:11px;padding:5px 12px" onclick="filtrarHisto('')">Todos</button>
+      <button class="btn-top" style="background:var(--verde);border-radius:20px;font-size:11px;padding:5px 12px" onclick="filtrarHisto('COMPLETADA')">Completadas</button>
+      <button class="btn-top" style="background:var(--rojo);border-radius:20px;font-size:11px;padding:5px 12px" onclick="filtrarHisto('CANCELADA')">Canceladas</button>
+    </div>
+    <div id="historial-lista"><div class="loading-wrap"><div class="spin"></div><br>Cargando...</div></div>
+  </div>
+
+  <!-- PACIENTES (solo fisio/superadmin) -->
+  <div id="vista-pacientes" style="display:none">
+    <div class="search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="pac-buscar" placeholder="Buscar paciente..." oninput="renderPacientes()">
+    </div>
+    <div id="pacientes-lista"><div class="loading-wrap"><div class="spin"></div><br>Cargando...</div></div>
+    <button class="fab" onclick="abrirModalNuevoPaciente()">+</button>
+  </div>
+
+</div>
+
+<!-- FAB reservar (agenda) -->
+<button class="fab" id="fab-reservar" onclick="abrirModalReserva(null,null)">+</button>
+
+<!-- MODAL RESERVA -->
+<div class="modal-overlay hidden" id="modal-reserva" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-sheet">
+    <div class="modal-title" id="modal-reserva-title">📅 Nueva reserva</div>
+    <div class="modal-field"><label>Fecha</label><input type="date" id="res-fecha"></div>
+    <div class="modal-field"><label>Hora</label>
+      <select id="res-hora"></select>
+    </div>
+    <div class="modal-field"><label>Jugador</label>
+      <select id="res-jugador"><option value="">— Seleccionar jugador —</option></select>
+    </div>
+    <div class="modal-field"><label>Dolencia / Motivo</label>
+      <textarea id="res-dolencia" rows="2" placeholder="Ej: Sobrecarga isquiotibial derecho..."></textarea>
+    </div>
+    <div class="modal-field"><label>Fecha de lesión</label><input type="date" id="res-fecha-lesion"></div>
+    <div class="modal-field"><label>Notas adicionales</label>
+      <textarea id="res-notas" rows="2" placeholder="Observaciones..."></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-cancel" onclick="document.getElementById('modal-reserva').classList.add('hidden')">Cancelar</button>
+      <button class="modal-btn modal-ok" onclick="confirmarReserva()">✅ Reservar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE SLOT -->
+<div class="modal-overlay hidden" id="modal-slot" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-sheet">
+    <div class="modal-title">📋 Detalle cita</div>
+    <div id="slot-detalle-content"></div>
+    <div id="slot-acciones" class="acciones-fisio" style="margin-top:12px"></div>
+    <div class="modal-btns" style="margin-top:8px">
+      <button class="modal-btn modal-cancel" onclick="document.getElementById('modal-slot').classList.add('hidden')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NUEVO PACIENTE -->
+<div class="modal-overlay hidden" id="modal-paciente" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-sheet">
+    <div class="modal-title">👤 Nuevo paciente / Lesión</div>
+    <div class="modal-field"><label>Jugador</label>
+      <select id="pac-jugador"><option value="">— Seleccionar —</option></select>
+    </div>
+    <div class="modal-field"><label>Equipo</label>
+      <select id="pac-equipo" onchange="cargarJugadoresPaciente(this.value)">
+        <option value="">— Seleccionar equipo —</option>
+        <option value="amateur">Amateur</option><option value="juvenil_a">Juvenil A</option>
+        <option value="juvenil_b">Juvenil B</option><option value="cadete_a">Cadete A</option>
+        <option value="cadete_b">Cadete B</option><option value="infantil_a">Infantil A</option>
+        <option value="alevin_a">Alevín A</option><option value="benjamin_a">Benjamín A</option>
+        <option value="prebenjamin_a">Prebenjamín A</option>
+      </select>
+    </div>
+    <div class="modal-field"><label>Dolencia</label><textarea id="pac-dolencia" rows="2" placeholder="Diagnóstico o descripción de la lesión..."></textarea></div>
+    <div class="modal-field"><label>Fecha de lesión</label><input type="date" id="pac-fecha-lesion"></div>
+    <div class="modal-field"><label>Notas</label><textarea id="pac-notas" rows="2" placeholder="Observaciones adicionales..."></textarea></div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-cancel" onclick="document.getElementById('modal-paciente').classList.add('hidden')">Cancelar</button>
+      <button class="modal-btn modal-ok" onclick="confirmarNuevoPaciente()">✅ Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzccJuHc7_dNEJluOJL4-2HGnPvHX-UvzHIMCNPBmfJi5Q-dwFnyAKT0aatXCay3Ygm/exec';
+var cfg = {};
+try { cfg = JSON.parse(localStorage.getItem('silos_sesion') || '{}'); } catch(e) {}
+
+var esFisio    = cfg.rol === 'fisioterapeuta' || cfg.rol === 'superadmin' || cfg.rol === 'director';
+var esEntrenador = cfg.rol === 'entrenador' || cfg.rol === 'entrenador_principal' || esFisio;
+var tabActual  = 'agenda';
+var semanaOffset = 0;
+var citasData  = [];
+var pacientesData = [];
+var histoFiltro = '';
+var plantillaCache = {};
+
+// Horarios fisio: martes y jueves, 17:30-20:30, cada 15 min
+var HORAS_SLOTS = [];
+(function() {
+  var h = 17, m = 30;
+  while (h < 20 || (h === 20 && m <= 30)) {
+    HORAS_SLOTS.push((h<10?'0':'')+h+':'+(m===0?'00':m));
+    m += 15;
+    if (m >= 60) { m -= 60; h++; }
+  }
+})();
+
+function volverAtras() {
+  if (window.history.length > 1) history.back();
+  else window.location.href = 'index.html';
+}
+
+// ── TABS ─────────────────────────────────────────────────────────
+function switchTab(tab) {
+  tabActual = tab;
+  ['agenda','historial','pacientes'].forEach(function(t) {
+    document.getElementById('vista-'+t).style.display = t===tab ? '' : 'none';
+    document.getElementById('tab-'+t).classList.toggle('on', t===tab);
+  });
+  var fab = document.getElementById('fab-reservar');
+  if (fab) fab.style.display = tab==='agenda' ? 'flex' : 'none';
+  if (tab==='historial') renderHistorial();
+  if (tab==='pacientes') renderPacientes();
+}
+
+// ── SEMANA ────────────────────────────────────────────────────────
+function getLunes(offset) {
+  var hoy = new Date();
+  var dia = hoy.getDay();
+  var diffLunes = dia === 0 ? -6 : 1 - dia;
+  var lunes = new Date(hoy);
+  lunes.setDate(hoy.getDate() + diffLunes + offset * 7);
+  lunes.setHours(0,0,0,0);
+  return lunes;
+}
+
+function getDiasSemana(offset) {
+  var lunes = getLunes(offset);
+  // Solo martes (lunes+1) y jueves (lunes+3)
+  var martes  = new Date(lunes); martes.setDate(lunes.getDate()+1);
+  var jueves  = new Date(lunes); jueves.setDate(lunes.getDate()+3);
+  return [martes, jueves];
+}
+
+function fmtFecha(d) {
+  return d.getFullYear()+'-'+(d.getMonth()<9?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate();
+}
+
+function fmtFechaCorta(d) {
+  var dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return dias[d.getDay()]+' '+d.getDate()+' '+meses[d.getMonth()];
+}
+
+function cambiarSemana(delta) {
+  semanaOffset += delta;
+  renderAgenda();
+}
+
+function renderAgenda() {
+  var dias = getDiasSemana(semanaOffset);
+  var lunes = getLunes(semanaOffset);
+  var viernes = new Date(lunes); viernes.setDate(lunes.getDate()+4);
+  document.getElementById('semana-label').textContent =
+    fmtFechaCorta(lunes) + ' — ' + fmtFechaCorta(viernes);
+
+  var html = '';
+  dias.forEach(function(dia) {
+    var fechaStr = fmtFecha(dia);
+    var citasDia = citasData.filter(function(c){ return c.fecha === fechaStr; });
+    var nombreDia = dia.getDay()===2 ? 'Martes' : 'Jueves';
+    html += '<div class="dia-card">';
+    html += '<div class="dia-header">'+nombreDia+' '+fmtFechaCorta(dia)+'</div>';
+    HORAS_SLOTS.forEach(function(hora) {
+      var cita = citasDia.find(function(c){ return c.hora === hora && c.estado !== 'CANCELADA'; });
+      html += '<div class="slot" onclick="clickSlot(\''+fechaStr+'\',\''+hora+'\')">';
+      html += '<div class="slot-hora">'+hora+'</div>';
+      if (cita) {
+        var badgeCls = cita.estado==='COMPLETADA' ? 'badge-comp' : 'badge-pend';
+        var badgeTxt = cita.estado==='COMPLETADA' ? '✅ Completada' : '⏳ Pendiente';
+        html += '<div class="slot-info"><div class="slot-jugador">'+cita.jugador+'</div>';
+        html += '<div class="slot-detalle">'+cita.equipo+' · '+(cita.dolencia||'').substring(0,30)+'</div></div>';
+        html += '<div class="slot-estado"><span class="badge '+badgeCls+'">'+badgeTxt+'</span></div>';
+      } else {
+        html += '<div class="slot-info"><div class="slot-detalle" style="color:var(--verde)">Disponible</div></div>';
+        html += '<div class="slot-estado"><span class="badge badge-libre">Libre</span></div>';
+      }
+      html += '</div>';
+    });
+    // Citas canceladas del día
+    var canceladas = citasDia.filter(function(c){ return c.estado==='CANCELADA'; });
+    if (canceladas.length) {
+      html += '<div style="padding:8px 14px;font-size:11px;color:var(--rojo);border-top:.5px solid var(--borde)">'+canceladas.length+' cita(s) cancelada(s)</div>';
+    }
+    html += '</div>';
+  });
+  document.getElementById('agenda-dias').innerHTML = html;
+}
+
+// ── CLICK SLOT ────────────────────────────────────────────────────
+function clickSlot(fecha, hora) {
+  var cita = citasData.find(function(c){ return c.fecha===fecha && c.hora===hora && c.estado!=='CANCELADA'; });
+  if (cita) {
+    mostrarDetalleCita(cita);
+  } else {
+    abrirModalReserva(fecha, hora);
+  }
+}
+
+function mostrarDetalleCita(cita) {
+  var d = document.getElementById('slot-detalle-content');
+  var fechaDisplay = new Date(cita.fecha+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+  d.innerHTML =
+    '<div style="background:var(--gris);border-radius:var(--radio-sm);padding:12px;margin-bottom:12px">' +
+    '<div style="font-size:16px;font-weight:700;margin-bottom:4px">'+cita.jugador+'</div>' +
+    '<div style="font-size:12px;color:var(--texto2)">'+cita.equipo+'</div>' +
+    '</div>' +
+    '<div style="display:grid;gap:8px">' +
+    '<div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--texto2)">📅 Fecha</span><span style="font-size:13px;font-weight:600">'+fechaDisplay+' · '+cita.hora+'</span></div>' +
+    '<div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--texto2)">🤕 Dolencia</span><span style="font-size:13px;font-weight:600;max-width:55%;text-align:right">'+( cita.dolencia||'—')+'</span></div>' +
+    '<div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--texto2)">📆 Lesión</span><span style="font-size:13px;font-weight:600">'+(cita.fecha_lesion||'—')+'</span></div>' +
+    '<div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--texto2)">🔢 Sesión nº</span><span style="font-size:13px;font-weight:600">'+(cita.n_sesion||'—')+'</span></div>' +
+    '<div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--texto2)">📝 Notas</span><span style="font-size:13px;color:var(--texto2);max-width:55%;text-align:right">'+(cita.notas||'—')+'</span></div>' +
+    '</div>';
+
+  // Acciones según rol
+  var acc = document.getElementById('slot-acciones');
+  if (esFisio && cita.estado !== 'COMPLETADA') {
+    acc.innerHTML =
+      '<button class="btn-accion" style="background:var(--verde-c);color:var(--verde)" onclick="cambiarEstadoCita(\''+cita.id+'\',\'COMPLETADA\')">✅ Completar</button>' +
+      '<button class="btn-accion" style="background:var(--rojo-c);color:var(--rojo)" onclick="cambiarEstadoCita(\''+cita.id+'\',\'CANCELADA\')">❌ Cancelar</button>' +
+      '<button class="btn-accion" style="background:var(--azul-c);color:var(--azul)" onclick="editarCita(\''+cita.id+'\')">✏️ Editar</button>' +
+      '<button class="btn-accion" style="background:var(--naranja-c);color:var(--naranja)" onclick="cambiarEstadoCita(\''+cita.id+'\',\'NO_ASISTE\')">🚫 No asistió</button>';
+  } else if (cita.estado === 'COMPLETADA') {
+    acc.innerHTML = '<div style="text-align:center;color:var(--verde);font-weight:700;padding:8px">✅ Cita completada</div>';
+  } else {
+    acc.innerHTML = esEntrenador ?
+      '<button class="btn-accion" style="background:var(--rojo-c);color:var(--rojo);grid-column:1/-1" onclick="cambiarEstadoCita(\''+cita.id+'\',\'CANCELADA\')">❌ Cancelar cita</button>' : '';
+  }
+  document.getElementById('modal-slot').classList.remove('hidden');
+}
+
+// ── MODAL RESERVA ─────────────────────────────────────────────────
+async function abrirModalReserva(fecha, hora) {
+  // Rellenar fecha y hora
+  var inFecha = document.getElementById('res-fecha');
+  var inHora  = document.getElementById('res-hora');
+  if (fecha) inFecha.value = fecha;
+  else {
+    var dias = getDiasSemana(semanaOffset);
+    inFecha.value = fmtFecha(dias[0]);
+  }
+  // Generar opciones de hora
+  inHora.innerHTML = HORAS_SLOTS.map(function(h){
+    return '<option value="'+h+'"'+(h===hora?' selected':'')+'>'+h+'</option>';
+  }).join('');
+
+  // Cargar jugadores según rol
+  await cargarJugadoresReserva();
+  document.getElementById('modal-reserva').classList.remove('hidden');
+}
+
+async function cargarJugadoresReserva() {
+  var sel = document.getElementById('res-jugador');
+  sel.innerHTML = '<option value="">— Cargando... —</option>';
+  try {
+    var cats = esFisio ? [] : [cfg.equipo];
+    if (esFisio) {
+      // Fisio/superadmin ve todos los equipos
+      cats = ['amateur','juvenil_a','juvenil_b','cadete_a','cadete_b','cadete_femenino',
+              'infantil_a','infantil_b','alevin_a','alevin_b','benjamin_a','benjamin_b',
+              'prebenjamin_a','prebenjamin_b'];
+    }
+    var opts = ['<option value="">— Seleccionar jugador —</option>'];
+    for (var i = 0; i < cats.length; i++) {
+      var cat = cats[i];
+      if (!plantillaCache[cat]) {
+        var r = await fetch(WEBAPP_URL+'?action=plantilla&categoria='+cat).then(function(res){return res.json();});
+        if (r.ok && r.jugadores) plantillaCache[cat] = r.jugadores;
+      }
+      var jugs = plantillaCache[cat] || [];
+      if (jugs.length) {
+        opts.push('<optgroup label="'+cat.replace(/_/g,' ').toUpperCase()+'">');
+        jugs.forEach(function(j) {
+          var nom = typeof j==='string' ? j : (j.nombre||j);
+          opts.push('<option value="'+nom+'|'+cat+'">'+nom+'</option>');
+        });
+        opts.push('</optgroup>');
+      }
+    }
+    sel.innerHTML = opts.join('');
+  } catch(e) { sel.innerHTML = '<option value="">Error al cargar</option>'; }
+}
+
+async function confirmarReserva() {
+  var fecha    = document.getElementById('res-fecha').value;
+  var hora     = document.getElementById('res-hora').value;
+  var jugSel   = document.getElementById('res-jugador').value;
+  var dolencia = document.getElementById('res-dolencia').value.trim();
+  var fLesion  = document.getElementById('res-fecha-lesion').value;
+  var notas    = document.getElementById('res-notas').value.trim();
+
+  if (!fecha || !hora || !jugSel) { alert('Rellena fecha, hora y jugador'); return; }
+
+  // Verificar que el slot esté libre
+  var ocupado = citasData.some(function(c){ return c.fecha===fecha && c.hora===hora && c.estado!=='CANCELADA'; });
+  if (ocupado) { alert('Ese horario ya está ocupado'); return; }
+
+  // Verificar que sea martes o jueves
+  var d = new Date(fecha+'T12:00:00');
+  if (d.getDay()!==2 && d.getDay()!==4) { alert('Solo se puede reservar martes o jueves'); return; }
+
+  var partes = jugSel.split('|');
+  var jugador = partes[0];
+  var equipo  = partes[1] || cfg.equipo || '';
+
+  document.getElementById('modal-reserva').classList.add('hidden');
+
+  try {
+    await fetch(WEBAPP_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        tipo:'nueva_cita_fisio',
+        fecha:fecha, hora:hora, jugador:jugador, equipo:equipo,
+        dolencia:dolencia, fecha_lesion:fLesion, notas:notas,
+        reservado_por: cfg.nombre||cfg.email||''
+      })
+    });
+    await cargarDatos();
+    renderAgenda();
+  } catch(e) { alert('Error al reservar'); }
+}
+
+// ── CAMBIAR ESTADO ────────────────────────────────────────────────
+async function cambiarEstadoCita(id, nuevoEstado) {
+  if (nuevoEstado==='CANCELADA' && !confirm('¿Cancelar esta cita?')) return;
+  document.getElementById('modal-slot').classList.add('hidden');
+  try {
+    await fetch(WEBAPP_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({tipo:'actualizar_cita_fisio', id:id, estado:nuevoEstado})
+    });
+    await cargarDatos();
+    renderAgenda();
+  } catch(e) { alert('Error al actualizar'); }
+}
+
+function editarCita(id) {
+  var cita = citasData.find(function(c){ return c.id===id; });
+  if (!cita) return;
+  document.getElementById('modal-slot').classList.add('hidden');
+  document.getElementById('res-fecha').value = cita.fecha;
+  document.getElementById('res-dolencia').value = cita.dolencia||'';
+  document.getElementById('res-fecha-lesion').value = cita.fecha_lesion||'';
+  document.getElementById('res-notas').value = cita.notas||'';
+  document.getElementById('modal-reserva-title').textContent = '✏️ Editar cita';
+  document.getElementById('modal-reserva').classList.remove('hidden');
+}
+
+// ── HISTORIAL ─────────────────────────────────────────────────────
+function filtrarHisto(estado) { histoFiltro = estado; renderHistorial(); }
+
+function renderHistorial() {
+  var busq = (document.getElementById('histo-buscar').value||'').toLowerCase();
+  var lista = citasData.filter(function(c) {
+    if (histoFiltro && c.estado !== histoFiltro) return false;
+    if (busq && c.jugador.toLowerCase().indexOf(busq)===-1) return false;
+    return true;
+  }).sort(function(a,b){ return b.fecha.localeCompare(a.fecha); });
+
+  if (!lista.length) { document.getElementById('historial-lista').innerHTML='<div class="loading-wrap">Sin resultados</div>'; return; }
+  var html = '';
+  lista.forEach(function(c) {
+    var badgeCls = c.estado==='COMPLETADA'?'badge-comp':c.estado==='CANCELADA'?'badge-canc':'badge-pend';
+    var badgeTxt = c.estado==='COMPLETADA'?'Completada':c.estado==='CANCELADA'?'Cancelada':c.estado==='NO_ASISTE'?'No asistió':'Pendiente';
+    html += '<div class="histo-row" onclick="mostrarDetalleCita('+JSON.stringify(c).replace(/"/g,"&quot;")+')">'+
+      '<div class="histo-fecha">'+c.fecha+' · '+c.hora+' <span class="badge '+badgeCls+'">'+badgeTxt+'</span></div>'+
+      '<div class="histo-jugador">'+c.jugador+'</div>'+
+      '<div class="histo-detalle">'+c.equipo+' · '+(c.dolencia||'Sin dolencia anotada')+'</div>'+
+      '</div>';
+  });
+  document.getElementById('historial-lista').innerHTML = html;
+}
+
+// ── PACIENTES ─────────────────────────────────────────────────────
+function renderPacientes() {
+  var busq = (document.getElementById('pac-buscar').value||'').toLowerCase();
+  // Agrupar citas por jugador
+  var jugMap = {};
+  citasData.forEach(function(c) {
+    if (!jugMap[c.jugador]) jugMap[c.jugador] = {jugador:c.jugador, equipo:c.equipo, citas:[], dolencia:c.dolencia, fecha_lesion:c.fecha_lesion};
+    jugMap[c.jugador].citas.push(c);
+  });
+  var lista = Object.values(jugMap).filter(function(p){ return !busq || p.jugador.toLowerCase().indexOf(busq)!==-1; });
+  if (!lista.length) { document.getElementById('pacientes-lista').innerHTML='<div class="loading-wrap">Sin pacientes</div>'; return; }
+  var html = '';
+  lista.forEach(function(p) {
+    var total = p.citas.length;
+    var comp  = p.citas.filter(function(c){ return c.estado==='COMPLETADA'; }).length;
+    var ultima = p.citas.sort(function(a,b){return b.fecha.localeCompare(a.fecha);})[0];
+    html += '<div class="histo-row">'+
+      '<div class="histo-jugador">'+p.jugador+'</div>'+
+      '<div class="histo-detalle">'+p.equipo+' · '+(p.dolencia||'Sin dolencia')+'</div>'+
+      '<div style="display:flex;gap:12px;margin-top:6px;font-size:12px;color:var(--texto2)">'+
+      '<span>📅 Sesiones: <strong>'+comp+'/'+total+'</strong></span>'+
+      '<span>🗓️ Lesión: <strong>'+(p.fecha_lesion||'—')+'</strong></span>'+
+      '<span>🕐 Última: <strong>'+(ultima?ultima.fecha:'—')+'</strong></span>'+
+      '</div></div>';
+  });
+  document.getElementById('pacientes-lista').innerHTML = html;
+}
+
+// ── NUEVO PACIENTE ────────────────────────────────────────────────
+async function abrirModalNuevoPaciente() {
+  document.getElementById('modal-paciente').classList.remove('hidden');
+}
+
+async function cargarJugadoresPaciente(cat) {
+  if (!cat) return;
+  var sel = document.getElementById('pac-jugador');
+  sel.innerHTML = '<option>Cargando...</option>';
+  if (!plantillaCache[cat]) {
+    var r = await fetch(WEBAPP_URL+'?action=plantilla&categoria='+cat).then(function(res){return res.json();});
+    if (r.ok && r.jugadores) plantillaCache[cat] = r.jugadores;
+  }
+  var jugs = plantillaCache[cat] || [];
+  sel.innerHTML = '<option value="">— Seleccionar —</option>' + jugs.map(function(j){
+    var nom = typeof j==='string'?j:(j.nombre||j);
+    return '<option value="'+nom+'">'+nom+'</option>';
+  }).join('');
+}
+
+async function confirmarNuevoPaciente() {
+  var jugador   = document.getElementById('pac-jugador').value;
+  var equipo    = document.getElementById('pac-equipo').value;
+  var dolencia  = document.getElementById('pac-dolencia').value.trim();
+  var fLesion   = document.getElementById('pac-fecha-lesion').value;
+  var notas     = document.getElementById('pac-notas').value.trim();
+  if (!jugador || !equipo) { alert('Selecciona equipo y jugador'); return; }
+  document.getElementById('modal-paciente').classList.add('hidden');
+  try {
+    await fetch(WEBAPP_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({tipo:'nuevo_paciente_fisio', jugador:jugador, equipo:equipo, dolencia:dolencia, fecha_lesion:fLesion, notas:notas})
+    });
+    await cargarDatos();
+    renderPacientes();
+  } catch(e) { alert('Error'); }
+}
+
+// ── CARGAR DATOS ──────────────────────────────────────────────────
+async function cargarDatos() {
+  try {
+    var r = await fetch(WEBAPP_URL+'?action=citas_fisio').then(function(res){return res.json();});
+    citasData = (r.ok && r.citas) ? r.citas : [];
+  } catch(e) { citasData = []; }
+}
+
+// ── PERMISOS ──────────────────────────────────────────────────────
+function aplicarPermisos() {
+  // Tab pacientes solo fisio/superadmin/director
+  if (!esFisio) {
+    var tabP = document.getElementById('tab-pacientes');
+    if (tabP) tabP.style.display = 'none';
+  }
+}
+
+// INIT
+window.addEventListener('DOMContentLoaded', async function() {
+  aplicarPermisos();
+  await cargarDatos();
+  renderAgenda();
+  var hoy = new Date();
+  document.getElementById('res-fecha').value = fmtFecha(hoy);
+});
+</script>
+</body>
+</html>

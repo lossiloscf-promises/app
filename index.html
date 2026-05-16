@@ -115,6 +115,11 @@
         <div><h3>Gestionar plantilla</h3><p>Añadir jugadores, bajas y estados</p></div>
         <span class="chevron">›</span>
       </div>
+      <div class="home-card" id="btn-fisioterapia" style="display:none;border-left:3px solid #00897B" onclick="window.location.href='fisioterapia.html'">
+        <div class="home-card-icon" style="background:#E0F2F1">🏥</div>
+        <div><h3>Fisioterapia</h3><p>Agenda y gestión de citas</p></div>
+        <span class="chevron">›</span>
+      </div>
       <div class="home-card" id="btn-panel-director" style="display:none;border-left:3px solid #8E44AD" onclick="window.location.href='panel_director.html'">
         <div class="home-card-icon" style="background:#F5EEF8">&#128204;</div>
         <div><h3>Panel director</h3><p>Semáforo de fichas por equipo</p></div>
@@ -579,6 +584,8 @@ function cargarMenuEquipo() {
   if (bU)  bU.style.display  = esSuperAdmin ? '' : 'none';
   if (bP)  bP.style.display  = esPagos ? '' : 'none';
   if (bPD) bPD.style.display = (esSuperAdmin || esPresidente || esDirector) ? '' : 'none';
+  var bFisio = document.getElementById('btn-fisioterapia');
+  if (bFisio) bFisio.style.display = (esSuperAdmin || esPresidente || esDirector || cfg.rol==='fisioterapeuta' || cfg.rol==='entrenador' || cfg.rol==='entrenador_principal' || cfg.rol==='coordinador') ? '' : 'none';
   if (bMU) bMU.style.display = (esSuperAdmin || esPresidente || esDirector) ? '' : 'none';
   var bD = document.getElementById('btn-directo');
   if (bD) bD.style.display = (cfg.permisos && cfg.permisos.directo) || esSuperAdmin || esPresidente || esDirector || esEntrenador ? '' : 'none';
