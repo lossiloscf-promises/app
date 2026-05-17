@@ -145,13 +145,12 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
       <input type="text" id="pac-buscar" placeholder="Buscar paciente..." oninput="renderPacientes()">
     </div>
     <div id="pacientes-lista"><div class="loading-wrap"><div class="spin"></div><br>Cargando...</div></div>
-    <button class="fab" onclick="abrirModalNuevoPaciente()">+</button>
   </div>
 
 </div>
 
-<!-- FAB reservar (agenda) -->
-<button class="fab" id="fab-reservar" onclick="abrirModalReserva(null,null)">+</button>
+<!-- FAB dinámico según tab -->
+<button class="fab" id="fab-main" onclick="fabClick()">+</button>
 
 <!-- MODAL RESERVA -->
 <div class="modal-overlay hidden" id="modal-reserva" onclick="if(event.target===this)this.classList.add('hidden')">
@@ -248,14 +247,19 @@ function volverAtras() {
 }
 
 // ── TABS ─────────────────────────────────────────────────────────
+function fabClick() {
+  if (tabActual === 'agenda') abrirModalReserva(null, null);
+  else if (tabActual === 'pacientes') abrirModalNuevoPaciente();
+}
+
 function switchTab(tab) {
   tabActual = tab;
   ['agenda','historial','pacientes'].forEach(function(t) {
     document.getElementById('vista-'+t).style.display = t===tab ? '' : 'none';
     document.getElementById('tab-'+t).classList.toggle('on', t===tab);
   });
-  var fab = document.getElementById('fab-reservar');
-  if (fab) fab.style.display = tab==='agenda' ? 'flex' : 'none';
+  var fab = document.getElementById('fab-main');
+  if (fab) fab.style.display = tab==='historial' ? 'none' : 'flex';
   if (tab==='historial') renderHistorial();
   if (tab==='pacientes') renderPacientes();
 }
