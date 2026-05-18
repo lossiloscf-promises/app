@@ -591,9 +591,10 @@ function cargarMenuEquipo() {
 
   document.getElementById('btn-cambiar').style.display = esDirector ? 'block' : 'none';
 
-  // Menú F11 (entrenamientos y partidos) — solo si tiene permisos
-  var verF11 = (esF11 || esDirector || esEntrenador || esCoord) && (tiene('entrenamientos') || tiene('partidos'));
-  document.getElementById('menu-f11').style.display    = verF11 ? 'block' : 'none';
+  // Menú entrenador (entrenamientos y partidos)
+  var bMenuEnt = document.getElementById('menu-entrenador');
+  if (bMenuEnt) bMenuEnt.style.display = (tiene('entrenamientos') || tiene('partidos')) ? '' : 'none';
+  document.getElementById('menu-f11').style.display    = (tiene('entrenamientos') || tiene('partidos')) ? 'block' : 'none';
   document.getElementById('menu-director').style.display = esDirector ? 'block' : 'none';
 
   cargarUltimos();
