@@ -486,10 +486,14 @@ function cargarMenuEquipo() {
   document.getElementById('saludo-txt').textContent        = esDirector
     ? 'Director Deportivo · Viendo: ' + cat.nombre
     : 'Hola, ' + cfg.nombre.split(' ')[0] + ' · ' + cat.nombre;
-  document.getElementById('entreno-cat-label').textContent  = cat.nombre;
-  document.getElementById('partido-cat-label').textContent  = cat.nombre;
-  document.getElementById('se-cat-label').textContent       = cat.nombre;
-  document.getElementById('sp-cat-label').textContent       = cat.nombre;
+  var elEntreno = document.getElementById('entreno-cat-label');
+  var elPartido = document.getElementById('partido-cat-label');
+  var elSe      = document.getElementById('se-cat-label');
+  var elSp      = document.getElementById('sp-cat-label');
+  if (elEntreno) elEntreno.textContent = cat.nombre;
+  if (elPartido) elPartido.textContent = cat.nombre;
+  if (elSe)      elSe.textContent      = cat.nombre;
+  if (elSp)      elSp.textContent      = cat.nombre;
 
   document.getElementById('btn-cambiar').style.display = esDirector ? 'block' : 'none';
 
