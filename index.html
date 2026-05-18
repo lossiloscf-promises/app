@@ -599,7 +599,7 @@ function cargarMenuEquipo() {
 
   cargarUltimos();
   cargarPlantillaRemota();
-  if (verF11) cargarProximosPartidos();
+  if (tiene('partidos') || tiene('entrenamientos')) cargarProximosPartidos();
 
   // Botones home
   var bU   = document.getElementById('btn-usuarios');
