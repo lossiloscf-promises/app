@@ -495,14 +495,14 @@ function cargarMenuEquipo() {
   if (elSe)      elSe.textContent      = cat.nombre;
   if (elSp)      elSp.textContent      = cat.nombre;
 
-  document.getElementById('btn-cambiar').style.display = esDirector ? 'block' : 'none';
+  var bCambiar = document.getElementById('btn-cambiar'); if(bCambiar) bCambiar.style.display = esDirector ? 'block' : 'none';
 
   // Menú entrenador (entrenamientos y partidos)
   var bMenuEnt = document.getElementById('menu-entrenador');
   if (bMenuEnt) bMenuEnt.style.display = (tiene('entrenamientos') || tiene('partidos')) ? '' : 'none';
-  document.getElementById('menu-f11').style.display    = (tiene('entrenamientos') || tiene('partidos')) ? 'block' : 'none';
-  document.getElementById('menu-director').style.display = esDirector ? 'block' : 'none';
-
+  if(bMenuEnt) bMenuEnt.style.display = (tiene('entrenamientos') || tiene('partidos')) ? '' : 'none';
+  var mF11 = document.getElementById('menu-f11'); if(mF11) mF11.style.display = (tiene('entrenamientos') || tiene('partidos')) ? 'block' : 'none';
+  var mDir = document.getElementById('menu-director'); if(mDir) mDir.style.display = esDirector ? 'block' : 'none';
   cargarUltimos();
   cargarPlantillaRemota();
   if (tiene('partidos') || tiene('entrenamientos')) cargarProximosPartidos();
