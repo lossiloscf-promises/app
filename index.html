@@ -558,8 +558,10 @@ function seleccionarEquipo(key) {
 }
 function cargarMenuEquipo() {
   var esDirector   = cfg.rol === 'director' || cfg.rol === 'presidente' || cfg.rol === 'superadmin';
-  var esEntrenador = cfg.rol === 'entrenador';
+  var esPresidente = cfg.rol === 'presidente' || cfg.rol === 'superadmin';
+  var esEntrenador = cfg.rol === 'entrenador' || cfg.rol === 'entrenador_principal';
   var esSuperAdmin = cfg.rol === 'superadmin';
+  var esFisio      = cfg.rol === 'fisioterapeuta';
   var esPagos      = cfg.rol === 'superadmin' || cfg.rol === 'presidente';
   var cat = CATEGORIAS[equipoActual] || {nombre: equipoActual, formato:'F11', duracion:45, jugadores:[]};
   var esF11 = F11_CATS.indexOf(equipoActual) !== -1;
