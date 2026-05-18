@@ -108,13 +108,6 @@
       </div>
     </div>
 
-    <div id="menu-f11" style="display:none">
-      <div id="proximos-partidos-cont"></div>
-      <div class="home-card" onclick="window.location.href='plantilla.html?categoria='+equipoActual" style="border-left:3px solid var(--texto3)">
-        <div class="home-card-icon" style="background:var(--gris)">👥</div>
-        <div><h3>Gestionar plantilla</h3><p>Añadir jugadores, bajas y estados</p></div>
-        <span class="chevron">›</span>
-      </div>
       <div class="home-card" id="btn-fisioterapia" style="display:none;border-left:3px solid #00897B" onclick="window.location.href='fisioterapia.html'">
         <div class="home-card-icon" style="background:#E0F2F1">🏥</div>
         <div><h3>Fisioterapia</h3><p>Agenda y gestión de citas</p></div>
@@ -135,106 +128,15 @@
         <div><h3>Control de pagos</h3><p>Estado de pagos por categoría</p></div>
         <span class="chevron">›</span>
       </div>
-      <div class="home-card" id="btn-usuarios" style="display:none;border-left:3px solid #6C3483" onclick="window.location.href='usuarios.html'">
-        <div class="home-card-icon" style="background:#F5EEF8">🔑</div>
-        <div><h3>Gestionar usuarios</h3><p>Crear y editar accesos al sistema</p></div>
-        <span class="chevron">›</span>
-      </div>
-      <div class="home-card" id="btn-pagos" style="display:none;border-left:3px solid var(--verde)" onclick="window.location.href='pagos.html'">
-        <div class="home-card-icon" style="background:var(--verde-c)">💰</div>
-        <div><h3>Control de pagos</h3><p>Estado de pagos por categoría</p></div>
-        <span class="chevron">›</span>
-      </div>
-      <div class="home-card" onclick="window.location.href='informe_propio.html'" style="border-left:3px solid var(--verde)">
-        <div class="home-card-icon" style="background:var(--verde-c)">📊</div>
-        <div><h3>Análisis propio</h3><p>Informe completo de nuestro equipo esta temporada</p></div>
-        <span class="chevron">›</span>
-      </div>
-      <div class="home-card" onclick="irA('s-scouting')">
-        <div class="home-card-icon" style="background:#FFF0CC">🔍</div>
-        <div><h3>Scouting rival</h3><p>Informe de cualquier equipo de la competicion</p></div>
-        <span class="chevron">›</span>
-      </div>
-      <div class="home-card" id="btn-directo" style="display:none;border-left:3px solid var(--rojo)" onclick="window.location.href='en_directo.html'">
-        <div class="home-card-icon" style="background:var(--rojo-c)">🔴</div>
-        <div><h3>En directo</h3><p>Marcadores en tiempo real</p></div>
-        <span class="chevron">›</span>
-      </div>
-      <div class="home-card" style="border-left:3px solid var(--verde)" onclick="window.location.href='clasificacion.html'">
-        <div class="home-card-icon" style="background:var(--verde-c)">📊</div>
-        <div><h3>Clasificación</h3><p>Tabla y resultados del equipo</p></div>
-        <span class="chevron">›</span>
-      </div>
-      <div class="home-card" id="btn-calendario" style="border-left:3px solid var(--azul2)" onclick="window.location.href='calendario_semanal.html'">
-        <div class="home-card-icon" style="background:var(--azul-c)">📅</div>
-        <div><h3>Calendario semanal</h3><p>Todos los partidos de la semana</p></div>
-        <span class="chevron">›</span>
-      </div>
-      <div class="home-card" id="btn-mensajes-urgentes" style="display:none;border-left:3px solid var(--rojo)" onclick="window.location.href='mensajes_urgentes.html'">
-        <div class="home-card-icon" style="background:var(--rojo-c)">🚨</div>
-        <div><h3>Mensajes urgentes</h3><p>Comunicados a familias F11 y F8</p></div>
-        <span class="chevron">›</span>
-      </div>
-    </div>
 
-    <div id="menu-director" style="display:none">
-      <div style="margin-top:6px"><span class="rol-divider">DIRECTOR DEPORTIVO</span></div>
-      <div class="home-card" onclick="irA('s-panel')">
-        <div class="home-card-icon" style="background:#E8F4FD">🏠</div>
-        <div><h3>Panel global</h3><p>Todos los equipos a la vez</p></div>
+    <div id="menu-f11" style="display:none">
+      <div id="proximos-partidos-cont"></div>
+      <div class="home-card" onclick="window.location.href='plantilla.html?categoria='+equipoActual" style="border-left:3px solid var(--texto3)">
+        <div class="home-card-icon" style="background:var(--gris)">👥</div>
+        <div><h3>Gestionar plantilla</h3><p>Añadir jugadores, bajas y estados</p></div>
         <span class="chevron">›</span>
       </div>
-      <div class="home-card" onclick="irA('s-alertas')">
-        <div class="home-card-icon" style="background:#FAD7D3">⚠️</div>
-        <div><h3>Alertas pendientes</h3><p>Registros sin subir y anomalias</p></div>
-        <span class="chevron">›</span>
-      </div>
-    </div>
 
-    <p class="section-label" style="margin-top:8px">Ultimos registros</p>
-    <div class="card" id="ultimos-card">
-      <div class="card-body" style="color:var(--texto3);font-size:13px;text-align:center;padding:20px">Aun no hay registros.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ENTRENAMIENTO -->
-<div class="screen" id="s-entreno">
-  <div class="topbar">
-    <button class="topbar-back" onclick="irA('s-inicio')">‹</button>
-    <div><h1>Entrenamiento</h1><p id="entreno-cat-label">-</p></div>
-  </div>
-  <div class="scroll-body">
-    <!-- Selector equipo (superadmin/director/presidente) -->
-    <div id="entreno-selector-equipo" style="display:none;margin-bottom:12px">
-      <div class="field" style="margin:0">
-        <label>Equipo</label>
-        <select id="entreno-equipo-sel" onchange="cambiarEquipoEntreno(this.value)" style="width:100%;padding:13px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:16px;font-family:inherit;background:#fff;-webkit-appearance:none">
-          <option value="amateur">Amateur</option>
-          <option value="juvenil_a">Juvenil A</option>
-          <option value="juvenil_b">Juvenil B</option>
-          <option value="cadete_a">Cadete A</option>
-          <option value="cadete_b">Cadete B</option>
-          <option value="cadete_femenino">Cadete Femenino</option>
-          <option value="infantil_a">Infantil A</option>
-          <option value="infantil_b">Infantil B</option>
-          <option value="infantil_femenino">Infantil Femenino</option>
-          <option value="alevin_a">Alevín A</option>
-          <option value="alevin_b">Alevín B</option>
-          <option value="alevin_femenino">Alevín Femenino</option>
-          <option value="benjamin_a">Benjamín A</option>
-          <option value="benjamin_b">Benjamín B</option>
-          <option value="prebenjamin_a">Prebenjamín A</option>
-          <option value="prebenjamin_b">Prebenjamín B</option>
-        </select>
-      </div>
-    </div>
-    <p class="section-label">Informacion de la sesion</p>
-    <div class="card"><div class="card-body">
-      <div class="grid-2">
-        <div class="field"><label>Fecha</label><input type="date" id="e-fecha"></div>
-        <div class="field"><label>Hora inicio</label><input type="time" id="e-hora"></div>
-      </div>
       <div class="grid-2">
         <div class="field"><label>Duracion (min)</label><input type="number" id="e-duracion" placeholder="90" min="15" max="180"></div>
         <div class="field"><label>Campo</label><select id="e-campo"><option>Campo de las Oliveras</option><option>Polideportivo Municipal</option><option>Otro</option></select></div>
