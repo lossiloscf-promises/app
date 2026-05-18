@@ -221,23 +221,25 @@ var cfg = JSON.parse(localStorage.getItem('silos_sesion') || '{}');
 var usuarioEditando = null;
 
 var MODULOS = [
-  {key:'todos_equipos', label:'Todos los equipos', ico:'🌐'},
-  {key:'informes',      label:'Informes rival',    ico:'📊'},
-  {key:'entrenamientos',label:'Entrenamientos',    ico:'🏋️'},
-  {key:'partidos',      label:'Partidos',          ico:'⚽'},
-  {key:'plantilla',     label:'Plantilla',         ico:'👥'},
-  {key:'pagos',         label:'Pagos',             ico:'💰'},
-  {key:'usuarios',      label:'Usuarios',          ico:'🔑'},
-  {key:'estadisticas',  label:'Estadísticas',      ico:'📈'},
-  {key:'scouting',      label:'Scouting',          ico:'🔍'}
+  {key:'todos_equipos',  label:'Todos los equipos', ico:'🌐'},
+  {key:'informes',       label:'Informes rival',     ico:'📊'},
+  {key:'entrenamientos', label:'Entrenamientos',     ico:'🏋️'},
+  {key:'partidos',       label:'Partidos',           ico:'⚽'},
+  {key:'plantilla',      label:'Plantilla',          ico:'👥'},
+  {key:'pagos',          label:'Pagos',              ico:'💰'},
+  {key:'fisioterapia',   label:'Fisioterapia',       ico:'🏥'},
+  {key:'usuarios',       label:'Usuarios',           ico:'🔑'},
+  {key:'estadisticas',   label:'Estadísticas',       ico:'📈'},
+  {key:'scouting',       label:'Scouting',           ico:'🔍'}
 ];
 
 var PERMISOS_DEFAULT = {
-  superadmin:  {todos_equipos:true,  informes:true,  entrenamientos:true, partidos:true, plantilla:true, pagos:true,  usuarios:true,  estadisticas:true, scouting:true},
-  presidente:  {todos_equipos:true,  informes:true,  entrenamientos:true, partidos:true, plantilla:true, pagos:true,  usuarios:false, estadisticas:true, scouting:true},
-  director:    {todos_equipos:true,  informes:true,  entrenamientos:true, partidos:true, plantilla:true, pagos:false, usuarios:false, estadisticas:true, scouting:true},
-  coordinador: {todos_equipos:true,  informes:true,  entrenamientos:true, partidos:true, plantilla:true, pagos:false, usuarios:false, estadisticas:true, scouting:false},
-  entrenador:  {todos_equipos:false, informes:false, entrenamientos:true, partidos:true, plantilla:true, pagos:false, usuarios:false, estadisticas:true, scouting:false}
+  superadmin:      {todos_equipos:true,  informes:true,  entrenamientos:true, partidos:true, plantilla:true, pagos:true,  fisioterapia:true,  usuarios:true,  estadisticas:true, scouting:true},
+  presidente:      {todos_equipos:true,  informes:true,  entrenamientos:true, partidos:true, plantilla:true, pagos:true,  fisioterapia:true,  usuarios:false, estadisticas:true, scouting:true},
+  director:        {todos_equipos:true,  informes:true,  entrenamientos:true, partidos:true, plantilla:true, pagos:false, fisioterapia:true,  usuarios:false, estadisticas:true, scouting:true},
+  coordinador:     {todos_equipos:true,  informes:true,  entrenamientos:true, partidos:true, plantilla:true, pagos:false, fisioterapia:true,  usuarios:false, estadisticas:true, scouting:false},
+  fisioterapeuta:  {todos_equipos:true,  informes:false, entrenamientos:false, partidos:false, plantilla:true, pagos:false, fisioterapia:true, usuarios:false, estadisticas:false, scouting:false},
+  entrenador:      {todos_equipos:false, informes:false, entrenamientos:true, partidos:true, plantilla:true, pagos:false, fisioterapia:true,  usuarios:false, estadisticas:true, scouting:false}
 };
 
 // Verificar acceso

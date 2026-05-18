@@ -92,6 +92,8 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--texto3);font-size:16px}
 
 /* FAB */
+.filtro-estado{padding:6px 12px;border-radius:20px;border:.5px solid var(--borde);background:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--texto2)}
+.filtro-estado.on{background:var(--azul);color:#fff;border-color:var(--azul)}
 .fab{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));right:20px;z-index:50;width:56px;height:56px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center}
 </style>
 </head>
@@ -126,14 +128,32 @@ body{font-family:var(--font);background:var(--gris);color:var(--texto);min-heigh
 
   <!-- HISTORIAL -->
   <div id="vista-historial" style="display:none">
-    <div class="search-wrap">
-      <span class="search-icon">&#128269;</span>
-      <input type="text" id="histo-buscar" placeholder="Buscar jugador..." oninput="renderHistorial()">
+    <!-- Filtro por equipo -->
+    <div class="modal-field" style="margin-bottom:8px">
+      <select id="histo-equipo" onchange="actualizarFiltroJugadores()" style="width:100%;padding:10px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:14px;font-family:var(--font);background:#fff;outline:none;-webkit-appearance:none">
+        <option value="">— Todos los equipos —</option>
+        <option value="amateur">Amateur</option>
+        <option value="juvenil_a">Juvenil A</option><option value="juvenil_b">Juvenil B</option>
+        <option value="cadete_a">Cadete A</option><option value="cadete_b">Cadete B</option>
+        <option value="cadete_femenino">Cadete Femenino</option>
+        <option value="infantil_a">Infantil A</option><option value="infantil_b">Infantil B</option>
+        <option value="alevin_a">Alevín A</option><option value="alevin_b">Alevín B</option>
+        <option value="benjamin_a">Benjamín A</option><option value="benjamin_b">Benjamín B</option>
+        <option value="prebenjamin_a">Prebenjamín A</option><option value="prebenjamin_b">Prebenjamín B</option>
+      </select>
     </div>
+    <!-- Filtro por jugador (solo tratados) -->
+    <div class="modal-field" style="margin-bottom:8px">
+      <select id="histo-jugador" onchange="renderHistorial()" style="width:100%;padding:10px 14px;border:.5px solid var(--borde);border-radius:var(--radio-sm);font-size:14px;font-family:var(--font);background:#fff;outline:none;-webkit-appearance:none">
+        <option value="">— Todos los jugadores —</option>
+      </select>
+    </div>
+    <!-- Filtro por estado -->
     <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
-      <button class="btn-top" style="background:var(--naranja);border-radius:20px;font-size:11px;padding:5px 12px" onclick="filtrarHisto('')">Todos</button>
-      <button class="btn-top" style="background:var(--verde);border-radius:20px;font-size:11px;padding:5px 12px" onclick="filtrarHisto('COMPLETADA')">Completadas</button>
-      <button class="btn-top" style="background:var(--rojo);border-radius:20px;font-size:11px;padding:5px 12px" onclick="filtrarHisto('CANCELADA')">Canceladas</button>
+      <button class="filtro-estado on" onclick="filtrarHisto('',this)">Todos</button>
+      <button class="filtro-estado" onclick="filtrarHisto('COMPLETADA',this)">✅ Completadas</button>
+      <button class="filtro-estado" onclick="filtrarHisto('CANCELADA',this)">❌ Canceladas</button>
+      <button class="filtro-estado" onclick="filtrarHisto('NO_ASISTE',this)">🚫 No asistió</button>
     </div>
     <div id="historial-lista"><div class="loading-wrap"><div class="spin"></div><br>Cargando...</div></div>
   </div>
@@ -221,8 +241,9 @@ var WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzccJuHc7_dNEJluOJL4-2
 var cfg = {};
 try { cfg = JSON.parse(localStorage.getItem('silos_sesion') || '{}'); } catch(e) {}
 
-var esFisio    = cfg.rol === 'fisioterapeuta' || cfg.rol === 'superadmin' || cfg.rol === 'director';
-var esEntrenador = cfg.rol === 'entrenador' || cfg.rol === 'entrenador_principal' || esFisio;
+var esFisio      = cfg.rol === 'fisioterapeuta' || cfg.rol === 'superadmin' || cfg.rol === 'director';
+var esEntrenador  = cfg.rol === 'entrenador' || cfg.rol === 'entrenador_principal';
+var puedeVerTodo  = esFisio;
 var tabActual  = 'agenda';
 var semanaOffset = 0;
 var citasData  = [];
@@ -294,6 +315,19 @@ function fmtFechaCorta(d) {
 }
 
 function cambiarSemana(delta) {
+  // Entrenadores solo pueden ver semana actual
+  if (!esFisio && esEntrenador) {
+    var nuevoOffset = semanaOffset + delta;
+    if (nuevoOffset !== 0) return; // solo semana actual
+  }
+  // Fisio puede acceder a semana siguiente solo sáb/dom
+  if (esFisio && delta > 0 && semanaOffset >= 0) {
+    var hoy = new Date().getDay();
+    var esSabDom = hoy === 0 || hoy === 6;
+    if (!esSabDom && semanaOffset >= 0) {
+      // Puede avanzar igualmente (fisio tiene control total)
+    }
+  }
   semanaOffset += delta;
   renderAgenda();
 }
@@ -501,13 +535,41 @@ function editarCita(id) {
 }
 
 // ── HISTORIAL ─────────────────────────────────────────────────────
-function filtrarHisto(estado) { histoFiltro = estado; renderHistorial(); }
+function filtrarHisto(estado, btn) {
+  histoFiltro = estado;
+  document.querySelectorAll('.filtro-estado').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  renderHistorial();
+}
+
+function actualizarFiltroJugadores() {
+  var equipo = document.getElementById('histo-equipo').value;
+  // Obtener jugadores únicos tratados (con sesiones completadas) de ese equipo
+  var jugadores = {};
+  citasData.forEach(function(c) {
+    if (c.estado === 'COMPLETADA' || c.estado === 'NO_ASISTE') {
+      if (!equipo || c.equipo === equipo) jugadores[c.jugador] = true;
+    }
+  });
+  var sel = document.getElementById('histo-jugador');
+  sel.innerHTML = '<option value="">— Todos los jugadores —</option>' +
+    Object.keys(jugadores).sort().map(function(j){
+      return '<option value="'+j+'">'+j+'</option>';
+    }).join('');
+  renderHistorial();
+}
 
 function renderHistorial() {
-  var busq = (document.getElementById('histo-buscar').value||'').toLowerCase();
+  var equipo  = document.getElementById('histo-equipo') ? document.getElementById('histo-equipo').value : '';
+  var jugador = document.getElementById('histo-jugador') ? document.getElementById('histo-jugador').value : '';
   var lista = citasData.filter(function(c) {
     if (histoFiltro && c.estado !== histoFiltro) return false;
-    if (busq && c.jugador.toLowerCase().indexOf(busq)===-1) return false;
+    if (equipo && c.equipo !== equipo) return false;
+    if (jugador && c.jugador !== jugador) return false;
+    // Solo mostrar jugadores tratados (completados o no asistió) en historial
+    if (c.estado === 'PENDIENTE') return false;
+    // Entrenadores solo ven su equipo
+    if (!esFisio && esEntrenador && c.equipo !== cfg.equipo) return false;
     return true;
   }).sort(function(a,b){ return b.fecha.localeCompare(a.fecha); });
 
@@ -606,6 +668,15 @@ function aplicarPermisos() {
   if (!esFisio) {
     var tabP = document.getElementById('tab-pacientes');
     if (tabP) tabP.style.display = 'none';
+  }
+  // Entrenadores no pueden abrir agenda fuera de plazo
+  if (esEntrenador && !esFisio) {
+    var hoy = new Date().getDay(); // 0=dom, 6=sab
+    var esSabDom = hoy === 0 || hoy === 6;
+    if (!esSabDom) {
+      // Solo pueden ver semana actual
+      document.getElementById('tab-historial').style.display = 'none';
+    }
   }
 }
 
