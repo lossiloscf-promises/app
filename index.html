@@ -493,7 +493,7 @@ async function hacerLogin() {
     var data = JSON.parse(txt);
     document.getElementById('overlay').classList.remove('show');
     if (data.ok) {
-      cfg = {nombre:data.nombre, equipo:data.equipo||'', rol:data.rol, usuario:usuario};
+      cfg = {nombre:data.nombre, equipo:data.equipo||'', rol:data.rol, usuario:usuario, permisos:data.permisos||{}};
       localStorage.setItem('silos_sesion', JSON.stringify(cfg));
       iniciarApp();
     } else {
@@ -527,9 +527,14 @@ function irA(id) {
   }
 }
 function iniciarApp() {
-  if (cfg.rol === 'director') {
+  if (cfg.rol === 'director' || cfg.rol === 'superadmin' || cfg.rol === 'coordinador') {
     buildSelectorEquipos();
     irA('s-selector');
+  } else if (cfg.rol === 'fisioterapeuta') {
+    // Fisio va directo a inicio sin equipo
+    equipoActual = 'fisioterapia';
+    cargarMenuEquipo();
+    irA('s-inicio');
   } else {
     equipoActual = cfg.equipo;
     cargarMenuEquipo();
@@ -557,14 +562,24 @@ function seleccionarEquipo(key) {
   irA('s-inicio');
 }
 function cargarMenuEquipo() {
-  var esDirector   = cfg.rol === 'director' || cfg.rol === 'presidente' || cfg.rol === 'superadmin';
-  var esPresidente = cfg.rol === 'presidente' || cfg.rol === 'superadmin';
-  var esEntrenador = cfg.rol === 'entrenador' || cfg.rol === 'entrenador_principal';
-  var esSuperAdmin = cfg.rol === 'superadmin';
-  var esFisio      = cfg.rol === 'fisioterapeuta';
-  var esPagos      = cfg.rol === 'superadmin' || cfg.rol === 'presidente';
+  var rol        = cfg.rol || '';
+  var perms      = cfg.permisos || {};
+  var esSuperAdmin = rol === 'superadmin';
+  var esPresidente = rol === 'presidente' || esSuperAdmin;
+  var esDirector   = rol === 'director' || esPresidente;
+  var esEntrenador = rol === 'entrenador' || rol === 'entrenador_principal';
+  var esFisio      = rol === 'fisioterapeuta';
+  var esCoord      = rol === 'coordinador';
+
+  // Función helper: tiene permiso si es superadmin O el permiso está activado
+  function tiene(perm) {
+    if (esSuperAdmin) return true;
+    return perms[perm] === true;
+  }
+
   var cat = CATEGORIAS[equipoActual] || {nombre: equipoActual, formato:'F11', duracion:45, jugadores:[]};
   var esF11 = F11_CATS.indexOf(equipoActual) !== -1;
+
   document.getElementById('top-cat-badge').textContent     = cat.nombre + ' · ' + cat.formato;
   document.getElementById('saludo-txt').textContent        = esDirector
     ? 'Director Deportivo · Viendo: ' + cat.nombre
@@ -573,24 +588,32 @@ function cargarMenuEquipo() {
   document.getElementById('partido-cat-label').textContent  = cat.nombre;
   document.getElementById('se-cat-label').textContent       = cat.nombre;
   document.getElementById('sp-cat-label').textContent       = cat.nombre;
+
   document.getElementById('btn-cambiar').style.display = esDirector ? 'block' : 'none';
-  document.getElementById('menu-f11').style.display      = (esF11 || esDirector) ? 'block' : 'none';
+
+  // Menú F11 (entrenamientos y partidos) — solo si tiene permisos
+  var verF11 = (esF11 || esDirector || esEntrenador || esCoord) && (tiene('entrenamientos') || tiene('partidos'));
+  document.getElementById('menu-f11').style.display    = verF11 ? 'block' : 'none';
   document.getElementById('menu-director').style.display = esDirector ? 'block' : 'none';
+
   cargarUltimos();
   cargarPlantillaRemota();
-  if (esF11 || esDirector) cargarProximosPartidos();
-  var bU  = document.getElementById('btn-usuarios');
-  var bP  = document.getElementById('btn-pagos');
-  var bPD = document.getElementById('btn-panel-director');
-  var bMU = document.getElementById('btn-mensajes-urgentes');
-  if (bU)  bU.style.display  = esSuperAdmin ? '' : 'none';
-  if (bP)  bP.style.display  = esPagos ? '' : 'none';
-  if (bPD) bPD.style.display = (esSuperAdmin || esPresidente || esDirector) ? '' : 'none';
+  if (verF11) cargarProximosPartidos();
+
+  // Botones home
+  var bU   = document.getElementById('btn-usuarios');
+  var bP   = document.getElementById('btn-pagos');
+  var bPD  = document.getElementById('btn-panel-director');
+  var bMU  = document.getElementById('btn-mensajes-urgentes');
   var bFisio = document.getElementById('btn-fisioterapia');
-  if (bFisio) bFisio.style.display = (esSuperAdmin || esPresidente || esDirector || cfg.rol==='fisioterapeuta' || cfg.rol==='entrenador' || cfg.rol==='entrenador_principal' || cfg.rol==='coordinador') ? '' : 'none';
-  if (bMU) bMU.style.display = (esSuperAdmin || esPresidente || esDirector) ? '' : 'none';
-  var bD = document.getElementById('btn-directo');
-  if (bD) bD.style.display = (cfg.permisos && cfg.permisos.directo) || esSuperAdmin || esPresidente || esDirector || esEntrenador ? '' : 'none';
+  var bD   = document.getElementById('btn-directo');
+
+  if (bU)    bU.style.display    = esSuperAdmin ? '' : 'none';
+  if (bP)    bP.style.display    = tiene('pagos') ? '' : 'none';
+  if (bPD)   bPD.style.display   = esDirector ? '' : 'none';
+  if (bMU)   bMU.style.display   = esDirector ? '' : 'none';
+  if (bFisio) bFisio.style.display = tiene('fisioterapia') ? '' : 'none';
+  if (bD)    bD.style.display    = tiene('partidos') || esDirector ? '' : 'none';
 }
 async function cargarPlantillaRemota() {
   if (!equipoActual) return;
